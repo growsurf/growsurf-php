@@ -27,7 +27,7 @@
     "sort-packages": true
   },
   "description": "Growsurf PHP SDK",
-  "name": "org-placeholder/growsurf",
+  "name": "growsurf/growsurf-php",
   "require": {
     "php": "^8.1",
     "php-http/discovery": "^1",
