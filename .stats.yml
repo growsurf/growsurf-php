@@ -1,4 +1,4 @@
 configured_endpoints: 24
-openapi_spec_url: https://storage.googleapis.com/stainless-sdk-openapi-specs/growsurf/growsurf-5106ff829058d3f25922ff3b8ed82ee2c6f027e6beaa0a6ddb22866d4b4c0905.yml
+openapi_spec_url: https://storage.googleapis.com/stainless-sdk-openapi-specs/growsurf/growsurf-d7d3bc3dcc89d550491f274a0e6eaea935d6181b3a66afa29db63ff3f34e361d.yml
 openapi_spec_hash: ac0466a6577db6f9740bb0034fca0e19
-config_hash: 59755f44f4a2de8dec4428936a11edcc
+config_hash: d0163e61eaddce44034c4d466fb80426
