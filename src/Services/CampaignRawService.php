@@ -1,0 +1,312 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Growsurf\Services;
+
+use Growsurf\Campaign\Campaign;
+use Growsurf\Campaign\CampaignGetAnalyticsResponse;
+use Growsurf\Campaign\CampaignListCommissionsParams;
+use Growsurf\Campaign\CampaignListCommissionsParams\Status;
+use Growsurf\Campaign\CampaignListLeaderboardParams;
+use Growsurf\Campaign\CampaignListLeaderboardParams\LeaderboardType;
+use Growsurf\Campaign\CampaignListParticipantsParams;
+use Growsurf\Campaign\CampaignListPayoutsParams;
+use Growsurf\Campaign\CampaignListReferralsParams;
+use Growsurf\Campaign\CampaignListReferralsParams\SortBy;
+use Growsurf\Campaign\CampaignListResponse;
+use Growsurf\Campaign\CampaignRetrieveAnalyticsParams;
+use Growsurf\Campaign\Participant\ReferralStatus;
+use Growsurf\Campaign\ParticipantCommissionList;
+use Growsurf\Campaign\ParticipantList;
+use Growsurf\Campaign\ParticipantPayoutList;
+use Growsurf\Campaign\ReferralList;
+use Growsurf\Client;
+use Growsurf\Core\Contracts\BaseResponse;
+use Growsurf\Core\Exceptions\APIException;
+use Growsurf\Core\Util;
+use Growsurf\RequestOptions;
+use Growsurf\ServiceContracts\CampaignRawContract;
+
+/**
+ * @phpstan-import-type RequestOpts from \Growsurf\RequestOptions
+ */
+final class CampaignRawService implements CampaignRawContract
+{
+    // @phpstan-ignore-next-line
+    /**
+     * @internal
+     */
+    public function __construct(private Client $client) {}
+
+    /**
+     * @api
+     *
+     * Retrieves a program for the given program ID.
+     *
+     * @param string $id growSurf program ID
+     * @param RequestOpts|null $requestOptions
+     *
+     * @return BaseResponse<Campaign>
+     *
+     * @throws APIException
+     */
+    public function retrieve(
+        string $id,
+        RequestOptions|array|null $requestOptions = null
+    ): BaseResponse {
+        // @phpstan-ignore-next-line return.type
+        return $this->client->request(
+            method: 'get',
+            path: ['campaign/%1$s', $id],
+            options: $requestOptions,
+            convert: Campaign::class,
+        );
+    }
+
+    /**
+     * @api
+     *
+     * Retrieves a list of your programs. Deleted programs are not returned.
+     *
+     * @param RequestOpts|null $requestOptions
+     *
+     * @return BaseResponse<CampaignListResponse>
+     *
+     * @throws APIException
+     */
+    public function list(
+        RequestOptions|array|null $requestOptions = null
+    ): BaseResponse {
+        // @phpstan-ignore-next-line return.type
+        return $this->client->request(
+            method: 'get',
+            path: 'campaigns',
+            options: $requestOptions,
+            convert: CampaignListResponse::class,
+        );
+    }
+
+    /**
+     * @api
+     *
+     * Retrieves a paged list of all participant commissions in an affiliate program.
+     *
+     * @param string $id growSurf program ID
+     * @param array{
+     *   limit?: int, nextID?: string, status?: Status|value-of<Status>
+     * }|CampaignListCommissionsParams $params
+     * @param RequestOpts|null $requestOptions
+     *
+     * @return BaseResponse<ParticipantCommissionList>
+     *
+     * @throws APIException
+     */
+    public function listCommissions(
+        string $id,
+        array|CampaignListCommissionsParams $params,
+        RequestOptions|array|null $requestOptions = null,
+    ): BaseResponse {
+        [$parsed, $options] = CampaignListCommissionsParams::parseRequest(
+            $params,
+            $requestOptions,
+        );
+
+        // @phpstan-ignore-next-line return.type
+        return $this->client->request(
+            method: 'get',
+            path: ['campaign/%1$s/commissions', $id],
+            query: Util::array_transform_keys($parsed, ['nextID' => 'nextId']),
+            options: $options,
+            convert: ParticipantCommissionList::class,
+        );
+    }
+
+    /**
+     * @api
+     *
+     * Retrieves participants in leaderboard order for the specified leaderboard type.
+     *
+     * @param string $id growSurf program ID
+     * @param array{
+     *   isMonthly?: bool,
+     *   leaderboardType?: value-of<LeaderboardType>,
+     *   limit?: int,
+     *   nextID?: string,
+     * }|CampaignListLeaderboardParams $params
+     * @param RequestOpts|null $requestOptions
+     *
+     * @return BaseResponse<ParticipantList>
+     *
+     * @throws APIException
+     */
+    public function listLeaderboard(
+        string $id,
+        array|CampaignListLeaderboardParams $params,
+        RequestOptions|array|null $requestOptions = null,
+    ): BaseResponse {
+        [$parsed, $options] = CampaignListLeaderboardParams::parseRequest(
+            $params,
+            $requestOptions,
+        );
+
+        // @phpstan-ignore-next-line return.type
+        return $this->client->request(
+            method: 'get',
+            path: ['campaign/%1$s/leaderboard', $id],
+            query: Util::array_transform_keys($parsed, ['nextID' => 'nextId']),
+            options: $options,
+            convert: ParticipantList::class,
+        );
+    }
+
+    /**
+     * @api
+     *
+     * Retrieves a paged list of participants in a program.
+     *
+     * @param string $id growSurf program ID
+     * @param array{
+     *   limit?: int, nextID?: string
+     * }|CampaignListParticipantsParams $params
+     * @param RequestOpts|null $requestOptions
+     *
+     * @return BaseResponse<ParticipantList>
+     *
+     * @throws APIException
+     */
+    public function listParticipants(
+        string $id,
+        array|CampaignListParticipantsParams $params,
+        RequestOptions|array|null $requestOptions = null,
+    ): BaseResponse {
+        [$parsed, $options] = CampaignListParticipantsParams::parseRequest(
+            $params,
+            $requestOptions,
+        );
+
+        // @phpstan-ignore-next-line return.type
+        return $this->client->request(
+            method: 'get',
+            path: ['campaign/%1$s/participants', $id],
+            query: Util::array_transform_keys($parsed, ['nextID' => 'nextId']),
+            options: $options,
+            convert: ParticipantList::class,
+        );
+    }
+
+    /**
+     * @api
+     *
+     * Retrieves a paged list of all participant payouts in an affiliate program.
+     *
+     * @param string $id growSurf program ID
+     * @param array{
+     *   limit?: int,
+     *   nextID?: string,
+     *   status?: CampaignListPayoutsParams\Status|value-of<CampaignListPayoutsParams\Status>,
+     * }|CampaignListPayoutsParams $params
+     * @param RequestOpts|null $requestOptions
+     *
+     * @return BaseResponse<ParticipantPayoutList>
+     *
+     * @throws APIException
+     */
+    public function listPayouts(
+        string $id,
+        array|CampaignListPayoutsParams $params,
+        RequestOptions|array|null $requestOptions = null,
+    ): BaseResponse {
+        [$parsed, $options] = CampaignListPayoutsParams::parseRequest(
+            $params,
+            $requestOptions,
+        );
+
+        // @phpstan-ignore-next-line return.type
+        return $this->client->request(
+            method: 'get',
+            path: ['campaign/%1$s/payouts', $id],
+            query: Util::array_transform_keys($parsed, ['nextID' => 'nextId']),
+            options: $options,
+            convert: ParticipantPayoutList::class,
+        );
+    }
+
+    /**
+     * @api
+     *
+     * Retrieves a list of all referrals and email invites made by participants in a program.
+     *
+     * @param string $id growSurf program ID
+     * @param array{
+     *   desc?: bool,
+     *   email?: string,
+     *   firstName?: string,
+     *   lastName?: string,
+     *   limit?: int,
+     *   nextID?: string,
+     *   offset?: int,
+     *   referralStatus?: ReferralStatus|value-of<ReferralStatus>,
+     *   sortBy?: value-of<SortBy>,
+     * }|CampaignListReferralsParams $params
+     * @param RequestOpts|null $requestOptions
+     *
+     * @return BaseResponse<ReferralList>
+     *
+     * @throws APIException
+     */
+    public function listReferrals(
+        string $id,
+        array|CampaignListReferralsParams $params,
+        RequestOptions|array|null $requestOptions = null,
+    ): BaseResponse {
+        [$parsed, $options] = CampaignListReferralsParams::parseRequest(
+            $params,
+            $requestOptions,
+        );
+
+        // @phpstan-ignore-next-line return.type
+        return $this->client->request(
+            method: 'get',
+            path: ['campaign/%1$s/referrals', $id],
+            query: Util::array_transform_keys($parsed, ['nextID' => 'nextId']),
+            options: $options,
+            convert: ReferralList::class,
+        );
+    }
+
+    /**
+     * @api
+     *
+     * Retrieves analytics for a program.
+     *
+     * @param string $id growSurf program ID
+     * @param array{
+     *   days?: int, endDate?: int, startDate?: int
+     * }|CampaignRetrieveAnalyticsParams $params
+     * @param RequestOpts|null $requestOptions
+     *
+     * @return BaseResponse<CampaignGetAnalyticsResponse>
+     *
+     * @throws APIException
+     */
+    public function retrieveAnalytics(
+        string $id,
+        array|CampaignRetrieveAnalyticsParams $params,
+        RequestOptions|array|null $requestOptions = null,
+    ): BaseResponse {
+        [$parsed, $options] = CampaignRetrieveAnalyticsParams::parseRequest(
+            $params,
+            $requestOptions,
+        );
+
+        // @phpstan-ignore-next-line return.type
+        return $this->client->request(
+            method: 'get',
+            path: ['campaign/%1$s/analytics', $id],
+            query: $parsed,
+            options: $options,
+            convert: CampaignGetAnalyticsResponse::class,
+        );
+    }
+}
