@@ -6,6 +6,7 @@ namespace Growsurf\Services\Campaign;
 
 use Growsurf\Campaign\Participant\Participant;
 use Growsurf\Campaign\Participant\ParticipantAddParams;
+use Growsurf\Campaign\Participant\ParticipantCreateMobileTokenParams;
 use Growsurf\Campaign\Participant\ParticipantDeleteParams;
 use Growsurf\Campaign\Participant\ParticipantDeleteResponse;
 use Growsurf\Campaign\Participant\ParticipantListCommissionsParams;
@@ -15,6 +16,7 @@ use Growsurf\Campaign\Participant\ParticipantListReferralsParams;
 use Growsurf\Campaign\Participant\ParticipantListReferralsParams\SortBy;
 use Growsurf\Campaign\Participant\ParticipantListRewardsParams;
 use Growsurf\Campaign\Participant\ParticipantListRewardsResponse;
+use Growsurf\Campaign\Participant\ParticipantNewMobileTokenResponse;
 use Growsurf\Campaign\Participant\ParticipantRecordTransactionParams;
 use Growsurf\Campaign\Participant\ParticipantRecordTransactionResponse;
 use Growsurf\Campaign\Participant\ParticipantRecordTransactionResponse\UnionMember0;
@@ -199,6 +201,44 @@ final class ParticipantRawService implements ParticipantRawContract
             body: (object) $parsed,
             options: $options,
             convert: Participant::class,
+        );
+    }
+
+    /**
+     * @api
+     *
+     * Creates a participant-scoped token for GrowSurf mobile SDK participant endpoints. The program must have mobile SDK access enabled.
+     *
+     * @param string $participantIDOrEmail growSurf participant ID or URL-encoded participant email address
+     * @param array{id: string}|ParticipantCreateMobileTokenParams $params
+     * @param RequestOpts|null $requestOptions
+     *
+     * @return BaseResponse<ParticipantNewMobileTokenResponse>
+     *
+     * @throws APIException
+     */
+    public function createMobileToken(
+        string $participantIDOrEmail,
+        array|ParticipantCreateMobileTokenParams $params,
+        RequestOptions|array|null $requestOptions = null,
+    ): BaseResponse {
+        [$parsed, $options] = ParticipantCreateMobileTokenParams::parseRequest(
+            $params,
+            $requestOptions,
+        );
+        $id = $parsed['id'];
+        unset($parsed['id']);
+
+        // @phpstan-ignore-next-line return.type
+        return $this->client->request(
+            method: 'post',
+            path: [
+                'campaign/%1$s/participant/%2$s/mobile-token',
+                $id,
+                $participantIDOrEmail,
+            ],
+            options: $options,
+            convert: ParticipantNewMobileTokenResponse::class,
         );
     }
 
