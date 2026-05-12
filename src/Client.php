@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Growsurf;
 
 use Growsurf\Core\BaseClient;
+use Growsurf\Core\Implementation\StreamingHttpClient;
 use Growsurf\Core\Util;
 use Growsurf\Services\CampaignService;
 use Http\Discovery\Psr17FactoryDiscovery;
@@ -46,6 +47,11 @@ class Client extends BaseClient
             ),
             $requestOptions,
         );
+
+        if (is_null($options->streamingTransporter)) {
+            assert(!is_null($options->transporter));
+            $options->streamingTransporter = new StreamingHttpClient($options->transporter);
+        }
 
         /** @var array<string, string|null> $headers */
         $headers = [
