@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.2.0 (2026-05-12)
+
+Full Changelog: [v0.1.0...v0.2.0](https://github.com/growsurf/growsurf-php/compare/v0.1.0...v0.2.0)
+
+### Features
+
+* **api:** manual updates ([a36d6d5](https://github.com/growsurf/growsurf-php/commit/a36d6d503a6fa1882ccb35f5d030e54526554634))
+
+
+### Bug Fixes
+
+* guzzle requires special handling to enable streaming ([0131729](https://github.com/growsurf/growsurf-php/commit/01317296ebea475614ba911239059229848aff00))
+
 ## 0.1.0 (2026-05-08)
 
 Full Changelog: [v0.0.2...v0.1.0](https://github.com/growsurf/growsurf-php/compare/v0.0.2...v0.1.0)

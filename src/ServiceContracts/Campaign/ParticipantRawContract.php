@@ -6,6 +6,7 @@ namespace Growsurf\ServiceContracts\Campaign;
 
 use Growsurf\Campaign\Participant\Participant;
 use Growsurf\Campaign\Participant\ParticipantAddParams;
+use Growsurf\Campaign\Participant\ParticipantCreateMobileTokenParams;
 use Growsurf\Campaign\Participant\ParticipantDeleteParams;
 use Growsurf\Campaign\Participant\ParticipantDeleteResponse;
 use Growsurf\Campaign\Participant\ParticipantListCommissionsParams;
@@ -13,6 +14,7 @@ use Growsurf\Campaign\Participant\ParticipantListPayoutsParams;
 use Growsurf\Campaign\Participant\ParticipantListReferralsParams;
 use Growsurf\Campaign\Participant\ParticipantListRewardsParams;
 use Growsurf\Campaign\Participant\ParticipantListRewardsResponse;
+use Growsurf\Campaign\Participant\ParticipantNewMobileTokenResponse;
 use Growsurf\Campaign\Participant\ParticipantRecordTransactionParams;
 use Growsurf\Campaign\Participant\ParticipantRecordTransactionResponse\UnionMember0;
 use Growsurf\Campaign\Participant\ParticipantRecordTransactionResponse\UnionMember1;
@@ -99,6 +101,23 @@ interface ParticipantRawContract
     public function add(
         string $id,
         array|ParticipantAddParams $params,
+        RequestOptions|array|null $requestOptions = null,
+    ): BaseResponse;
+
+    /**
+     * @api
+     *
+     * @param string $participantIDOrEmail growSurf participant ID or URL-encoded participant email address
+     * @param array<string,mixed>|ParticipantCreateMobileTokenParams $params
+     * @param RequestOpts|null $requestOptions
+     *
+     * @return BaseResponse<ParticipantNewMobileTokenResponse>
+     *
+     * @throws APIException
+     */
+    public function createMobileToken(
+        string $participantIDOrEmail,
+        array|ParticipantCreateMobileTokenParams $params,
         RequestOptions|array|null $requestOptions = null,
     ): BaseResponse;
 
