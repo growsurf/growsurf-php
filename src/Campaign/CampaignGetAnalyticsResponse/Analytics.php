@@ -10,11 +10,14 @@ use Growsurf\Core\Contracts\BaseModel;
 
 /**
  * @phpstan-type AnalyticsShape = array{
+ *   androidNativeShares?: int|null,
  *   blueskyShares?: int|null,
+ *   copyRefLinkShares?: int|null,
  *   emailShares?: int|null,
  *   facebookShares?: int|null,
  *   impressions?: int|null,
  *   invites?: int|null,
+ *   iosNativeShares?: int|null,
  *   linkedInShares?: int|null,
  *   messengerShares?: int|null,
  *   participants?: int|null,
@@ -43,7 +46,13 @@ final class Analytics implements BaseModel
     use SdkModel;
 
     #[Optional]
+    public ?int $androidNativeShares;
+
+    #[Optional]
     public ?int $blueskyShares;
+
+    #[Optional]
+    public ?int $copyRefLinkShares;
 
     #[Optional]
     public ?int $emailShares;
@@ -56,6 +65,9 @@ final class Analytics implements BaseModel
 
     #[Optional]
     public ?int $invites;
+
+    #[Optional]
+    public ?int $iosNativeShares;
 
     #[Optional]
     public ?int $linkedInShares;
@@ -137,11 +149,14 @@ final class Analytics implements BaseModel
      * You must use named parameters to construct any parameters with a default value.
      */
     public static function with(
+        ?int $androidNativeShares = null,
         ?int $blueskyShares = null,
+        ?int $copyRefLinkShares = null,
         ?int $emailShares = null,
         ?int $facebookShares = null,
         ?int $impressions = null,
         ?int $invites = null,
+        ?int $iosNativeShares = null,
         ?int $linkedInShares = null,
         ?int $messengerShares = null,
         ?int $participants = null,
@@ -165,11 +180,14 @@ final class Analytics implements BaseModel
     ): self {
         $self = new self;
 
+        null !== $androidNativeShares && $self['androidNativeShares'] = $androidNativeShares;
         null !== $blueskyShares && $self['blueskyShares'] = $blueskyShares;
+        null !== $copyRefLinkShares && $self['copyRefLinkShares'] = $copyRefLinkShares;
         null !== $emailShares && $self['emailShares'] = $emailShares;
         null !== $facebookShares && $self['facebookShares'] = $facebookShares;
         null !== $impressions && $self['impressions'] = $impressions;
         null !== $invites && $self['invites'] = $invites;
+        null !== $iosNativeShares && $self['iosNativeShares'] = $iosNativeShares;
         null !== $linkedInShares && $self['linkedInShares'] = $linkedInShares;
         null !== $messengerShares && $self['messengerShares'] = $messengerShares;
         null !== $participants && $self['participants'] = $participants;
@@ -194,10 +212,26 @@ final class Analytics implements BaseModel
         return $self;
     }
 
+    public function withAndroidNativeShares(int $androidNativeShares): self
+    {
+        $self = clone $this;
+        $self['androidNativeShares'] = $androidNativeShares;
+
+        return $self;
+    }
+
     public function withBlueskyShares(int $blueskyShares): self
     {
         $self = clone $this;
         $self['blueskyShares'] = $blueskyShares;
+
+        return $self;
+    }
+
+    public function withCopyRefLinkShares(int $copyRefLinkShares): self
+    {
+        $self = clone $this;
+        $self['copyRefLinkShares'] = $copyRefLinkShares;
 
         return $self;
     }
@@ -230,6 +264,14 @@ final class Analytics implements BaseModel
     {
         $self = clone $this;
         $self['invites'] = $invites;
+
+        return $self;
+    }
+
+    public function withIosNativeShares(int $iosNativeShares): self
+    {
+        $self = clone $this;
+        $self['iosNativeShares'] = $iosNativeShares;
 
         return $self;
     }
