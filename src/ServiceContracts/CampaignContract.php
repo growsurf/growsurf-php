@@ -5,12 +5,13 @@ declare(strict_types=1);
 namespace Growsurf\ServiceContracts;
 
 use Growsurf\Campaign\Campaign;
+use Growsurf\Campaign\CampaignCreateMobileParticipantTokenParams\ReferralStatus;
 use Growsurf\Campaign\CampaignGetAnalyticsResponse;
 use Growsurf\Campaign\CampaignListCommissionsParams\Status;
 use Growsurf\Campaign\CampaignListLeaderboardParams\LeaderboardType;
 use Growsurf\Campaign\CampaignListReferralsParams\SortBy;
 use Growsurf\Campaign\CampaignListResponse;
-use Growsurf\Campaign\Participant\ReferralStatus;
+use Growsurf\Campaign\CampaignNewMobileParticipantTokenResponse;
 use Growsurf\Campaign\ParticipantCommissionList;
 use Growsurf\Campaign\ParticipantList;
 use Growsurf\Campaign\ParticipantPayoutList;
@@ -46,6 +47,30 @@ interface CampaignContract
     public function list(
         RequestOptions|array|null $requestOptions = null
     ): CampaignListResponse;
+
+    /**
+     * @api
+     *
+     * @param string $id growSurf program ID
+     * @param array<string,mixed> $metadata shallow custom metadata object
+     * @param ReferralStatus|value-of<ReferralStatus> $referralStatus
+     * @param string $referredBy referrer participant ID or email address
+     * @param RequestOpts|null $requestOptions
+     *
+     * @throws APIException
+     */
+    public function createMobileParticipantToken(
+        string $id,
+        string $email,
+        ?string $fingerprint = null,
+        ?string $firstName = null,
+        ?string $ipAddress = null,
+        ?string $lastName = null,
+        ?array $metadata = null,
+        ReferralStatus|string|null $referralStatus = null,
+        ?string $referredBy = null,
+        RequestOptions|array|null $requestOptions = null,
+    ): CampaignNewMobileParticipantTokenResponse;
 
     /**
      * @api
@@ -134,7 +159,7 @@ interface CampaignContract
      * @param int $limit Number of results to return. Maximum 100.
      * @param string $nextID ID to start the next paged result set with
      * @param int $offset offset number used to skip through a result set
-     * @param ReferralStatus|value-of<ReferralStatus> $referralStatus
+     * @param \Growsurf\Campaign\Participant\ReferralStatus|value-of<\Growsurf\Campaign\Participant\ReferralStatus> $referralStatus
      * @param SortBy|value-of<SortBy> $sortBy field used to sort referral results
      * @param RequestOpts|null $requestOptions
      *
@@ -149,7 +174,7 @@ interface CampaignContract
         int $limit = 10,
         ?string $nextID = null,
         ?int $offset = null,
-        ReferralStatus|string|null $referralStatus = null,
+        \Growsurf\Campaign\Participant\ReferralStatus|string|null $referralStatus = null,
         SortBy|string $sortBy = 'updatedAt',
         RequestOptions|array|null $requestOptions = null,
     ): ReferralList;
