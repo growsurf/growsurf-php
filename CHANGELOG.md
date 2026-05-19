@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.4.0 (2026-05-19)
+
+Full Changelog: [v0.3.0...v0.4.0](https://github.com/growsurf/growsurf-php/compare/v0.3.0...v0.4.0)
+
+### Features
+
+* **api:** manual updates ([895ae3f](https://github.com/growsurf/growsurf-php/commit/895ae3fbbbbb26e5efd9c0bd60f23ca38ba8732d))
+
 ## 0.3.0 (2026-05-15)
 
 Full Changelog: [v0.2.1...v0.3.0](https://github.com/growsurf/growsurf-php/compare/v0.2.1...v0.3.0)
