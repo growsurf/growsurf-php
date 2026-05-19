@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Growsurf\Services;
 
 use Growsurf\Campaign\Campaign;
+use Growsurf\Campaign\CampaignCreateMobileParticipantTokenParams;
+use Growsurf\Campaign\CampaignCreateMobileParticipantTokenParams\ReferralStatus;
 use Growsurf\Campaign\CampaignGetAnalyticsResponse;
 use Growsurf\Campaign\CampaignListCommissionsParams;
 use Growsurf\Campaign\CampaignListCommissionsParams\Status;
@@ -15,8 +17,8 @@ use Growsurf\Campaign\CampaignListPayoutsParams;
 use Growsurf\Campaign\CampaignListReferralsParams;
 use Growsurf\Campaign\CampaignListReferralsParams\SortBy;
 use Growsurf\Campaign\CampaignListResponse;
+use Growsurf\Campaign\CampaignNewMobileParticipantTokenResponse;
 use Growsurf\Campaign\CampaignRetrieveAnalyticsParams;
-use Growsurf\Campaign\Participant\ReferralStatus;
 use Growsurf\Campaign\ParticipantCommissionList;
 use Growsurf\Campaign\ParticipantList;
 use Growsurf\Campaign\ParticipantPayoutList;
@@ -84,6 +86,48 @@ final class CampaignRawService implements CampaignRawContract
             path: 'campaigns',
             options: $requestOptions,
             convert: CampaignListResponse::class,
+        );
+    }
+
+    /**
+     * @api
+     *
+     * Creates or returns a participant using the same input behavior as Add Participant, then returns a participant-scoped token for GrowSurf mobile SDK participant endpoints. Use this endpoint from your backend after your mobile app authenticates a signed-in user. The program must have mobile SDK access enabled.
+     *
+     * @param string $id growSurf program ID
+     * @param array{
+     *   email: string,
+     *   fingerprint?: string,
+     *   firstName?: string,
+     *   ipAddress?: string,
+     *   lastName?: string,
+     *   metadata?: array<string,mixed>,
+     *   referralStatus?: ReferralStatus|value-of<ReferralStatus>,
+     *   referredBy?: string,
+     * }|CampaignCreateMobileParticipantTokenParams $params
+     * @param RequestOpts|null $requestOptions
+     *
+     * @return BaseResponse<CampaignNewMobileParticipantTokenResponse>
+     *
+     * @throws APIException
+     */
+    public function createMobileParticipantToken(
+        string $id,
+        array|CampaignCreateMobileParticipantTokenParams $params,
+        RequestOptions|array|null $requestOptions = null,
+    ): BaseResponse {
+        [$parsed, $options] = CampaignCreateMobileParticipantTokenParams::parseRequest(
+            $params,
+            $requestOptions,
+        );
+
+        // @phpstan-ignore-next-line return.type
+        return $this->client->request(
+            method: 'post',
+            path: ['campaign/%1$s/mobile-participant-token', $id],
+            body: (object) $parsed,
+            options: $options,
+            convert: CampaignNewMobileParticipantTokenResponse::class,
         );
     }
 
@@ -246,7 +290,7 @@ final class CampaignRawService implements CampaignRawContract
      *   limit?: int,
      *   nextID?: string,
      *   offset?: int,
-     *   referralStatus?: ReferralStatus|value-of<ReferralStatus>,
+     *   referralStatus?: \Growsurf\Campaign\Participant\ReferralStatus|value-of<\Growsurf\Campaign\Participant\ReferralStatus>,
      *   sortBy?: value-of<SortBy>,
      * }|CampaignListReferralsParams $params
      * @param RequestOpts|null $requestOptions

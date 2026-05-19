@@ -9,7 +9,6 @@ use Growsurf\Campaign\Participant\ParticipantDeleteResponse;
 use Growsurf\Campaign\Participant\ParticipantListCommissionsParams\Status;
 use Growsurf\Campaign\Participant\ParticipantListReferralsParams\SortBy;
 use Growsurf\Campaign\Participant\ParticipantListRewardsResponse;
-use Growsurf\Campaign\Participant\ParticipantNewMobileTokenResponse;
 use Growsurf\Campaign\Participant\ParticipantRecordTransactionResponse\UnionMember0;
 use Growsurf\Campaign\Participant\ParticipantRecordTransactionResponse\UnionMember1;
 use Growsurf\Campaign\Participant\ParticipantSendInvitesResponse;
@@ -182,30 +181,6 @@ final class ParticipantService implements ParticipantContract
 
         // @phpstan-ignore-next-line argument.type
         $response = $this->raw->add($id, params: $params, requestOptions: $requestOptions);
-
-        return $response->parse();
-    }
-
-    /**
-     * @api
-     *
-     * Creates a participant-scoped token for GrowSurf mobile SDK participant endpoints. The program must have mobile SDK access enabled.
-     *
-     * @param string $participantIDOrEmail growSurf participant ID or URL-encoded participant email address
-     * @param string $id growSurf program ID
-     * @param RequestOpts|null $requestOptions
-     *
-     * @throws APIException
-     */
-    public function createMobileToken(
-        string $participantIDOrEmail,
-        string $id,
-        RequestOptions|array|null $requestOptions = null,
-    ): ParticipantNewMobileTokenResponse {
-        $params = Util::removeNulls(['id' => $id]);
-
-        // @phpstan-ignore-next-line argument.type
-        $response = $this->raw->createMobileToken($participantIDOrEmail, params: $params, requestOptions: $requestOptions);
 
         return $response->parse();
     }
