@@ -5,7 +5,6 @@ namespace Tests\Services\Campaign;
 use Growsurf\Campaign\Participant\Participant;
 use Growsurf\Campaign\Participant\ParticipantDeleteResponse;
 use Growsurf\Campaign\Participant\ParticipantListRewardsResponse;
-use Growsurf\Campaign\Participant\ParticipantNewMobileTokenResponse;
 use Growsurf\Campaign\Participant\ParticipantSendInvitesResponse;
 use Growsurf\Campaign\Participant\ParticipantTriggerReferralResponse;
 use Growsurf\Campaign\Participant\ReferralStatus;
@@ -150,7 +149,7 @@ final class ParticipantTest extends TestCase
 
         $result = $this->client->campaign->participant->add(
             'id',
-            email: 'gavin@hooli.com'
+            email: 'dev@stainless.com'
         );
 
         // @phpstan-ignore-next-line method.alreadyNarrowedType
@@ -166,50 +165,18 @@ final class ParticipantTest extends TestCase
 
         $result = $this->client->campaign->participant->add(
             'id',
-            email: 'gavin@hooli.com',
+            email: 'dev@stainless.com',
             fingerprint: 'fingerprint',
-            firstName: 'Gavin',
-            ipAddress: '203.0.113.10',
-            lastName: 'Belson',
-            metadata: ['companyName' => 'bar', 'industry' => 'bar'],
+            firstName: 'firstName',
+            ipAddress: 'ipAddress',
+            lastName: 'lastName',
+            metadata: ['foo' => 'bar'],
             referralStatus: 'CREDIT_PENDING',
-            referredBy: 'richard-h8kp6l',
+            referredBy: 'referredBy',
         );
 
         // @phpstan-ignore-next-line method.alreadyNarrowedType
         $this->assertInstanceOf(Participant::class, $result);
-    }
-
-    #[Test]
-    public function testCreateMobileToken(): void
-    {
-        if (UnsupportedMockTests::$skip) {
-            $this->markTestSkipped('Mock server tests are disabled');
-        }
-
-        $result = $this->client->campaign->participant->createMobileToken(
-            'participantIdOrEmail',
-            id: 'id'
-        );
-
-        // @phpstan-ignore-next-line method.alreadyNarrowedType
-        $this->assertInstanceOf(ParticipantNewMobileTokenResponse::class, $result);
-    }
-
-    #[Test]
-    public function testCreateMobileTokenWithOptionalParams(): void
-    {
-        if (UnsupportedMockTests::$skip) {
-            $this->markTestSkipped('Mock server tests are disabled');
-        }
-
-        $result = $this->client->campaign->participant->createMobileToken(
-            'participantIdOrEmail',
-            id: 'id'
-        );
-
-        // @phpstan-ignore-next-line method.alreadyNarrowedType
-        $this->assertInstanceOf(ParticipantNewMobileTokenResponse::class, $result);
     }
 
     #[Test]

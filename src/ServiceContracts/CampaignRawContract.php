@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Growsurf\ServiceContracts;
 
 use Growsurf\Campaign\Campaign;
+use Growsurf\Campaign\CampaignCreateMobileParticipantTokenParams;
 use Growsurf\Campaign\CampaignGetAnalyticsResponse;
 use Growsurf\Campaign\CampaignListCommissionsParams;
 use Growsurf\Campaign\CampaignListLeaderboardParams;
@@ -12,6 +13,7 @@ use Growsurf\Campaign\CampaignListParticipantsParams;
 use Growsurf\Campaign\CampaignListPayoutsParams;
 use Growsurf\Campaign\CampaignListReferralsParams;
 use Growsurf\Campaign\CampaignListResponse;
+use Growsurf\Campaign\CampaignNewMobileParticipantTokenResponse;
 use Growsurf\Campaign\CampaignRetrieveAnalyticsParams;
 use Growsurf\Campaign\ParticipantCommissionList;
 use Growsurf\Campaign\ParticipantList;
@@ -52,6 +54,23 @@ interface CampaignRawContract
      */
     public function list(
         RequestOptions|array|null $requestOptions = null
+    ): BaseResponse;
+
+    /**
+     * @api
+     *
+     * @param string $id growSurf program ID
+     * @param array<string,mixed>|CampaignCreateMobileParticipantTokenParams $params
+     * @param RequestOpts|null $requestOptions
+     *
+     * @return BaseResponse<CampaignNewMobileParticipantTokenResponse>
+     *
+     * @throws APIException
+     */
+    public function createMobileParticipantToken(
+        string $id,
+        array|CampaignCreateMobileParticipantTokenParams $params,
+        RequestOptions|array|null $requestOptions = null,
     ): BaseResponse;
 
     /**

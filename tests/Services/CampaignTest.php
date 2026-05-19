@@ -5,6 +5,7 @@ namespace Tests\Services;
 use Growsurf\Campaign\Campaign;
 use Growsurf\Campaign\CampaignGetAnalyticsResponse;
 use Growsurf\Campaign\CampaignListResponse;
+use Growsurf\Campaign\CampaignNewMobileParticipantTokenResponse;
 use Growsurf\Campaign\ParticipantCommissionList;
 use Growsurf\Campaign\ParticipantList;
 use Growsurf\Campaign\ParticipantPayoutList;
@@ -58,6 +59,51 @@ final class CampaignTest extends TestCase
 
         // @phpstan-ignore-next-line method.alreadyNarrowedType
         $this->assertInstanceOf(CampaignListResponse::class, $result);
+    }
+
+    #[Test]
+    public function testCreateMobileParticipantToken(): void
+    {
+        if (UnsupportedMockTests::$skip) {
+            $this->markTestSkipped('Mock server tests are disabled');
+        }
+
+        $result = $this->client->campaign->createMobileParticipantToken(
+            'id',
+            email: 'dev@stainless.com'
+        );
+
+        // @phpstan-ignore-next-line method.alreadyNarrowedType
+        $this->assertInstanceOf(
+            CampaignNewMobileParticipantTokenResponse::class,
+            $result
+        );
+    }
+
+    #[Test]
+    public function testCreateMobileParticipantTokenWithOptionalParams(): void
+    {
+        if (UnsupportedMockTests::$skip) {
+            $this->markTestSkipped('Mock server tests are disabled');
+        }
+
+        $result = $this->client->campaign->createMobileParticipantToken(
+            'id',
+            email: 'dev@stainless.com',
+            fingerprint: 'fingerprint',
+            firstName: 'firstName',
+            ipAddress: 'ipAddress',
+            lastName: 'lastName',
+            metadata: ['foo' => 'bar'],
+            referralStatus: 'CREDIT_PENDING',
+            referredBy: 'referredBy',
+        );
+
+        // @phpstan-ignore-next-line method.alreadyNarrowedType
+        $this->assertInstanceOf(
+            CampaignNewMobileParticipantTokenResponse::class,
+            $result
+        );
     }
 
     #[Test]

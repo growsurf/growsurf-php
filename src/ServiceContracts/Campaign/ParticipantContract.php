@@ -9,7 +9,6 @@ use Growsurf\Campaign\Participant\ParticipantDeleteResponse;
 use Growsurf\Campaign\Participant\ParticipantListCommissionsParams\Status;
 use Growsurf\Campaign\Participant\ParticipantListReferralsParams\SortBy;
 use Growsurf\Campaign\Participant\ParticipantListRewardsResponse;
-use Growsurf\Campaign\Participant\ParticipantNewMobileTokenResponse;
 use Growsurf\Campaign\Participant\ParticipantRecordTransactionResponse\UnionMember0;
 use Growsurf\Campaign\Participant\ParticipantRecordTransactionResponse\UnionMember1;
 use Growsurf\Campaign\Participant\ParticipantSendInvitesResponse;
@@ -110,21 +109,6 @@ interface ParticipantContract
         ?string $referredBy = null,
         RequestOptions|array|null $requestOptions = null,
     ): Participant;
-
-    /**
-     * @api
-     *
-     * @param string $participantIDOrEmail growSurf participant ID or URL-encoded participant email address
-     * @param string $id growSurf program ID
-     * @param RequestOpts|null $requestOptions
-     *
-     * @throws APIException
-     */
-    public function createMobileToken(
-        string $participantIDOrEmail,
-        string $id,
-        RequestOptions|array|null $requestOptions = null,
-    ): ParticipantNewMobileTokenResponse;
 
     /**
      * @api
