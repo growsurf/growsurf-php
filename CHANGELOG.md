@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.5.0 (2026-05-20)
+
+Full Changelog: [v0.4.0...v0.5.0](https://github.com/growsurf/growsurf-php/compare/v0.4.0...v0.5.0)
+
+### Features
+
+* **api:** Add Participant.mobileInstanceId ([eb616e5](https://github.com/growsurf/growsurf-php/commit/eb616e55419a9f1e5f5e4bebde57d930b1c063b7))
+
 ## 0.4.0 (2026-05-19)
 
 Full Changelog: [v0.3.0...v0.4.0](https://github.com/growsurf/growsurf-php/compare/v0.3.0...v0.4.0)
