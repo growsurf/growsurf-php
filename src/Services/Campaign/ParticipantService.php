@@ -148,6 +148,7 @@ final class ParticipantService implements ParticipantContract
      *
      * @param string $id growSurf program ID
      * @param array<string,mixed> $metadata shallow custom metadata object
+     * @param string $mobileInstanceID Optional app-install scoped identifier for native mobile anti-fraud. Recommended for mobile participant creation and mobile participant token flows.
      * @param \Growsurf\Campaign\Participant\ParticipantAddParams\ReferralStatus|value-of<\Growsurf\Campaign\Participant\ParticipantAddParams\ReferralStatus> $referralStatus
      * @param string $referredBy referrer participant ID or email address
      * @param RequestOpts|null $requestOptions
@@ -162,6 +163,7 @@ final class ParticipantService implements ParticipantContract
         ?string $ipAddress = null,
         ?string $lastName = null,
         ?array $metadata = null,
+        ?string $mobileInstanceID = null,
         \Growsurf\Campaign\Participant\ParticipantAddParams\ReferralStatus|string|null $referralStatus = null,
         ?string $referredBy = null,
         RequestOptions|array|null $requestOptions = null,
@@ -174,6 +176,7 @@ final class ParticipantService implements ParticipantContract
                 'ipAddress' => $ipAddress,
                 'lastName' => $lastName,
                 'metadata' => $metadata,
+                'mobileInstanceID' => $mobileInstanceID,
                 'referralStatus' => $referralStatus,
                 'referredBy' => $referredBy,
             ],
