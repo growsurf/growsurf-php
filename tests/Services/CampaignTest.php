@@ -95,6 +95,7 @@ final class CampaignTest extends TestCase
             ipAddress: 'ipAddress',
             lastName: 'lastName',
             metadata: ['foo' => 'bar'],
+            mobileInstanceID: 'mobileInstanceId',
             referralStatus: 'CREDIT_PENDING',
             referredBy: 'referredBy',
         );

@@ -173,6 +173,7 @@ final class ParticipantRawService implements ParticipantRawContract
      *   ipAddress?: string,
      *   lastName?: string,
      *   metadata?: array<string,mixed>,
+     *   mobileInstanceID?: string,
      *   referralStatus?: ParticipantAddParams\ReferralStatus|value-of<ParticipantAddParams\ReferralStatus>,
      *   referredBy?: string,
      * }|ParticipantAddParams $params

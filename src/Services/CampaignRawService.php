@@ -102,6 +102,7 @@ final class CampaignRawService implements CampaignRawContract
      *   ipAddress?: string,
      *   lastName?: string,
      *   metadata?: array<string,mixed>,
+     *   mobileInstanceID?: string,
      *   referralStatus?: ReferralStatus|value-of<ReferralStatus>,
      *   referredBy?: string,
      * }|CampaignCreateMobileParticipantTokenParams $params

@@ -23,6 +23,7 @@ use Growsurf\Core\Contracts\BaseModel;
  *   ipAddress?: string|null,
  *   lastName?: string|null,
  *   metadata?: array<string,mixed>|null,
+ *   mobileInstanceID?: string|null,
  *   referralStatus?: null|\Growsurf\Campaign\Participant\ParticipantAddParams\ReferralStatus|value-of<\Growsurf\Campaign\Participant\ParticipantAddParams\ReferralStatus>,
  *   referredBy?: string|null,
  * }
@@ -55,6 +56,12 @@ final class ParticipantAddParams implements BaseModel
      */
     #[Optional(map: 'mixed')]
     public ?array $metadata;
+
+    /**
+     * Optional app-install scoped identifier for native mobile anti-fraud. Recommended for mobile participant creation and mobile participant token flows.
+     */
+    #[Optional('mobileInstanceId')]
+    public ?string $mobileInstanceID;
 
     /**
      * @var value-of<ReferralStatus>|null $referralStatus
@@ -104,6 +111,7 @@ final class ParticipantAddParams implements BaseModel
         ?string $ipAddress = null,
         ?string $lastName = null,
         ?array $metadata = null,
+        ?string $mobileInstanceID = null,
         ReferralStatus|string|null $referralStatus = null,
         ?string $referredBy = null,
     ): self {
@@ -116,6 +124,7 @@ final class ParticipantAddParams implements BaseModel
         null !== $ipAddress && $self['ipAddress'] = $ipAddress;
         null !== $lastName && $self['lastName'] = $lastName;
         null !== $metadata && $self['metadata'] = $metadata;
+        null !== $mobileInstanceID && $self['mobileInstanceID'] = $mobileInstanceID;
         null !== $referralStatus && $self['referralStatus'] = $referralStatus;
         null !== $referredBy && $self['referredBy'] = $referredBy;
 
@@ -171,6 +180,17 @@ final class ParticipantAddParams implements BaseModel
     {
         $self = clone $this;
         $self['metadata'] = $metadata;
+
+        return $self;
+    }
+
+    /**
+     * Optional app-install scoped identifier for native mobile anti-fraud. Recommended for mobile participant creation and mobile participant token flows.
+     */
+    public function withMobileInstanceID(string $mobileInstanceID): self
+    {
+        $self = clone $this;
+        $self['mobileInstanceID'] = $mobileInstanceID;
 
         return $self;
     }
