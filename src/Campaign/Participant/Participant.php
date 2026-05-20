@@ -37,6 +37,7 @@ use Growsurf\Core\Conversion\MapOf;
  *   isWinner?: bool|null,
  *   lastName?: string|null,
  *   metadata?: array<string,mixed>|null,
+ *   mobileInstanceID?: string|null,
  *   monthlyReferrals?: list<string>|null,
  *   notes?: string|null,
  *   paypalEmailAddress?: string|null,
@@ -130,6 +131,12 @@ final class Participant implements BaseModel
      */
     #[Optional(map: 'mixed')]
     public ?array $metadata;
+
+    /**
+     * App-install scoped mobile identifier used for anti-fraud matching when provided by native mobile apps. Not stored when strict GDPR/CCPA mode is enabled.
+     */
+    #[Optional('mobileInstanceId', nullable: true)]
+    public ?string $mobileInstanceID;
 
     /** @var list<string>|null $monthlyReferrals */
     #[Optional(list: 'string')]
@@ -260,6 +267,7 @@ final class Participant implements BaseModel
         ?bool $isWinner = null,
         ?string $lastName = null,
         ?array $metadata = null,
+        ?string $mobileInstanceID = null,
         ?array $monthlyReferrals = null,
         ?string $notes = null,
         ?string $paypalEmailAddress = null,
@@ -301,6 +309,7 @@ final class Participant implements BaseModel
         null !== $isWinner && $self['isWinner'] = $isWinner;
         null !== $lastName && $self['lastName'] = $lastName;
         null !== $metadata && $self['metadata'] = $metadata;
+        null !== $mobileInstanceID && $self['mobileInstanceID'] = $mobileInstanceID;
         null !== $monthlyReferrals && $self['monthlyReferrals'] = $monthlyReferrals;
         null !== $notes && $self['notes'] = $notes;
         null !== $paypalEmailAddress && $self['paypalEmailAddress'] = $paypalEmailAddress;
@@ -501,6 +510,17 @@ final class Participant implements BaseModel
     {
         $self = clone $this;
         $self['metadata'] = $metadata;
+
+        return $self;
+    }
+
+    /**
+     * App-install scoped mobile identifier used for anti-fraud matching when provided by native mobile apps. Not stored when strict GDPR/CCPA mode is enabled.
+     */
+    public function withMobileInstanceID(?string $mobileInstanceID): self
+    {
+        $self = clone $this;
+        $self['mobileInstanceID'] = $mobileInstanceID;
 
         return $self;
     }
