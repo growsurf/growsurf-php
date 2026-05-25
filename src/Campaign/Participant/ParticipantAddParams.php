@@ -58,7 +58,7 @@ final class ParticipantAddParams implements BaseModel
     public ?array $metadata;
 
     /**
-     * Optional app-install scoped identifier for native mobile anti-fraud. Recommended for mobile participant creation and mobile participant token flows.
+     * Optional app-install scoped identifier for native mobile anti-fraud. Recommended for mobile participant creation and mobile participant token flows. The official mobile SDKs generate this as a lowercase UUID.
      */
     #[Optional('mobileInstanceId')]
     public ?string $mobileInstanceID;
@@ -185,7 +185,7 @@ final class ParticipantAddParams implements BaseModel
     }
 
     /**
-     * Optional app-install scoped identifier for native mobile anti-fraud. Recommended for mobile participant creation and mobile participant token flows.
+     * Optional app-install scoped identifier for native mobile anti-fraud. Recommended for mobile participant creation and mobile participant token flows. The official mobile SDKs generate this as a lowercase UUID.
      */
     public function withMobileInstanceID(string $mobileInstanceID): self
     {
