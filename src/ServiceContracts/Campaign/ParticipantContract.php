@@ -91,7 +91,7 @@ interface ParticipantContract
      *
      * @param string $id growSurf program ID
      * @param array<string,mixed> $metadata shallow custom metadata object
-     * @param string $mobileInstanceID Optional app-install scoped identifier for native mobile anti-fraud. Recommended for mobile participant creation and mobile participant token flows.
+     * @param string $mobileInstanceID Optional app-install scoped identifier for native mobile anti-fraud. Recommended for mobile participant creation and mobile participant token flows. The official mobile SDKs generate this as a lowercase UUID.
      * @param \Growsurf\Campaign\Participant\ParticipantAddParams\ReferralStatus|value-of<\Growsurf\Campaign\Participant\ParticipantAddParams\ReferralStatus> $referralStatus
      * @param string $referredBy referrer participant ID or email address
      * @param RequestOpts|null $requestOptions
