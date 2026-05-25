@@ -133,7 +133,7 @@ final class Participant implements BaseModel
     public ?array $metadata;
 
     /**
-     * App-install scoped mobile identifier used for anti-fraud matching when provided by native mobile apps. Not stored when strict GDPR/CCPA mode is enabled.
+     * App-install scoped mobile identifier used for anti-fraud matching when provided by native mobile apps. The official mobile SDKs generate this as a lowercase UUID. Not stored when strict GDPR/CCPA mode is enabled.
      */
     #[Optional('mobileInstanceId', nullable: true)]
     public ?string $mobileInstanceID;
@@ -515,7 +515,7 @@ final class Participant implements BaseModel
     }
 
     /**
-     * App-install scoped mobile identifier used for anti-fraud matching when provided by native mobile apps. Not stored when strict GDPR/CCPA mode is enabled.
+     * App-install scoped mobile identifier used for anti-fraud matching when provided by native mobile apps. The official mobile SDKs generate this as a lowercase UUID. Not stored when strict GDPR/CCPA mode is enabled.
      */
     public function withMobileInstanceID(?string $mobileInstanceID): self
     {
