@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.7.0 (2026-06-23)
+
+Full Changelog: [v0.6.0...v0.7.0](https://github.com/growsurf/growsurf-php/compare/v0.6.0...v0.7.0)
+
+### Features
+
+* **api:** add payoutSettings to Participant ([eb1508e](https://github.com/growsurf/growsurf-php/commit/eb1508e5d29839030b14d2ff05c079fa6823d2e0))
+* **api:** manual updates ([67bb159](https://github.com/growsurf/growsurf-php/commit/67bb159350dc13bfb72428f24dfeccc173a97d87))
+
 ## 0.6.0 (2026-05-25)
 
 Full Changelog: [v0.5.0...v0.6.0](https://github.com/growsurf/growsurf-php/compare/v0.5.0...v0.6.0)
