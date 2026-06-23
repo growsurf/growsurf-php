@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Growsurf\Campaign\Participant;
 
-use Growsurf\Campaign\Participant\Participant\PayoutSettings;
 use Growsurf\Campaign\Participant\Participant\Referrer;
 use Growsurf\Core\Attributes\Optional;
 use Growsurf\Core\Attributes\Required;
@@ -14,7 +13,6 @@ use Growsurf\Core\Conversion\MapOf;
 
 /**
  * @phpstan-import-type ParticipantRewardShape from \Growsurf\Campaign\Participant\ParticipantReward
- * @phpstan-import-type PayoutSettingsShape from \Growsurf\Campaign\Participant\Participant\PayoutSettings
  * @phpstan-import-type ReferrerShape from \Growsurf\Campaign\Participant\Participant\Referrer
  *
  * @phpstan-type ParticipantShape = array{
@@ -42,7 +40,6 @@ use Growsurf\Core\Conversion\MapOf;
  *   mobileInstanceID?: string|null,
  *   monthlyReferrals?: list<string>|null,
  *   notes?: string|null,
- *   payoutSettings?: null|PayoutSettings|PayoutSettingsShape,
  *   paypalEmailAddress?: string|null,
  *   prevMonthlyRank?: int|null,
  *   prevMonthlyReferralCount?: int|null,
@@ -148,12 +145,6 @@ final class Participant implements BaseModel
     #[Optional(nullable: true)]
     public ?string $notes;
 
-    /**
-     * Payout-related actions the participant must complete before a payout can be released (e.g. confirming a PayPal email or submitting a W-9/W-8 tax form). Always present; the requiredActions array is empty when no action is required.
-     */
-    #[Optional]
-    public ?PayoutSettings $payoutSettings;
-
     #[Optional]
     public ?string $paypalEmailAddress;
 
@@ -247,7 +238,6 @@ final class Participant implements BaseModel
      * @param FraudRiskLevel|value-of<FraudRiskLevel>|null $fraudRiskLevel
      * @param array<string,mixed>|null $metadata
      * @param list<string>|null $monthlyReferrals
-     * @param PayoutSettings|PayoutSettingsShape|null $payoutSettings
      * @param list<string>|null $referrals
      * @param ReferralSource|value-of<ReferralSource>|null $referralSource
      * @param ReferralStatus|value-of<ReferralStatus>|null $referralStatus
@@ -280,7 +270,6 @@ final class Participant implements BaseModel
         ?string $mobileInstanceID = null,
         ?array $monthlyReferrals = null,
         ?string $notes = null,
-        PayoutSettings|array|null $payoutSettings = null,
         ?string $paypalEmailAddress = null,
         ?int $prevMonthlyRank = null,
         ?int $prevMonthlyReferralCount = null,
@@ -323,7 +312,6 @@ final class Participant implements BaseModel
         null !== $mobileInstanceID && $self['mobileInstanceID'] = $mobileInstanceID;
         null !== $monthlyReferrals && $self['monthlyReferrals'] = $monthlyReferrals;
         null !== $notes && $self['notes'] = $notes;
-        null !== $payoutSettings && $self['payoutSettings'] = $payoutSettings;
         null !== $paypalEmailAddress && $self['paypalEmailAddress'] = $paypalEmailAddress;
         null !== $prevMonthlyRank && $self['prevMonthlyRank'] = $prevMonthlyRank;
         null !== $prevMonthlyReferralCount && $self['prevMonthlyReferralCount'] = $prevMonthlyReferralCount;
@@ -552,20 +540,6 @@ final class Participant implements BaseModel
     {
         $self = clone $this;
         $self['notes'] = $notes;
-
-        return $self;
-    }
-
-    /**
-     * Payout-related actions the participant must complete before a payout can be released (e.g. confirming a PayPal email or submitting a W-9/W-8 tax form). Always present; the requiredActions array is empty when no action is required.
-     *
-     * @param PayoutSettings|PayoutSettingsShape $payoutSettings
-     */
-    public function withPayoutSettings(
-        PayoutSettings|array $payoutSettings
-    ): self {
-        $self = clone $this;
-        $self['payoutSettings'] = $payoutSettings;
 
         return $self;
     }
