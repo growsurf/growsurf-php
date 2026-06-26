@@ -13,12 +13,12 @@ use Growsurf\Core\Contracts\BaseModel;
 /**
  * @phpstan-type CommissionShape = array{
  *   id: string,
- *   amount: int,
+ *   amount: int|null,
  *   createdAt: int,
  *   currencyISO: string,
  *   referredID: string,
  *   referrerID: string,
- *   saleAmount: int,
+ *   saleAmount: int|null,
  *   status: Status|value-of<Status>,
  *   amountInCampaignCurrency?: int|null,
  *   approvedAt?: int|null,
@@ -31,7 +31,7 @@ use Growsurf\Core\Contracts\BaseModel;
  *   payoutQueuedAt?: int|null,
  *   provider?: string|null,
  *   reversedAt?: int|null,
- *   saleAmountAmountInCampaignCurrency?: int|null,
+ *   saleAmountInCampaignCurrency?: int|null,
  * }
  */
 final class Commission implements BaseModel
@@ -43,7 +43,7 @@ final class Commission implements BaseModel
     public string $id;
 
     #[Required]
-    public int $amount;
+    public ?int $amount;
 
     #[Required]
     public int $createdAt;
@@ -58,7 +58,7 @@ final class Commission implements BaseModel
     public string $referrerID;
 
     #[Required]
-    public int $saleAmount;
+    public ?int $saleAmount;
 
     /** @var value-of<Status> $status */
     #[Required(enum: Status::class)]
@@ -98,7 +98,7 @@ final class Commission implements BaseModel
     public ?int $reversedAt;
 
     #[Optional(nullable: true)]
-    public ?int $saleAmountAmountInCampaignCurrency;
+    public ?int $saleAmountInCampaignCurrency;
 
     /**
      * `new Commission()` is missing required properties by the API.
@@ -145,12 +145,12 @@ final class Commission implements BaseModel
      */
     public static function with(
         string $id,
-        int $amount,
+        ?int $amount,
         int $createdAt,
         string $currencyISO,
         string $referredID,
         string $referrerID,
-        int $saleAmount,
+        ?int $saleAmount,
         Status|string $status,
         ?int $amountInCampaignCurrency = null,
         ?int $approvedAt = null,
@@ -163,7 +163,7 @@ final class Commission implements BaseModel
         ?int $payoutQueuedAt = null,
         ?string $provider = null,
         ?int $reversedAt = null,
-        ?int $saleAmountAmountInCampaignCurrency = null,
+        ?int $saleAmountInCampaignCurrency = null,
     ): self {
         $self = new self;
 
@@ -187,7 +187,7 @@ final class Commission implements BaseModel
         null !== $payoutQueuedAt && $self['payoutQueuedAt'] = $payoutQueuedAt;
         null !== $provider && $self['provider'] = $provider;
         null !== $reversedAt && $self['reversedAt'] = $reversedAt;
-        null !== $saleAmountAmountInCampaignCurrency && $self['saleAmountAmountInCampaignCurrency'] = $saleAmountAmountInCampaignCurrency;
+        null !== $saleAmountInCampaignCurrency && $self['saleAmountInCampaignCurrency'] = $saleAmountInCampaignCurrency;
 
         return $self;
     }
@@ -200,7 +200,7 @@ final class Commission implements BaseModel
         return $self;
     }
 
-    public function withAmount(int $amount): self
+    public function withAmount(?int $amount): self
     {
         $self = clone $this;
         $self['amount'] = $amount;
@@ -240,7 +240,7 @@ final class Commission implements BaseModel
         return $self;
     }
 
-    public function withSaleAmount(int $saleAmount): self
+    public function withSaleAmount(?int $saleAmount): self
     {
         $self = clone $this;
         $self['saleAmount'] = $saleAmount;
@@ -348,11 +348,11 @@ final class Commission implements BaseModel
         return $self;
     }
 
-    public function withSaleAmountAmountInCampaignCurrency(
-        ?int $saleAmountAmountInCampaignCurrency
+    public function withSaleAmountInCampaignCurrency(
+        ?int $saleAmountInCampaignCurrency
     ): self {
         $self = clone $this;
-        $self['saleAmountAmountInCampaignCurrency'] = $saleAmountAmountInCampaignCurrency;
+        $self['saleAmountInCampaignCurrency'] = $saleAmountInCampaignCurrency;
 
         return $self;
     }

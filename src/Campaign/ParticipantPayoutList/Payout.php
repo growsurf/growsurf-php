@@ -27,6 +27,7 @@ use Growsurf\Core\Contracts\BaseModel;
  *   fxError?: string|null,
  *   issuedAt?: int|null,
  *   provider?: string|null,
+ *   queuedAt?: int|null,
  * }
  */
 final class Payout implements BaseModel
@@ -80,6 +81,9 @@ final class Payout implements BaseModel
 
     #[Optional(nullable: true)]
     public ?string $provider;
+
+    #[Optional]
+    public ?int $queuedAt;
 
     /**
      * `new Payout()` is missing required properties by the API.
@@ -139,6 +143,7 @@ final class Payout implements BaseModel
         ?string $fxError = null,
         ?int $issuedAt = null,
         ?string $provider = null,
+        ?int $queuedAt = null,
     ): self {
         $self = new self;
 
@@ -158,6 +163,7 @@ final class Payout implements BaseModel
         null !== $fxError && $self['fxError'] = $fxError;
         null !== $issuedAt && $self['issuedAt'] = $issuedAt;
         null !== $provider && $self['provider'] = $provider;
+        null !== $queuedAt && $self['queuedAt'] = $queuedAt;
 
         return $self;
     }
@@ -285,6 +291,14 @@ final class Payout implements BaseModel
     {
         $self = clone $this;
         $self['provider'] = $provider;
+
+        return $self;
+    }
+
+    public function withQueuedAt(int $queuedAt): self
+    {
+        $self = clone $this;
+        $self['queuedAt'] = $queuedAt;
 
         return $self;
     }
