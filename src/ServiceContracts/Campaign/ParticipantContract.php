@@ -11,6 +11,8 @@ use Growsurf\Campaign\Participant\ParticipantListReferralsParams\SortBy;
 use Growsurf\Campaign\Participant\ParticipantListRewardsResponse;
 use Growsurf\Campaign\Participant\ParticipantRecordTransactionResponse\UnionMember0;
 use Growsurf\Campaign\Participant\ParticipantRecordTransactionResponse\UnionMember1;
+use Growsurf\Campaign\Participant\ParticipantRefundTransactionParams\AmendmentType;
+use Growsurf\Campaign\Participant\ParticipantRefundTransactionResponse;
 use Growsurf\Campaign\Participant\ParticipantSendInvitesResponse;
 use Growsurf\Campaign\Participant\ParticipantTriggerReferralResponse;
 use Growsurf\Campaign\Participant\ParticipantUpdateParams\ReferralStatus;
@@ -272,6 +274,51 @@ interface ParticipantContract
      *
      * @param string $participantIDOrEmail path param: GrowSurf participant ID or URL-encoded participant email address
      * @param string $id path param: GrowSurf program ID
+     * @param AmendmentType|value-of<AmendmentType> $amendmentType body param: REFUND covers full refunds, partial refunds, and refund cancellations; CHARGEBACK is always a full reversal
+     * @param int $amount body param: Original sale gross (minor units). Optional — the value stored when the transaction was recorded is used when available; only needed for partial refunds of older records.
+     * @param int $amountRefunded body param: Cumulative amount refunded so far, in the currency's minor unit. Omit for a full refund. For a partial refund send the running total, not the per-refund delta.
+     * @param string $chargeID Body param
+     * @param string $currency body param: 3-letter ISO currency. Optional — resolved from the original commission when available.
+     * @param string $description Body param
+     * @param string $externalID Body param
+     * @param string $invoiceID Body param
+     * @param string $orderID Body param
+     * @param string $paymentID Body param
+     * @param string $paymentIntentID Body param
+     * @param int $refundAmount body param: The per-refund delta (minor units). Optional bookkeeping field.
+     * @param string $refundID body param: Stable per-refund identifier. Recommended for partial refunds so repeated calls stay idempotent.
+     * @param string $refundStatus body param: Refund status. Send "canceled" with a lowered amountRefunded to restore a previously reduced commission.
+     * @param string $transactionID Body param
+     * @param RequestOpts|null $requestOptions
+     *
+     * @throws APIException
+     */
+    public function refundTransaction(
+        string $participantIDOrEmail,
+        string $id,
+        AmendmentType|string $amendmentType = 'REFUND',
+        ?int $amount = null,
+        ?int $amountRefunded = null,
+        ?string $chargeID = null,
+        ?string $currency = null,
+        ?string $description = null,
+        ?string $externalID = null,
+        ?string $invoiceID = null,
+        ?string $orderID = null,
+        ?string $paymentID = null,
+        ?string $paymentIntentID = null,
+        ?int $refundAmount = null,
+        ?string $refundID = null,
+        ?string $refundStatus = null,
+        ?string $transactionID = null,
+        RequestOptions|array|null $requestOptions = null,
+    ): ParticipantRefundTransactionResponse;
+
+    /**
+     * @api
+     *
+     * @param string $participantIDOrEmail path param: GrowSurf participant ID or URL-encoded participant email address
+     * @param string $id path param: GrowSurf program ID
      * @param list<string> $emailAddresses Body param
      * @param string $messageText Body param
      * @param string $subjectText Body param
@@ -291,13 +338,30 @@ interface ParticipantContract
     /**
      * @api
      *
+     * @param string $participantIDOrEmail path param: GrowSurf participant ID or URL-encoded participant email address
+     * @param string $id path param: GrowSurf program ID
+     * @param int $delayInDays Body param: Number of whole days to hold referral credit before it is awarded. Useful for honoring a refund window before crediting a referrer. Omit this field to award credit immediately. The credit is awarded automatically once the delay elapses, and can be cancelled before then with the Cancel delayed referral trigger request.
+     * @param RequestOpts|null $requestOptions
+     *
+     * @throws APIException
+     */
+    public function triggerReferral(
+        string $participantIDOrEmail,
+        string $id,
+        ?int $delayInDays = null,
+        RequestOptions|array|null $requestOptions = null,
+    ): ParticipantTriggerReferralResponse;
+
+    /**
+     * @api
+     *
      * @param string $participantIDOrEmail growSurf participant ID or URL-encoded participant email address
      * @param string $id growSurf program ID
      * @param RequestOpts|null $requestOptions
      *
      * @throws APIException
      */
-    public function triggerReferral(
+    public function cancelDelayedReferral(
         string $participantIDOrEmail,
         string $id,
         RequestOptions|array|null $requestOptions = null,

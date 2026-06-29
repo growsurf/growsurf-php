@@ -6,6 +6,7 @@ namespace Growsurf\Services\Campaign;
 
 use Growsurf\Campaign\Participant\Participant;
 use Growsurf\Campaign\Participant\ParticipantAddParams;
+use Growsurf\Campaign\Participant\ParticipantCancelDelayedReferralParams;
 use Growsurf\Campaign\Participant\ParticipantDeleteParams;
 use Growsurf\Campaign\Participant\ParticipantDeleteResponse;
 use Growsurf\Campaign\Participant\ParticipantListCommissionsParams;
@@ -19,6 +20,8 @@ use Growsurf\Campaign\Participant\ParticipantRecordTransactionParams;
 use Growsurf\Campaign\Participant\ParticipantRecordTransactionResponse;
 use Growsurf\Campaign\Participant\ParticipantRecordTransactionResponse\UnionMember0;
 use Growsurf\Campaign\Participant\ParticipantRecordTransactionResponse\UnionMember1;
+use Growsurf\Campaign\Participant\ParticipantRefundTransactionParams;
+use Growsurf\Campaign\Participant\ParticipantRefundTransactionResponse;
 use Growsurf\Campaign\Participant\ParticipantRetrieveParams;
 use Growsurf\Campaign\Participant\ParticipantSendInvitesParams;
 use Growsurf\Campaign\Participant\ParticipantSendInvitesResponse;
@@ -436,6 +439,62 @@ final class ParticipantRawService implements ParticipantRawContract
     /**
      * @api
      *
+     * Records an amendment (refund, partial refund, refund cancellation, or chargeback) against a previously recorded transaction and reverses or adjusts the referrer's commission. The inverse of recordTransaction. Commissions already paid out to the affiliate are not clawed back; the amendment is recorded for tax reporting only.
+     *
+     * @param string $participantIDOrEmail path param: GrowSurf participant ID or URL-encoded participant email address
+     * @param array{
+     *   id: string,
+     *   amendmentType?: ParticipantRefundTransactionParams\AmendmentType|value-of<ParticipantRefundTransactionParams\AmendmentType>,
+     *   amount?: int,
+     *   amountRefunded?: int,
+     *   chargeID?: string,
+     *   currency?: string,
+     *   description?: string,
+     *   externalID?: string,
+     *   invoiceID?: string,
+     *   orderID?: string,
+     *   paymentID?: string,
+     *   paymentIntentID?: string,
+     *   refundAmount?: int,
+     *   refundID?: string,
+     *   refundStatus?: string,
+     *   transactionID?: string,
+     * }|ParticipantRefundTransactionParams $params
+     * @param RequestOpts|null $requestOptions
+     *
+     * @return BaseResponse<ParticipantRefundTransactionResponse>
+     *
+     * @throws APIException
+     */
+    public function refundTransaction(
+        string $participantIDOrEmail,
+        array|ParticipantRefundTransactionParams $params,
+        RequestOptions|array|null $requestOptions = null,
+    ): BaseResponse {
+        [$parsed, $options] = ParticipantRefundTransactionParams::parseRequest(
+            $params,
+            $requestOptions,
+        );
+        $id = $parsed['id'];
+        unset($parsed['id']);
+
+        // @phpstan-ignore-next-line return.type
+        return $this->client->request(
+            method: 'post',
+            path: [
+                'campaign/%1$s/participant/%2$s/transaction/refund',
+                $id,
+                $participantIDOrEmail,
+            ],
+            body: (object) array_diff_key($parsed, array_flip(['id'])),
+            options: $options,
+            convert: ParticipantRefundTransactionResponse::class,
+        );
+    }
+
+    /**
+     * @api
+     *
      * Sends email invites on behalf of a participant to a list of email addresses.
      *
      * @param string $participantIDOrEmail path param: GrowSurf participant ID or URL-encoded participant email address
@@ -481,7 +540,9 @@ final class ParticipantRawService implements ParticipantRawContract
      * Triggers referral credit for an existing referred participant by GrowSurf participant ID or email address.
      *
      * @param string $participantIDOrEmail growSurf participant ID or URL-encoded participant email address
-     * @param array{id: string}|ParticipantTriggerReferralParams $params
+     * @param array{
+     *   id: string, delayInDays?: int|null
+     * }|ParticipantTriggerReferralParams $params
      * @param RequestOpts|null $requestOptions
      *
      * @return BaseResponse<ParticipantTriggerReferralResponse>
@@ -503,6 +564,41 @@ final class ParticipantRawService implements ParticipantRawContract
         // @phpstan-ignore-next-line return.type
         return $this->client->request(
             method: 'post',
+            path: ['campaign/%1$s/participant/%2$s/ref', $id, $participantIDOrEmail],
+            body: (object) array_diff_key($parsed, array_flip(['id'])),
+            options: $options,
+            convert: ParticipantTriggerReferralResponse::class,
+        );
+    }
+
+    /**
+     * @api
+     *
+     * Cancels a pending delayed referral trigger for a participant by GrowSurf participant ID or email address.
+     *
+     * @param string $participantIDOrEmail growSurf participant ID or URL-encoded participant email address
+     * @param array{id: string}|ParticipantCancelDelayedReferralParams $params
+     * @param RequestOpts|null $requestOptions
+     *
+     * @return BaseResponse<ParticipantTriggerReferralResponse>
+     *
+     * @throws APIException
+     */
+    public function cancelDelayedReferral(
+        string $participantIDOrEmail,
+        array|ParticipantCancelDelayedReferralParams $params,
+        RequestOptions|array|null $requestOptions = null,
+    ): BaseResponse {
+        [$parsed, $options] = ParticipantCancelDelayedReferralParams::parseRequest(
+            $params,
+            $requestOptions,
+        );
+        $id = $parsed['id'];
+        unset($parsed['id']);
+
+        // @phpstan-ignore-next-line return.type
+        return $this->client->request(
+            method: 'delete',
             path: ['campaign/%1$s/participant/%2$s/ref', $id, $participantIDOrEmail],
             options: $options,
             convert: ParticipantTriggerReferralResponse::class,

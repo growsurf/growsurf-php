@@ -5,6 +5,7 @@ namespace Tests\Services\Campaign;
 use Growsurf\Campaign\Participant\Participant;
 use Growsurf\Campaign\Participant\ParticipantDeleteResponse;
 use Growsurf\Campaign\Participant\ParticipantListRewardsResponse;
+use Growsurf\Campaign\Participant\ParticipantRefundTransactionResponse;
 use Growsurf\Campaign\Participant\ParticipantSendInvitesResponse;
 use Growsurf\Campaign\Participant\ParticipantTriggerReferralResponse;
 use Growsurf\Campaign\Participant\ReferralStatus;
@@ -383,6 +384,53 @@ final class ParticipantTest extends TestCase
     }
 
     #[Test]
+    public function testRefundTransaction(): void
+    {
+        if (UnsupportedMockTests::$skip) {
+            $this->markTestSkipped('Mock server tests are disabled');
+        }
+
+        $result = $this->client->campaign->participant->refundTransaction(
+            'participantIdOrEmail',
+            id: 'id'
+        );
+
+        // @phpstan-ignore-next-line method.alreadyNarrowedType
+        $this->assertInstanceOf(ParticipantRefundTransactionResponse::class, $result);
+    }
+
+    #[Test]
+    public function testRefundTransactionWithOptionalParams(): void
+    {
+        if (UnsupportedMockTests::$skip) {
+            $this->markTestSkipped('Mock server tests are disabled');
+        }
+
+        $result = $this->client->campaign->participant->refundTransaction(
+            'participantIdOrEmail',
+            id: 'id',
+            amendmentType: 'REFUND',
+            amount: 9900,
+            amountRefunded: 9900,
+            chargeID: 'chargeId',
+            currency: 'USD',
+            description: 'Customer refunded the Pro subscription',
+            externalID: 'externalId',
+            invoiceID: 'invoice_54',
+            orderID: 'orderId',
+            paymentID: 'paymentId',
+            paymentIntentID: 'paymentIntentId',
+            refundAmount: 9900,
+            refundID: 'refundId',
+            refundStatus: 'canceled',
+            transactionID: 'transactionId',
+        );
+
+        // @phpstan-ignore-next-line method.alreadyNarrowedType
+        $this->assertInstanceOf(ParticipantRefundTransactionResponse::class, $result);
+    }
+
+    #[Test]
     public function testSendInvites(): void
     {
         if (UnsupportedMockTests::$skip) {
@@ -444,6 +492,39 @@ final class ParticipantTest extends TestCase
         }
 
         $result = $this->client->campaign->participant->triggerReferral(
+            'participantIdOrEmail',
+            id: 'id',
+            delayInDays: 14
+        );
+
+        // @phpstan-ignore-next-line method.alreadyNarrowedType
+        $this->assertInstanceOf(ParticipantTriggerReferralResponse::class, $result);
+    }
+
+    #[Test]
+    public function testCancelDelayedReferral(): void
+    {
+        if (UnsupportedMockTests::$skip) {
+            $this->markTestSkipped('Mock server tests are disabled');
+        }
+
+        $result = $this->client->campaign->participant->cancelDelayedReferral(
+            'participantIdOrEmail',
+            id: 'id'
+        );
+
+        // @phpstan-ignore-next-line method.alreadyNarrowedType
+        $this->assertInstanceOf(ParticipantTriggerReferralResponse::class, $result);
+    }
+
+    #[Test]
+    public function testCancelDelayedReferralWithOptionalParams(): void
+    {
+        if (UnsupportedMockTests::$skip) {
+            $this->markTestSkipped('Mock server tests are disabled');
+        }
+
+        $result = $this->client->campaign->participant->cancelDelayedReferral(
             'participantIdOrEmail',
             id: 'id'
         );

@@ -6,6 +6,7 @@ namespace Growsurf\ServiceContracts\Campaign;
 
 use Growsurf\Campaign\Participant\Participant;
 use Growsurf\Campaign\Participant\ParticipantAddParams;
+use Growsurf\Campaign\Participant\ParticipantCancelDelayedReferralParams;
 use Growsurf\Campaign\Participant\ParticipantDeleteParams;
 use Growsurf\Campaign\Participant\ParticipantDeleteResponse;
 use Growsurf\Campaign\Participant\ParticipantListCommissionsParams;
@@ -16,6 +17,8 @@ use Growsurf\Campaign\Participant\ParticipantListRewardsResponse;
 use Growsurf\Campaign\Participant\ParticipantRecordTransactionParams;
 use Growsurf\Campaign\Participant\ParticipantRecordTransactionResponse\UnionMember0;
 use Growsurf\Campaign\Participant\ParticipantRecordTransactionResponse\UnionMember1;
+use Growsurf\Campaign\Participant\ParticipantRefundTransactionParams;
+use Growsurf\Campaign\Participant\ParticipantRefundTransactionResponse;
 use Growsurf\Campaign\Participant\ParticipantRetrieveParams;
 use Growsurf\Campaign\Participant\ParticipantSendInvitesParams;
 use Growsurf\Campaign\Participant\ParticipantSendInvitesResponse;
@@ -191,6 +194,23 @@ interface ParticipantRawContract
      * @api
      *
      * @param string $participantIDOrEmail path param: GrowSurf participant ID or URL-encoded participant email address
+     * @param array<string,mixed>|ParticipantRefundTransactionParams $params
+     * @param RequestOpts|null $requestOptions
+     *
+     * @return BaseResponse<ParticipantRefundTransactionResponse>
+     *
+     * @throws APIException
+     */
+    public function refundTransaction(
+        string $participantIDOrEmail,
+        array|ParticipantRefundTransactionParams $params,
+        RequestOptions|array|null $requestOptions = null,
+    ): BaseResponse;
+
+    /**
+     * @api
+     *
+     * @param string $participantIDOrEmail path param: GrowSurf participant ID or URL-encoded participant email address
      * @param array<string,mixed>|ParticipantSendInvitesParams $params
      * @param RequestOpts|null $requestOptions
      *
@@ -218,6 +238,23 @@ interface ParticipantRawContract
     public function triggerReferral(
         string $participantIDOrEmail,
         array|ParticipantTriggerReferralParams $params,
+        RequestOptions|array|null $requestOptions = null,
+    ): BaseResponse;
+
+    /**
+     * @api
+     *
+     * @param string $participantIDOrEmail growSurf participant ID or URL-encoded participant email address
+     * @param array<string,mixed>|ParticipantCancelDelayedReferralParams $params
+     * @param RequestOpts|null $requestOptions
+     *
+     * @return BaseResponse<ParticipantTriggerReferralResponse>
+     *
+     * @throws APIException
+     */
+    public function cancelDelayedReferral(
+        string $participantIDOrEmail,
+        array|ParticipantCancelDelayedReferralParams $params,
         RequestOptions|array|null $requestOptions = null,
     ): BaseResponse;
 }
