@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.8.0 (2026-06-29)
+
+Full Changelog: [v0.7.1...v0.8.0](https://github.com/growsurf/growsurf-php/compare/v0.7.1...v0.8.0)
+
+### Features
+
+* **api:** support delayed referral rewards and affiliate refunds ([41eae71](https://github.com/growsurf/growsurf-php/commit/41eae71952cd6f05c7d3abf496f7e9dc29c24a7b))
+
+
+### Chores
+
+* re-trigger stainless release ([f4fafcd](https://github.com/growsurf/growsurf-php/commit/f4fafcd3f884e20d6127c9b5aeea3e7f63f301c0))
+
 ## 0.7.1 (2026-06-26)
 
 Full Changelog: [v0.7.0...v0.7.1](https://github.com/growsurf/growsurf-php/compare/v0.7.0...v0.7.1)
