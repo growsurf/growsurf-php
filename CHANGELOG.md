@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.9.0](https://github.com/growsurf/growsurf-php/compare/v0.8.0...v0.9.0) (2026-07-01)
+
+
+### Features
+
+* **api:** add campaign create/update/clone and program-reward CRUD ([0f9e633](https://github.com/growsurf/growsurf-php/commit/0f9e633b6fd2821da58e24da591303a80dde2f24))
+
 ## 0.8.0 (2026-06-29)
 
 Full Changelog: [v0.7.1...v0.8.0](https://github.com/growsurf/growsurf-php/compare/v0.7.1...v0.8.0)
