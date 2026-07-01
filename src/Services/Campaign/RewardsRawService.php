@@ -1,0 +1,204 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Growsurf\Services\Campaign;
+
+use Growsurf\Campaign\CampaignRewardListResponse;
+use Growsurf\Campaign\CommissionStructure;
+use Growsurf\Campaign\DeleteRewardResponse;
+use Growsurf\Campaign\Reward;
+use Growsurf\Campaign\RewardCreateParams;
+use Growsurf\Campaign\RewardCreateParams\LimitDuration;
+use Growsurf\Campaign\RewardCreateParams\Type;
+use Growsurf\Campaign\RewardDeleteParams;
+use Growsurf\Campaign\RewardUpdateParams;
+use Growsurf\Client;
+use Growsurf\Core\Contracts\BaseResponse;
+use Growsurf\Core\Exceptions\APIException;
+use Growsurf\RequestOptions;
+use Growsurf\ServiceContracts\Campaign\RewardsRawContract;
+
+/**
+ * Program reward (`CampaignReward`) configuration.
+ *
+ * @phpstan-import-type RequestOpts from \Growsurf\RequestOptions
+ * @phpstan-import-type CommissionStructureShape from \Growsurf\Campaign\CommissionStructure
+ */
+final class RewardsRawService implements RewardsRawContract
+{
+    // @phpstan-ignore-next-line
+    /**
+     * @internal
+     */
+    public function __construct(private Client $client) {}
+
+    /**
+     * @api
+     *
+     * Retrieves the list of a program's configured rewards (`CampaignReward`s). Returns the active, visible, and enabled rewards — the same set embedded in the `rewards` array of the campaign response.
+     *
+     * @param string $id growSurf program ID
+     * @param RequestOpts|null $requestOptions
+     *
+     * @return BaseResponse<CampaignRewardListResponse>
+     *
+     * @throws APIException
+     */
+    public function list(
+        string $id,
+        RequestOptions|array|null $requestOptions = null
+    ): BaseResponse {
+        // @phpstan-ignore-next-line return.type
+        return $this->client->request(
+            method: 'get',
+            path: ['campaign/%1$s/rewards', $id],
+            options: $requestOptions,
+            convert: CampaignRewardListResponse::class,
+        );
+    }
+
+    /**
+     * @api
+     *
+     * Creates a new program reward (`CampaignReward`) with a server-generated ID. The reward type must be compatible with the program type (affiliate programs support only `AFFILIATE` rewards; referral programs support all other types). Enabling an active reward of a type automatically enables that reward type on the program.
+     *
+     * @param string $id growSurf program ID
+     * @param array{
+     *   type: Type|value-of<Type>,
+     *   commissionStructure?: CommissionStructure|CommissionStructureShape,
+     *   conversionsRequired?: int,
+     *   couponCode?: string,
+     *   description?: string,
+     *   imageURL?: string,
+     *   isActive?: bool,
+     *   isUnlimited?: bool,
+     *   isVisible?: bool,
+     *   limit?: int,
+     *   limitDuration?: LimitDuration|value-of<LimitDuration>,
+     *   metadata?: array<string,mixed>,
+     *   nextMilestonePrefix?: string,
+     *   nextMilestoneSuffix?: string,
+     *   numberOfWinners?: int,
+     *   order?: int,
+     *   referralCouponCode?: string,
+     *   referralDescription?: string,
+     *   referredRewardUpfront?: bool,
+     *   title?: string,
+     * }|RewardCreateParams $params
+     * @param RequestOpts|null $requestOptions
+     *
+     * @return BaseResponse<Reward>
+     *
+     * @throws APIException
+     */
+    public function create(
+        string $id,
+        array|RewardCreateParams $params,
+        RequestOptions|array|null $requestOptions = null,
+    ): BaseResponse {
+        [$parsed, $options] = RewardCreateParams::parseRequest(
+            $params,
+            $requestOptions,
+        );
+
+        // @phpstan-ignore-next-line return.type
+        return $this->client->request(
+            method: 'post',
+            path: ['campaign/%1$s/rewards', $id],
+            body: (object) $parsed,
+            options: $options,
+            convert: Reward::class,
+        );
+    }
+
+    /**
+     * @api
+     *
+     * Updates an existing program reward (`CampaignReward`). The reward `type` is immutable and cannot be changed.
+     *
+     * @param string $rewardID path param: Program reward (`CampaignReward`) ID
+     * @param array{
+     *   id: string,
+     *   commissionStructure?: CommissionStructure|CommissionStructureShape,
+     *   conversionsRequired?: int,
+     *   couponCode?: string,
+     *   description?: string,
+     *   imageURL?: string,
+     *   isActive?: bool,
+     *   isUnlimited?: bool,
+     *   isVisible?: bool,
+     *   limit?: int,
+     *   limitDuration?: RewardUpdateParams\LimitDuration|value-of<RewardUpdateParams\LimitDuration>,
+     *   metadata?: array<string,mixed>,
+     *   nextMilestonePrefix?: string,
+     *   nextMilestoneSuffix?: string,
+     *   numberOfWinners?: int,
+     *   order?: int,
+     *   referralCouponCode?: string,
+     *   referralDescription?: string,
+     *   referredRewardUpfront?: bool,
+     *   title?: string,
+     * }|RewardUpdateParams $params
+     * @param RequestOpts|null $requestOptions
+     *
+     * @return BaseResponse<Reward>
+     *
+     * @throws APIException
+     */
+    public function update(
+        string $rewardID,
+        array|RewardUpdateParams $params,
+        RequestOptions|array|null $requestOptions = null,
+    ): BaseResponse {
+        [$parsed, $options] = RewardUpdateParams::parseRequest(
+            $params,
+            $requestOptions,
+        );
+        $id = $parsed['id'];
+        unset($parsed['id']);
+
+        // @phpstan-ignore-next-line return.type
+        return $this->client->request(
+            method: 'patch',
+            path: ['campaign/%1$s/rewards/%2$s', $id, $rewardID],
+            body: (object) array_diff_key($parsed, array_flip(['id'])),
+            options: $options,
+            convert: Reward::class,
+        );
+    }
+
+    /**
+     * @api
+     *
+     * Deletes a program reward (`CampaignReward`). The reward is deactivated, removed from the program's reward set, and any connected upfront-discount coupons are cleaned up.
+     *
+     * @param string $rewardID path param: Program reward (`CampaignReward`) ID
+     * @param array{id: string}|RewardDeleteParams $params
+     * @param RequestOpts|null $requestOptions
+     *
+     * @return BaseResponse<DeleteRewardResponse>
+     *
+     * @throws APIException
+     */
+    public function delete(
+        string $rewardID,
+        array|RewardDeleteParams $params,
+        RequestOptions|array|null $requestOptions = null,
+    ): BaseResponse {
+        [$parsed, $options] = RewardDeleteParams::parseRequest(
+            $params,
+            $requestOptions,
+        );
+        $id = $parsed['id'];
+        unset($parsed['id']);
+
+        // @phpstan-ignore-next-line return.type
+        return $this->client->request(
+            method: 'delete',
+            path: ['campaign/%1$s/rewards/%2$s', $id, $rewardID],
+            options: $options,
+            convert: DeleteRewardResponse::class,
+        );
+    }
+}

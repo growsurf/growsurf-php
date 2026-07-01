@@ -6,6 +6,7 @@ namespace Growsurf\ServiceContracts;
 
 use Growsurf\Campaign\Campaign;
 use Growsurf\Campaign\CampaignCreateMobileParticipantTokenParams\ReferralStatus;
+use Growsurf\Campaign\CampaignCreateParams\Type;
 use Growsurf\Campaign\CampaignGetAnalyticsResponse;
 use Growsurf\Campaign\CampaignListCommissionsParams\Status;
 use Growsurf\Campaign\CampaignListLeaderboardParams\LeaderboardType;
@@ -16,11 +17,13 @@ use Growsurf\Campaign\ParticipantCommissionList;
 use Growsurf\Campaign\ParticipantList;
 use Growsurf\Campaign\ParticipantPayoutList;
 use Growsurf\Campaign\ReferralList;
+use Growsurf\Campaign\RewardCreateParams;
 use Growsurf\Core\Exceptions\APIException;
 use Growsurf\RequestOptions;
 
 /**
  * @phpstan-import-type RequestOpts from \Growsurf\RequestOptions
+ * @phpstan-import-type RewardCreateParamsShape from \Growsurf\Campaign\RewardCreateParams
  */
 interface CampaignContract
 {
@@ -47,6 +50,73 @@ interface CampaignContract
     public function list(
         RequestOptions|array|null $requestOptions = null
     ): CampaignListResponse;
+
+    /**
+     * @api
+     *
+     * @param Type|value-of<Type> $type The program type. Immutable after creation.
+     * @param string $currencyISO ISO 4217 currency code. Defaults to USD.
+     * @param string $name The program name. Defaults to "Untitled Program".
+     * @param array<string,mixed> $options a curated subset of program options to shallow-merge onto the defaults
+     * @param list<RewardCreateParams|RewardCreateParamsShape> $rewards optional inline rewards to create with the program
+     * @param RequestOpts|null $requestOptions
+     *
+     * @throws APIException
+     */
+    public function create(
+        Type|string $type,
+        ?string $companyLogoImageURL = null,
+        ?string $companyName = null,
+        ?string $currencyISO = null,
+        ?string $goal = null,
+        ?string $name = null,
+        ?array $options = null,
+        ?array $rewards = null,
+        RequestOptions|array|null $requestOptions = null,
+    ): Campaign;
+
+    /**
+     * @api
+     *
+     * @param string $id growSurf program ID
+     * @param array<string,mixed> $design
+     * @param array<string,mixed> $emails
+     * @param array<string,mixed> $installation
+     * @param array<string,mixed> $notifications
+     * @param array<string,mixed> $options
+     * @param \Growsurf\Campaign\CampaignUpdateParams\Status|value-of<\Growsurf\Campaign\CampaignUpdateParams\Status> $status The program status. Transitions are validated; DELETED is not allowed.
+     * @param RequestOpts|null $requestOptions
+     *
+     * @throws APIException
+     */
+    public function update(
+        string $id,
+        ?string $companyLogoImageURL = null,
+        ?string $companyName = null,
+        ?string $currencyISO = null,
+        ?array $design = null,
+        ?array $emails = null,
+        ?string $goal = null,
+        ?array $installation = null,
+        ?string $name = null,
+        ?array $notifications = null,
+        ?array $options = null,
+        \Growsurf\Campaign\CampaignUpdateParams\Status|string|null $status = null,
+        RequestOptions|array|null $requestOptions = null,
+    ): Campaign;
+
+    /**
+     * @api
+     *
+     * @param string $id growSurf program ID
+     * @param RequestOpts|null $requestOptions
+     *
+     * @throws APIException
+     */
+    public function clone(
+        string $id,
+        RequestOptions|array|null $requestOptions = null
+    ): Campaign;
 
     /**
      * @api

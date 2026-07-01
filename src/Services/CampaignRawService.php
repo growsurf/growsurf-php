@@ -7,6 +7,8 @@ namespace Growsurf\Services;
 use Growsurf\Campaign\Campaign;
 use Growsurf\Campaign\CampaignCreateMobileParticipantTokenParams;
 use Growsurf\Campaign\CampaignCreateMobileParticipantTokenParams\ReferralStatus;
+use Growsurf\Campaign\CampaignCreateParams;
+use Growsurf\Campaign\CampaignCreateParams\Type;
 use Growsurf\Campaign\CampaignGetAnalyticsResponse;
 use Growsurf\Campaign\CampaignListCommissionsParams;
 use Growsurf\Campaign\CampaignListCommissionsParams\Status;
@@ -19,10 +21,12 @@ use Growsurf\Campaign\CampaignListReferralsParams\SortBy;
 use Growsurf\Campaign\CampaignListResponse;
 use Growsurf\Campaign\CampaignNewMobileParticipantTokenResponse;
 use Growsurf\Campaign\CampaignRetrieveAnalyticsParams;
+use Growsurf\Campaign\CampaignUpdateParams;
 use Growsurf\Campaign\ParticipantCommissionList;
 use Growsurf\Campaign\ParticipantList;
 use Growsurf\Campaign\ParticipantPayoutList;
 use Growsurf\Campaign\ReferralList;
+use Growsurf\Campaign\RewardCreateParams;
 use Growsurf\Client;
 use Growsurf\Core\Contracts\BaseResponse;
 use Growsurf\Core\Exceptions\APIException;
@@ -32,6 +36,7 @@ use Growsurf\ServiceContracts\CampaignRawContract;
 
 /**
  * @phpstan-import-type RequestOpts from \Growsurf\RequestOptions
+ * @phpstan-import-type RewardCreateParamsShape from \Growsurf\Campaign\RewardCreateParams
  */
 final class CampaignRawService implements CampaignRawContract
 {
@@ -86,6 +91,116 @@ final class CampaignRawService implements CampaignRawContract
             path: 'campaigns',
             options: $requestOptions,
             convert: CampaignListResponse::class,
+        );
+    }
+
+    /**
+     * @api
+     *
+     * Creates a new program pre-populated with type-appropriate defaults, plus any optional inline rewards. The new program is created in `DRAFT` status and owned by the API key's account. Requires a verified account email and a paid plan (referral) or a payment source on file (affiliate); subject to your plan's program limit.
+     *
+     * @param array{
+     *   type: Type|value-of<Type>,
+     *   companyLogoImageURL?: string,
+     *   companyName?: string,
+     *   currencyISO?: string,
+     *   goal?: string,
+     *   name?: string,
+     *   options?: array<string,mixed>,
+     *   rewards?: list<RewardCreateParams|RewardCreateParamsShape>,
+     * }|CampaignCreateParams $params
+     * @param RequestOpts|null $requestOptions
+     *
+     * @return BaseResponse<Campaign>
+     *
+     * @throws APIException
+     */
+    public function create(
+        array|CampaignCreateParams $params,
+        RequestOptions|array|null $requestOptions = null,
+    ): BaseResponse {
+        [$parsed, $options] = CampaignCreateParams::parseRequest(
+            $params,
+            $requestOptions,
+        );
+
+        // @phpstan-ignore-next-line return.type
+        return $this->client->request(
+            method: 'post',
+            path: 'campaigns',
+            body: (object) $parsed,
+            options: $options,
+            convert: Campaign::class,
+        );
+    }
+
+    /**
+     * @api
+     *
+     * Updates a program's configuration and/or status. Only the fields you send are changed. `type` and `urlId` are immutable. Status changes are validated against the allowed transitions; the program cannot be deleted via this endpoint.
+     *
+     * @param string $id growSurf program ID
+     * @param array{
+     *   companyLogoImageURL?: string,
+     *   companyName?: string,
+     *   currencyISO?: string,
+     *   design?: array<string,mixed>,
+     *   emails?: array<string,mixed>,
+     *   goal?: string,
+     *   installation?: array<string,mixed>,
+     *   name?: string,
+     *   notifications?: array<string,mixed>,
+     *   options?: array<string,mixed>,
+     *   status?: CampaignUpdateParams\Status|value-of<CampaignUpdateParams\Status>,
+     * }|CampaignUpdateParams $params
+     * @param RequestOpts|null $requestOptions
+     *
+     * @return BaseResponse<Campaign>
+     *
+     * @throws APIException
+     */
+    public function update(
+        string $id,
+        array|CampaignUpdateParams $params,
+        RequestOptions|array|null $requestOptions = null,
+    ): BaseResponse {
+        [$parsed, $options] = CampaignUpdateParams::parseRequest(
+            $params,
+            $requestOptions,
+        );
+
+        // @phpstan-ignore-next-line return.type
+        return $this->client->request(
+            method: 'patch',
+            path: ['campaign/%1$s', $id],
+            body: (object) $parsed,
+            options: $options,
+            convert: Campaign::class,
+        );
+    }
+
+    /**
+     * @api
+     *
+     * Clones an existing program into a new `DRAFT` program. Integrations and credentials are not copied; active rewards are cloned.
+     *
+     * @param string $id growSurf program ID
+     * @param RequestOpts|null $requestOptions
+     *
+     * @return BaseResponse<Campaign>
+     *
+     * @throws APIException
+     */
+    public function clone(
+        string $id,
+        RequestOptions|array|null $requestOptions = null
+    ): BaseResponse {
+        // @phpstan-ignore-next-line return.type
+        return $this->client->request(
+            method: 'post',
+            path: ['campaign/%1$s/clone', $id],
+            options: $requestOptions,
+            convert: Campaign::class,
         );
     }
 

@@ -6,6 +6,7 @@ namespace Growsurf\ServiceContracts;
 
 use Growsurf\Campaign\Campaign;
 use Growsurf\Campaign\CampaignCreateMobileParticipantTokenParams;
+use Growsurf\Campaign\CampaignCreateParams;
 use Growsurf\Campaign\CampaignGetAnalyticsResponse;
 use Growsurf\Campaign\CampaignListCommissionsParams;
 use Growsurf\Campaign\CampaignListLeaderboardParams;
@@ -15,6 +16,7 @@ use Growsurf\Campaign\CampaignListReferralsParams;
 use Growsurf\Campaign\CampaignListResponse;
 use Growsurf\Campaign\CampaignNewMobileParticipantTokenResponse;
 use Growsurf\Campaign\CampaignRetrieveAnalyticsParams;
+use Growsurf\Campaign\CampaignUpdateParams;
 use Growsurf\Campaign\ParticipantCommissionList;
 use Growsurf\Campaign\ParticipantList;
 use Growsurf\Campaign\ParticipantPayoutList;
@@ -53,6 +55,53 @@ interface CampaignRawContract
      * @throws APIException
      */
     public function list(
+        RequestOptions|array|null $requestOptions = null
+    ): BaseResponse;
+
+    /**
+     * @api
+     *
+     * @param array<string,mixed>|CampaignCreateParams $params
+     * @param RequestOpts|null $requestOptions
+     *
+     * @return BaseResponse<Campaign>
+     *
+     * @throws APIException
+     */
+    public function create(
+        array|CampaignCreateParams $params,
+        RequestOptions|array|null $requestOptions = null,
+    ): BaseResponse;
+
+    /**
+     * @api
+     *
+     * @param string $id growSurf program ID
+     * @param array<string,mixed>|CampaignUpdateParams $params
+     * @param RequestOpts|null $requestOptions
+     *
+     * @return BaseResponse<Campaign>
+     *
+     * @throws APIException
+     */
+    public function update(
+        string $id,
+        array|CampaignUpdateParams $params,
+        RequestOptions|array|null $requestOptions = null,
+    ): BaseResponse;
+
+    /**
+     * @api
+     *
+     * @param string $id growSurf program ID
+     * @param RequestOpts|null $requestOptions
+     *
+     * @return BaseResponse<Campaign>
+     *
+     * @throws APIException
+     */
+    public function clone(
+        string $id,
         RequestOptions|array|null $requestOptions = null
     ): BaseResponse;
 
