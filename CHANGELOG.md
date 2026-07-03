@@ -1,5 +1,16 @@
 # Changelog
 
+## [1.0.0](https://github.com/growsurf/growsurf-php/compare/v0.9.0...v1.0.0) (2026-07-03)
+
+
+### ⚠ BREAKING CHANGES
+
+* campaign create no longer accepts `options`, and campaign update no longer accepts the design / emails / options / notifications / installation config blobs — edit those via the new config sub-resources. Reward-config CRUD moved from /campaign/{id}/rewards to /campaign/{id}/reward-configs[/{campaignRewardId}].
+
+### Features
+
+* add campaign management endpoints; drop deprecated create/update config blobs ([d0316e2](https://github.com/growsurf/growsurf-php/commit/d0316e282261d665835f2b9c1afb556c8d52f6eb))
+
 ## [0.9.0](https://github.com/growsurf/growsurf-php/compare/v0.8.0...v0.9.0) (2026-07-01)
 
 
