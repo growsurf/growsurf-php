@@ -10,12 +10,14 @@ use Growsurf\Campaign\DeleteRewardResponse;
 use Growsurf\Campaign\Reward;
 use Growsurf\Campaign\RewardCreateParams\LimitDuration;
 use Growsurf\Campaign\RewardCreateParams\Type;
+use Growsurf\Campaign\RewardTaxValuation;
 use Growsurf\Core\Exceptions\APIException;
 use Growsurf\RequestOptions;
 
 /**
  * @phpstan-import-type RequestOpts from \Growsurf\RequestOptions
  * @phpstan-import-type CommissionStructureShape from \Growsurf\Campaign\CommissionStructure
+ * @phpstan-import-type RewardTaxValuationShape from \Growsurf\Campaign\RewardTaxValuation
  */
 interface RewardsContract
 {
@@ -55,7 +57,9 @@ interface RewardsContract
      * @param string|null $referralCouponCode Body param
      * @param string|null $referralDescription body param: The reward description shown to the referred friend (double-sided rewards)
      * @param bool $referredRewardUpfront body param: For double-sided rewards, deliver the referred friend's reward upfront as a discount
+     * @param RewardTaxValuation|RewardTaxValuationShape|null $referredValue body param: Tax valuation for the referred friend's side of a double-sided reward. Defaults to not tax-reportable (a purchase rebate)
      * @param string $title body param: The reward title (internal label)
+     * @param RewardTaxValuation|RewardTaxValuationShape|null $value body param: Tax valuation for the reward (the referrer's side of a double-sided reward). Used by tax documentation / 1099 reporting
      * @param RequestOpts|null $requestOptions
      *
      * @throws APIException
@@ -81,14 +85,16 @@ interface RewardsContract
         ?string $referralCouponCode = null,
         ?string $referralDescription = null,
         ?bool $referredRewardUpfront = null,
+        RewardTaxValuation|array|null $referredValue = null,
         ?string $title = null,
+        RewardTaxValuation|array|null $value = null,
         RequestOptions|array|null $requestOptions = null,
     ): Reward;
 
     /**
      * @api
      *
-     * @param string $rewardID path param: Program reward (`CampaignReward`) ID
+     * @param string $campaignRewardID path param: Campaign reward (`CampaignReward`) ID
      * @param string $id path param: GrowSurf program ID
      * @param CommissionStructure|CommissionStructureShape|null $commissionStructure body param: The affiliate commission structure (AFFILIATE rewards only)
      * @param int $conversionsRequired body param: The number of referrals required to earn the reward
@@ -108,13 +114,15 @@ interface RewardsContract
      * @param string|null $referralCouponCode Body param
      * @param string|null $referralDescription body param: The reward description shown to the referred friend (double-sided rewards)
      * @param bool $referredRewardUpfront body param: For double-sided rewards, deliver the referred friend's reward upfront as a discount
+     * @param RewardTaxValuation|RewardTaxValuationShape|null $referredValue body param: Tax valuation for the referred friend's side of a double-sided reward. Defaults to not tax-reportable (a purchase rebate)
      * @param string $title body param: The reward title (internal label)
+     * @param RewardTaxValuation|RewardTaxValuationShape|null $value body param: Tax valuation for the reward (the referrer's side of a double-sided reward). Used by tax documentation / 1099 reporting
      * @param RequestOpts|null $requestOptions
      *
      * @throws APIException
      */
     public function update(
-        string $rewardID,
+        string $campaignRewardID,
         string $id,
         CommissionStructure|array|null $commissionStructure = null,
         ?int $conversionsRequired = null,
@@ -134,21 +142,23 @@ interface RewardsContract
         ?string $referralCouponCode = null,
         ?string $referralDescription = null,
         ?bool $referredRewardUpfront = null,
+        RewardTaxValuation|array|null $referredValue = null,
         ?string $title = null,
+        RewardTaxValuation|array|null $value = null,
         RequestOptions|array|null $requestOptions = null,
     ): Reward;
 
     /**
      * @api
      *
-     * @param string $rewardID path param: Program reward (`CampaignReward`) ID
+     * @param string $campaignRewardID path param: Campaign reward (`CampaignReward`) ID
      * @param string $id path param: GrowSurf program ID
      * @param RequestOpts|null $requestOptions
      *
      * @throws APIException
      */
     public function delete(
-        string $rewardID,
+        string $campaignRewardID,
         string $id,
         RequestOptions|array|null $requestOptions = null,
     ): DeleteRewardResponse;

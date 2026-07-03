@@ -104,9 +104,7 @@ final class CampaignRawService implements CampaignRawContract
      *   companyLogoImageURL?: string,
      *   companyName?: string,
      *   currencyISO?: string,
-     *   goal?: string,
      *   name?: string,
-     *   options?: array<string,mixed>,
      *   rewards?: list<RewardCreateParams|RewardCreateParamsShape>,
      * }|CampaignCreateParams $params
      * @param RequestOpts|null $requestOptions
@@ -137,20 +135,13 @@ final class CampaignRawService implements CampaignRawContract
     /**
      * @api
      *
-     * Updates a program's configuration and/or status. Only the fields you send are changed. `type` and `urlId` are immutable. Status changes are validated against the allowed transitions; the program cannot be deleted via this endpoint.
+     * Updates a program's configuration and/or status. Only the fields you send are changed. `type`, `urlId`, and `currencyISO` are immutable. Status changes are validated against the allowed transitions; the program cannot be deleted via this endpoint.
      *
      * @param string $id growSurf program ID
      * @param array{
      *   companyLogoImageURL?: string,
      *   companyName?: string,
-     *   currencyISO?: string,
-     *   design?: array<string,mixed>,
-     *   emails?: array<string,mixed>,
-     *   goal?: string,
-     *   installation?: array<string,mixed>,
      *   name?: string,
-     *   notifications?: array<string,mixed>,
-     *   options?: array<string,mixed>,
      *   status?: CampaignUpdateParams\Status|value-of<CampaignUpdateParams\Status>,
      * }|CampaignUpdateParams $params
      * @param RequestOpts|null $requestOptions

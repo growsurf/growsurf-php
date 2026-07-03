@@ -12,9 +12,10 @@ use Growsurf\Core\Concerns\SdkModel;
 use Growsurf\Core\Contracts\BaseModel;
 
 /**
- * A single program reward (also known as a `CampaignReward`). This is different from a `ParticipantReward`, which is a reward earned by a participant.
+ * A single campaign reward (also known as a `CampaignReward`). This is different from a `ParticipantReward`, which is a reward earned by a participant.
  *
  * @phpstan-import-type CommissionStructureShape from \Growsurf\Campaign\CommissionStructure
+ * @phpstan-import-type RewardTaxValuationShape from \Growsurf\Campaign\RewardTaxValuation
  *
  * @phpstan-type RewardShape = array{
  *   id: string,
@@ -32,8 +33,11 @@ use Growsurf\Core\Contracts\BaseModel;
  *   nextMilestoneSuffix?: string|null,
  *   numberOfWinners?: int|null,
  *   order?: int|null,
+ *   referralCouponCode?: string|null,
  *   referralDescription?: string|null,
  *   referredRewardUpfront?: bool|null,
+ *   referredValue?: null|RewardTaxValuation|RewardTaxValuationShape,
+ *   value?: null|RewardTaxValuation|RewardTaxValuationShape,
  * }
  */
 final class Reward implements BaseModel
@@ -42,7 +46,7 @@ final class Reward implements BaseModel
     use SdkModel;
 
     /**
-     * The unique identifier of the program reward. You can find this ID from *Program Editor > 1. Rewards* and clicking the reward.
+     * The unique identifier of the campaign reward. You can find this ID from *Program Editor > 1. Rewards* and clicking the reward.
      */
     #[Required]
     public string $id;
@@ -138,6 +142,12 @@ final class Reward implements BaseModel
     public ?int $order;
 
     /**
+     * The coupon code delivered to the referred friend (double-sided rewards).
+     */
+    #[Optional(nullable: true)]
+    public ?string $referralCouponCode;
+
+    /**
      * The reward description shown to the referred friend (only applicable for double-sided reward types).
      */
     #[Optional(nullable: true)]
@@ -148,6 +158,18 @@ final class Reward implements BaseModel
      */
     #[Optional]
     public ?bool $referredRewardUpfront;
+
+    /**
+     * Tax valuation for the referred friend's side of a double-sided reward.
+     */
+    #[Optional(nullable: true)]
+    public ?RewardTaxValuation $referredValue;
+
+    /**
+     * Tax valuation for the reward (the referrer's side of a double-sided reward).
+     */
+    #[Optional(nullable: true)]
+    public ?RewardTaxValuation $value;
 
     /**
      * `new Reward()` is missing required properties by the API.
@@ -181,6 +203,8 @@ final class Reward implements BaseModel
      * @param Type|value-of<Type> $type
      * @param CommissionStructure|CommissionStructureShape|null $commissionStructure
      * @param LimitDuration|value-of<LimitDuration>|null $limitDuration
+     * @param RewardTaxValuation|RewardTaxValuationShape|null $referredValue
+     * @param RewardTaxValuation|RewardTaxValuationShape|null $value
      */
     public static function with(
         string $id,
@@ -198,8 +222,11 @@ final class Reward implements BaseModel
         ?string $nextMilestoneSuffix = null,
         ?int $numberOfWinners = null,
         ?int $order = null,
+        ?string $referralCouponCode = null,
         ?string $referralDescription = null,
         ?bool $referredRewardUpfront = null,
+        RewardTaxValuation|array|null $referredValue = null,
+        RewardTaxValuation|array|null $value = null,
     ): self {
         $self = new self;
 
@@ -219,8 +246,11 @@ final class Reward implements BaseModel
         null !== $nextMilestoneSuffix && $self['nextMilestoneSuffix'] = $nextMilestoneSuffix;
         null !== $numberOfWinners && $self['numberOfWinners'] = $numberOfWinners;
         null !== $order && $self['order'] = $order;
+        null !== $referralCouponCode && $self['referralCouponCode'] = $referralCouponCode;
         null !== $referralDescription && $self['referralDescription'] = $referralDescription;
         null !== $referredRewardUpfront && $self['referredRewardUpfront'] = $referredRewardUpfront;
+        null !== $referredValue && $self['referredValue'] = $referredValue;
+        null !== $value && $self['value'] = $value;
 
         return $self;
     }
@@ -395,6 +425,17 @@ final class Reward implements BaseModel
     }
 
     /**
+     * The coupon code delivered to the referred friend (double-sided rewards).
+     */
+    public function withReferralCouponCode(?string $referralCouponCode): self
+    {
+        $self = clone $this;
+        $self['referralCouponCode'] = $referralCouponCode;
+
+        return $self;
+    }
+
+    /**
      * The reward description shown to the referred friend (only applicable for double-sided reward types).
      */
     public function withReferralDescription(?string $referralDescription): self
@@ -412,6 +453,33 @@ final class Reward implements BaseModel
     {
         $self = clone $this;
         $self['referredRewardUpfront'] = $referredRewardUpfront;
+
+        return $self;
+    }
+
+    /**
+     * Tax valuation for the referred friend's side of a double-sided reward.
+     *
+     * @param RewardTaxValuation|RewardTaxValuationShape|null $referredValue
+     */
+    public function withReferredValue(
+        RewardTaxValuation|array|null $referredValue
+    ): self {
+        $self = clone $this;
+        $self['referredValue'] = $referredValue;
+
+        return $self;
+    }
+
+    /**
+     * Tax valuation for the reward (the referrer's side of a double-sided reward).
+     *
+     * @param RewardTaxValuation|RewardTaxValuationShape|null $value
+     */
+    public function withValue(RewardTaxValuation|array|null $value): self
+    {
+        $self = clone $this;
+        $self['value'] = $value;
 
         return $self;
     }

@@ -12,11 +12,12 @@ use Growsurf\Core\Concerns\SdkParams;
 use Growsurf\Core\Contracts\BaseModel;
 
 /**
- * Updates an existing program reward (`CampaignReward`). All fields are optional; `type` is immutable and must not be supplied.
+ * Updates an existing campaign reward (`CampaignReward`). All fields are optional; `type` is immutable and must not be supplied.
  *
  * @see Growsurf\Services\Campaign\RewardsService::update()
  *
  * @phpstan-import-type CommissionStructureShape from \Growsurf\Campaign\CommissionStructure
+ * @phpstan-import-type RewardTaxValuationShape from \Growsurf\Campaign\RewardTaxValuation
  *
  * @phpstan-type RewardUpdateParamsShape = array{
  *   id: string,
@@ -38,7 +39,9 @@ use Growsurf\Core\Contracts\BaseModel;
  *   referralCouponCode?: string|null,
  *   referralDescription?: string|null,
  *   referredRewardUpfront?: bool|null,
+ *   referredValue?: null|RewardTaxValuation|RewardTaxValuationShape,
  *   title?: string|null,
+ *   value?: null|RewardTaxValuation|RewardTaxValuationShape,
  * }
  */
 final class RewardUpdateParams implements BaseModel
@@ -151,10 +154,22 @@ final class RewardUpdateParams implements BaseModel
     public ?bool $referredRewardUpfront;
 
     /**
+     * Tax valuation for the referred friend's side of a double-sided reward. Defaults to not tax-reportable (a purchase rebate).
+     */
+    #[Optional]
+    public ?RewardTaxValuation $referredValue;
+
+    /**
      * The reward title (internal label).
      */
     #[Optional]
     public ?string $title;
+
+    /**
+     * Tax valuation for the reward (the referrer's side of a double-sided reward). Used by tax documentation / 1099 reporting.
+     */
+    #[Optional]
+    public ?RewardTaxValuation $value;
 
     /**
      * `new RewardUpdateParams()` is missing required properties by the API.
@@ -183,6 +198,8 @@ final class RewardUpdateParams implements BaseModel
      * @param CommissionStructure|CommissionStructureShape|null $commissionStructure
      * @param LimitDuration|value-of<LimitDuration>|null $limitDuration
      * @param array<string,mixed> $metadata
+     * @param RewardTaxValuation|RewardTaxValuationShape|null $referredValue
+     * @param RewardTaxValuation|RewardTaxValuationShape|null $value
      */
     public static function with(
         string $id,
@@ -204,7 +221,9 @@ final class RewardUpdateParams implements BaseModel
         ?string $referralCouponCode = null,
         ?string $referralDescription = null,
         ?bool $referredRewardUpfront = null,
+        RewardTaxValuation|array|null $referredValue = null,
         ?string $title = null,
+        RewardTaxValuation|array|null $value = null,
     ): self {
         $self = new self;
 
@@ -228,7 +247,9 @@ final class RewardUpdateParams implements BaseModel
         null !== $referralCouponCode && $self['referralCouponCode'] = $referralCouponCode;
         null !== $referralDescription && $self['referralDescription'] = $referralDescription;
         null !== $referredRewardUpfront && $self['referredRewardUpfront'] = $referredRewardUpfront;
+        null !== $referredValue && $self['referredValue'] = $referredValue;
         null !== $title && $self['title'] = $title;
+        null !== $value && $self['value'] = $value;
 
         return $self;
     }
@@ -435,12 +456,39 @@ final class RewardUpdateParams implements BaseModel
     }
 
     /**
+     * Tax valuation for the referred friend's side of a double-sided reward. Defaults to not tax-reportable (a purchase rebate).
+     *
+     * @param RewardTaxValuation|RewardTaxValuationShape|null $referredValue
+     */
+    public function withReferredValue(
+        RewardTaxValuation|array|null $referredValue
+    ): self {
+        $self = clone $this;
+        $self['referredValue'] = $referredValue;
+
+        return $self;
+    }
+
+    /**
      * The reward title (internal label).
      */
     public function withTitle(string $title): self
     {
         $self = clone $this;
         $self['title'] = $title;
+
+        return $self;
+    }
+
+    /**
+     * Tax valuation for the reward (the referrer's side of a double-sided reward). Used by tax documentation / 1099 reporting.
+     *
+     * @param RewardTaxValuation|RewardTaxValuationShape|null $value
+     */
+    public function withValue(RewardTaxValuation|array|null $value): self
+    {
+        $self = clone $this;
+        $self['value'] = $value;
 
         return $self;
     }

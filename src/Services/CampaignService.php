@@ -24,6 +24,10 @@ use Growsurf\Core\Util;
 use Growsurf\RequestOptions;
 use Growsurf\ServiceContracts\CampaignContract;
 use Growsurf\Services\Campaign\CommissionService;
+use Growsurf\Services\Campaign\DesignService;
+use Growsurf\Services\Campaign\EmailsService;
+use Growsurf\Services\Campaign\InstallationService;
+use Growsurf\Services\Campaign\OptionsService;
 use Growsurf\Services\Campaign\ParticipantService;
 use Growsurf\Services\Campaign\RewardService;
 use Growsurf\Services\Campaign\RewardsService;
@@ -60,6 +64,26 @@ final class CampaignService implements CampaignContract
     public RewardsService $rewards;
 
     /**
+     * @api
+     */
+    public DesignService $design;
+
+    /**
+     * @api
+     */
+    public EmailsService $emails;
+
+    /**
+     * @api
+     */
+    public OptionsService $options;
+
+    /**
+     * @api
+     */
+    public InstallationService $installation;
+
+    /**
      * @internal
      */
     public function __construct(private Client $client)
@@ -69,6 +93,10 @@ final class CampaignService implements CampaignContract
         $this->reward = new RewardService($client);
         $this->commission = new CommissionService($client);
         $this->rewards = new RewardsService($client);
+        $this->design = new DesignService($client);
+        $this->emails = new EmailsService($client);
+        $this->options = new OptionsService($client);
+        $this->installation = new InstallationService($client);
     }
 
     /**
@@ -115,9 +143,8 @@ final class CampaignService implements CampaignContract
      * Creates a new program pre-populated with type-appropriate defaults, plus any optional inline rewards. The new program is created in `DRAFT` status and owned by the API key's account. Requires a verified account email and a paid plan (referral) or a payment source on file (affiliate); subject to your plan's program limit.
      *
      * @param Type|value-of<Type> $type The program type. Immutable after creation.
-     * @param string $currencyISO ISO 4217 currency code. Defaults to USD.
+     * @param string $currencyISO ISO 4217 currency code. Defaults to USD. Chosen when the program is created and immutable afterward — it cannot be changed on update.
      * @param string $name The program name. Defaults to "Untitled Program".
-     * @param array<string,mixed> $options a curated subset of program options to shallow-merge onto the defaults
      * @param list<RewardCreateParams|RewardCreateParamsShape> $rewards optional inline rewards to create with the program
      * @param RequestOpts|null $requestOptions
      *
@@ -128,9 +155,7 @@ final class CampaignService implements CampaignContract
         ?string $companyLogoImageURL = null,
         ?string $companyName = null,
         ?string $currencyISO = null,
-        ?string $goal = null,
         ?string $name = null,
-        ?array $options = null,
         ?array $rewards = null,
         RequestOptions|array|null $requestOptions = null,
     ): Campaign {
@@ -140,9 +165,7 @@ final class CampaignService implements CampaignContract
                 'companyLogoImageURL' => $companyLogoImageURL,
                 'companyName' => $companyName,
                 'currencyISO' => $currencyISO,
-                'goal' => $goal,
                 'name' => $name,
-                'options' => $options,
                 'rewards' => $rewards,
             ],
         );
@@ -156,14 +179,9 @@ final class CampaignService implements CampaignContract
     /**
      * @api
      *
-     * Updates a program's configuration and/or status. Only the fields you send are changed. `type` and `urlId` are immutable. Status changes are validated against the allowed transitions; the program cannot be deleted via this endpoint.
+     * Updates a program's configuration and/or status. Only the fields you send are changed. `type`, `urlId`, and `currencyISO` are immutable. Status changes are validated against the allowed transitions; the program cannot be deleted via this endpoint.
      *
      * @param string $id growSurf program ID
-     * @param array<string,mixed> $design
-     * @param array<string,mixed> $emails
-     * @param array<string,mixed> $installation
-     * @param array<string,mixed> $notifications
-     * @param array<string,mixed> $options
      * @param \Growsurf\Campaign\CampaignUpdateParams\Status|value-of<\Growsurf\Campaign\CampaignUpdateParams\Status> $status The program status. Transitions are validated; DELETED is not allowed.
      * @param RequestOpts|null $requestOptions
      *
@@ -173,14 +191,7 @@ final class CampaignService implements CampaignContract
         string $id,
         ?string $companyLogoImageURL = null,
         ?string $companyName = null,
-        ?string $currencyISO = null,
-        ?array $design = null,
-        ?array $emails = null,
-        ?string $goal = null,
-        ?array $installation = null,
         ?string $name = null,
-        ?array $notifications = null,
-        ?array $options = null,
         \Growsurf\Campaign\CampaignUpdateParams\Status|string|null $status = null,
         RequestOptions|array|null $requestOptions = null,
     ): Campaign {
@@ -188,14 +199,7 @@ final class CampaignService implements CampaignContract
             [
                 'companyLogoImageURL' => $companyLogoImageURL,
                 'companyName' => $companyName,
-                'currencyISO' => $currencyISO,
-                'design' => $design,
-                'emails' => $emails,
-                'goal' => $goal,
-                'installation' => $installation,
                 'name' => $name,
-                'notifications' => $notifications,
-                'options' => $options,
                 'status' => $status,
             ],
         );

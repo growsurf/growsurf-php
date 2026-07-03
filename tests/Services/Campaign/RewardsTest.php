@@ -98,7 +98,7 @@ final class RewardsTest extends TestCase
             $this->markTestSkipped('Mock server tests are disabled');
         }
 
-        $result = $this->client->campaign->rewards->update('rewardId', id: 'id');
+        $result = $this->client->campaign->rewards->update('campaignRewardId', id: 'id');
 
         // @phpstan-ignore-next-line method.alreadyNarrowedType
         $this->assertInstanceOf(Reward::class, $result);
@@ -112,7 +112,7 @@ final class RewardsTest extends TestCase
         }
 
         $result = $this->client->campaign->rewards->update(
-            'rewardId',
+            'campaignRewardId',
             id: 'id',
             commissionStructure: ['amount' => 5000, 'type' => 'AMOUNT'],
             conversionsRequired: 1,
@@ -146,7 +146,7 @@ final class RewardsTest extends TestCase
             $this->markTestSkipped('Mock server tests are disabled');
         }
 
-        $result = $this->client->campaign->rewards->delete('rewardId', id: 'id');
+        $result = $this->client->campaign->rewards->delete('campaignRewardId', id: 'id');
 
         // @phpstan-ignore-next-line method.alreadyNarrowedType
         $this->assertInstanceOf(DeleteRewardResponse::class, $result);
@@ -159,7 +159,7 @@ final class RewardsTest extends TestCase
             $this->markTestSkipped('Mock server tests are disabled');
         }
 
-        $result = $this->client->campaign->rewards->delete('rewardId', id: 'id');
+        $result = $this->client->campaign->rewards->delete('campaignRewardId', id: 'id');
 
         // @phpstan-ignore-next-line method.alreadyNarrowedType
         $this->assertInstanceOf(DeleteRewardResponse::class, $result);

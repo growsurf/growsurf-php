@@ -23,9 +23,7 @@ use Growsurf\Core\Contracts\BaseModel;
  *   companyLogoImageURL?: string|null,
  *   companyName?: string|null,
  *   currencyISO?: string|null,
- *   goal?: string|null,
  *   name?: string|null,
- *   options?: array<string,mixed>|null,
  *   rewards?: list<RewardCreateParams|RewardCreateParamsShape>|null,
  * }
  */
@@ -50,27 +48,17 @@ final class CampaignCreateParams implements BaseModel
     public ?string $companyName;
 
     /**
-     * ISO 4217 currency code. Defaults to USD.
+     * ISO 4217 currency code. Defaults to USD. Chosen when the program is created and
+     * immutable afterward — it cannot be changed on update.
      */
     #[Optional]
     public ?string $currencyISO;
-
-    #[Optional]
-    public ?string $goal;
 
     /**
      * The program name. Defaults to "Untitled Program".
      */
     #[Optional]
     public ?string $name;
-
-    /**
-     * A curated subset of program options to shallow-merge onto the defaults.
-     *
-     * @var array<string,mixed>|null $options
-     */
-    #[Optional(map: 'mixed')]
-    public ?array $options;
 
     /**
      * Optional inline rewards to create with the program.
@@ -105,7 +93,6 @@ final class CampaignCreateParams implements BaseModel
      * You must use named parameters to construct any parameters with a default value.
      *
      * @param Type|value-of<Type> $type
-     * @param array<string,mixed> $options
      * @param list<RewardCreateParams|RewardCreateParamsShape> $rewards
      */
     public static function with(
@@ -113,9 +100,7 @@ final class CampaignCreateParams implements BaseModel
         ?string $companyLogoImageURL = null,
         ?string $companyName = null,
         ?string $currencyISO = null,
-        ?string $goal = null,
         ?string $name = null,
-        ?array $options = null,
         ?array $rewards = null,
     ): self {
         $self = new self;
@@ -125,9 +110,7 @@ final class CampaignCreateParams implements BaseModel
         null !== $companyLogoImageURL && $self['companyLogoImageURL'] = $companyLogoImageURL;
         null !== $companyName && $self['companyName'] = $companyName;
         null !== $currencyISO && $self['currencyISO'] = $currencyISO;
-        null !== $goal && $self['goal'] = $goal;
         null !== $name && $self['name'] = $name;
-        null !== $options && $self['options'] = $options;
         null !== $rewards && $self['rewards'] = $rewards;
 
         return $self;
@@ -163,20 +146,13 @@ final class CampaignCreateParams implements BaseModel
     }
 
     /**
-     * ISO 4217 currency code. Defaults to USD.
+     * ISO 4217 currency code. Defaults to USD. Chosen when the program is created and
+     * immutable afterward — it cannot be changed on update.
      */
     public function withCurrencyISO(string $currencyISO): self
     {
         $self = clone $this;
         $self['currencyISO'] = $currencyISO;
-
-        return $self;
-    }
-
-    public function withGoal(string $goal): self
-    {
-        $self = clone $this;
-        $self['goal'] = $goal;
 
         return $self;
     }
@@ -188,19 +164,6 @@ final class CampaignCreateParams implements BaseModel
     {
         $self = clone $this;
         $self['name'] = $name;
-
-        return $self;
-    }
-
-    /**
-     * A curated subset of program options to shallow-merge onto the defaults.
-     *
-     * @param array<string,mixed> $options
-     */
-    public function withOptions(array $options): self
-    {
-        $self = clone $this;
-        $self['options'] = $options;
 
         return $self;
     }

@@ -86,9 +86,7 @@ final class CampaignTest extends TestCase
             companyLogoImageURL: 'companyLogoImageUrl',
             companyName: 'companyName',
             currencyISO: 'USD',
-            goal: 'goal',
             name: 'name',
-            options: ['foo' => 'bar'],
             rewards: [['type' => 'SINGLE_SIDED']],
         );
 
@@ -120,15 +118,8 @@ final class CampaignTest extends TestCase
             'id',
             companyLogoImageURL: 'companyLogoImageUrl',
             companyName: 'companyName',
-            currencyISO: 'currencyISO',
-            design: ['foo' => 'bar'],
-            emails: ['foo' => 'bar'],
-            goal: 'goal',
-            installation: ['foo' => 'bar'],
             name: 'name',
-            notifications: ['foo' => 'bar'],
-            options: ['foo' => 'bar'],
-            status: 'DRAFT',
+            status: 'IN_PROGRESS',
         );
 
         // @phpstan-ignore-next-line method.alreadyNarrowedType

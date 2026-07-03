@@ -10,6 +10,7 @@ use Growsurf\Campaign\DeleteRewardResponse;
 use Growsurf\Campaign\Reward;
 use Growsurf\Campaign\RewardCreateParams\LimitDuration;
 use Growsurf\Campaign\RewardCreateParams\Type;
+use Growsurf\Campaign\RewardTaxValuation;
 use Growsurf\Client;
 use Growsurf\Core\Exceptions\APIException;
 use Growsurf\Core\Util;
@@ -17,10 +18,11 @@ use Growsurf\RequestOptions;
 use Growsurf\ServiceContracts\Campaign\RewardsContract;
 
 /**
- * Program reward (`CampaignReward`) configuration.
+ * Campaign reward (`CampaignReward`) configuration.
  *
  * @phpstan-import-type RequestOpts from \Growsurf\RequestOptions
  * @phpstan-import-type CommissionStructureShape from \Growsurf\Campaign\CommissionStructure
+ * @phpstan-import-type RewardTaxValuationShape from \Growsurf\Campaign\RewardTaxValuation
  */
 final class RewardsService implements RewardsContract
 {
@@ -60,7 +62,7 @@ final class RewardsService implements RewardsContract
     /**
      * @api
      *
-     * Creates a new program reward (`CampaignReward`) with a server-generated ID. The reward type must be compatible with the program type (affiliate programs support only `AFFILIATE` rewards; referral programs support all other types). Enabling an active reward of a type automatically enables that reward type on the program.
+     * Creates a new campaign reward (`CampaignReward`) with a server-generated ID. The reward type must be compatible with the program type (affiliate programs support only `AFFILIATE` rewards; referral programs support all other types). Enabling an active reward of a type automatically enables that reward type on the program.
      *
      * @param string $id path param: GrowSurf program ID
      * @param Type|value-of<Type> $type body param: The reward type. Immutable after creation.
@@ -82,7 +84,9 @@ final class RewardsService implements RewardsContract
      * @param string|null $referralCouponCode Body param
      * @param string|null $referralDescription body param: The reward description shown to the referred friend (double-sided rewards)
      * @param bool $referredRewardUpfront body param: For double-sided rewards, deliver the referred friend's reward upfront as a discount
+     * @param RewardTaxValuation|RewardTaxValuationShape|null $referredValue body param: Tax valuation for the referred friend's side of a double-sided reward. Defaults to not tax-reportable (a purchase rebate)
      * @param string $title body param: The reward title (internal label)
+     * @param RewardTaxValuation|RewardTaxValuationShape|null $value body param: Tax valuation for the reward (the referrer's side of a double-sided reward). Used by tax documentation / 1099 reporting
      * @param RequestOpts|null $requestOptions
      *
      * @throws APIException
@@ -108,7 +112,9 @@ final class RewardsService implements RewardsContract
         ?string $referralCouponCode = null,
         ?string $referralDescription = null,
         ?bool $referredRewardUpfront = null,
+        RewardTaxValuation|array|null $referredValue = null,
         ?string $title = null,
+        RewardTaxValuation|array|null $value = null,
         RequestOptions|array|null $requestOptions = null,
     ): Reward {
         $params = Util::removeNulls(
@@ -132,7 +138,9 @@ final class RewardsService implements RewardsContract
                 'referralCouponCode' => $referralCouponCode,
                 'referralDescription' => $referralDescription,
                 'referredRewardUpfront' => $referredRewardUpfront,
+                'referredValue' => $referredValue,
                 'title' => $title,
+                'value' => $value,
             ],
         );
 
@@ -145,9 +153,9 @@ final class RewardsService implements RewardsContract
     /**
      * @api
      *
-     * Updates an existing program reward (`CampaignReward`). The reward `type` is immutable and cannot be changed.
+     * Updates an existing campaign reward (`CampaignReward`). The reward `type` is immutable and cannot be changed.
      *
-     * @param string $rewardID path param: Program reward (`CampaignReward`) ID
+     * @param string $campaignRewardID path param: Campaign reward (`CampaignReward`) ID
      * @param string $id path param: GrowSurf program ID
      * @param CommissionStructure|CommissionStructureShape|null $commissionStructure body param: The affiliate commission structure (AFFILIATE rewards only)
      * @param int $conversionsRequired body param: The number of referrals required to earn the reward
@@ -167,13 +175,15 @@ final class RewardsService implements RewardsContract
      * @param string|null $referralCouponCode Body param
      * @param string|null $referralDescription body param: The reward description shown to the referred friend (double-sided rewards)
      * @param bool $referredRewardUpfront body param: For double-sided rewards, deliver the referred friend's reward upfront as a discount
+     * @param RewardTaxValuation|RewardTaxValuationShape|null $referredValue body param: Tax valuation for the referred friend's side of a double-sided reward. Defaults to not tax-reportable (a purchase rebate)
      * @param string $title body param: The reward title (internal label)
+     * @param RewardTaxValuation|RewardTaxValuationShape|null $value body param: Tax valuation for the reward (the referrer's side of a double-sided reward). Used by tax documentation / 1099 reporting
      * @param RequestOpts|null $requestOptions
      *
      * @throws APIException
      */
     public function update(
-        string $rewardID,
+        string $campaignRewardID,
         string $id,
         CommissionStructure|array|null $commissionStructure = null,
         ?int $conversionsRequired = null,
@@ -193,7 +203,9 @@ final class RewardsService implements RewardsContract
         ?string $referralCouponCode = null,
         ?string $referralDescription = null,
         ?bool $referredRewardUpfront = null,
+        RewardTaxValuation|array|null $referredValue = null,
         ?string $title = null,
+        RewardTaxValuation|array|null $value = null,
         RequestOptions|array|null $requestOptions = null,
     ): Reward {
         $params = Util::removeNulls(
@@ -217,12 +229,14 @@ final class RewardsService implements RewardsContract
                 'referralCouponCode' => $referralCouponCode,
                 'referralDescription' => $referralDescription,
                 'referredRewardUpfront' => $referredRewardUpfront,
+                'referredValue' => $referredValue,
                 'title' => $title,
+                'value' => $value,
             ],
         );
 
         // @phpstan-ignore-next-line argument.type
-        $response = $this->raw->update($rewardID, params: $params, requestOptions: $requestOptions);
+        $response = $this->raw->update($campaignRewardID, params: $params, requestOptions: $requestOptions);
 
         return $response->parse();
     }
@@ -230,23 +244,23 @@ final class RewardsService implements RewardsContract
     /**
      * @api
      *
-     * Deletes a program reward (`CampaignReward`). The reward is deactivated, removed from the program's reward set, and any connected upfront-discount coupons are cleaned up.
+     * Deletes a campaign reward (`CampaignReward`). The reward is deactivated, removed from the program's reward set, and any connected upfront-discount coupons are cleaned up.
      *
-     * @param string $rewardID path param: Program reward (`CampaignReward`) ID
+     * @param string $campaignRewardID path param: Campaign reward (`CampaignReward`) ID
      * @param string $id path param: GrowSurf program ID
      * @param RequestOpts|null $requestOptions
      *
      * @throws APIException
      */
     public function delete(
-        string $rewardID,
+        string $campaignRewardID,
         string $id,
         RequestOptions|array|null $requestOptions = null,
     ): DeleteRewardResponse {
         $params = Util::removeNulls(['id' => $id]);
 
         // @phpstan-ignore-next-line argument.type
-        $response = $this->raw->delete($rewardID, params: $params, requestOptions: $requestOptions);
+        $response = $this->raw->delete($campaignRewardID, params: $params, requestOptions: $requestOptions);
 
         return $response->parse();
     }

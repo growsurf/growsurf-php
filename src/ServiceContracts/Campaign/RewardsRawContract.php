@@ -54,7 +54,7 @@ interface RewardsRawContract
     /**
      * @api
      *
-     * @param string $rewardID path param: Program reward (`CampaignReward`) ID
+     * @param string $campaignRewardID path param: Campaign reward (`CampaignReward`) ID
      * @param array<string,mixed>|RewardUpdateParams $params
      * @param RequestOpts|null $requestOptions
      *
@@ -63,7 +63,7 @@ interface RewardsRawContract
      * @throws APIException
      */
     public function update(
-        string $rewardID,
+        string $campaignRewardID,
         array|RewardUpdateParams $params,
         RequestOptions|array|null $requestOptions = null,
     ): BaseResponse;
@@ -71,7 +71,7 @@ interface RewardsRawContract
     /**
      * @api
      *
-     * @param string $rewardID path param: Program reward (`CampaignReward`) ID
+     * @param string $campaignRewardID path param: Campaign reward (`CampaignReward`) ID
      * @param array<string,mixed>|RewardDeleteParams $params
      * @param RequestOpts|null $requestOptions
      *
@@ -80,7 +80,7 @@ interface RewardsRawContract
      * @throws APIException
      */
     public function delete(
-        string $rewardID,
+        string $campaignRewardID,
         array|RewardDeleteParams $params,
         RequestOptions|array|null $requestOptions = null,
     ): BaseResponse;
