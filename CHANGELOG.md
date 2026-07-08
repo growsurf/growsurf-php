@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.0](https://github.com/growsurf/growsurf-php/compare/v1.0.0...v1.1.0) (2026-07-08)
+
+
+### Features
+
+* add account webhook and participant APIs ([f3f8420](https://github.com/growsurf/growsurf-php/commit/f3f84209581685ace91106e56e5439bf351695a3))
+
 ## [1.0.0](https://github.com/growsurf/growsurf-php/compare/v0.9.0...v1.0.0) (2026-07-03)
 
 
