@@ -14,6 +14,8 @@ use Growsurf\Core\Conversion\MapOf;
 /**
  * Records a sale made by a referred customer and generates affiliate commissions for their referrer when applicable.
  *
+ * At least one transaction identifier is required: one of `externalId`, `transactionId`, `orderId`, `paymentId`, `invoiceId`, `paymentIntentId`, or `chargeId`. `customerId` and `subscriptionId` do not count, since they identify the customer or subscription rather than the specific transaction. Without an identifier, resending the same sale creates a duplicate commission and double-pays the referrer; the server rejects such requests with HTTP 400.
+ *
  * @see Growsurf\Services\Campaign\ParticipantService::recordTransaction()
  *
  * @phpstan-type ParticipantRecordTransactionParamsShape = array{

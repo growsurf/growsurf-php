@@ -6,9 +6,16 @@ namespace Growsurf\Services\Campaign;
 
 use Growsurf\Campaign\Participant\Participant;
 use Growsurf\Campaign\Participant\ParticipantAddParams;
+use Growsurf\Campaign\Participant\ParticipantBulkDeleteParams;
+use Growsurf\Campaign\Participant\ParticipantBulkDeleteResponse;
 use Growsurf\Campaign\Participant\ParticipantCancelDelayedReferralParams;
 use Growsurf\Campaign\Participant\ParticipantDeleteParams;
 use Growsurf\Campaign\Participant\ParticipantDeleteResponse;
+use Growsurf\Campaign\Participant\ParticipantEmailParams;
+use Growsurf\Campaign\Participant\ParticipantEmailResponse;
+use Growsurf\Campaign\Participant\ParticipantGetAnalyticsResponse;
+use Growsurf\Campaign\Participant\ParticipantListActivityLogsParams;
+use Growsurf\Campaign\Participant\ParticipantListActivityLogsResponse;
 use Growsurf\Campaign\Participant\ParticipantListCommissionsParams;
 use Growsurf\Campaign\Participant\ParticipantListCommissionsParams\Status;
 use Growsurf\Campaign\Participant\ParticipantListPayoutsParams;
@@ -22,6 +29,8 @@ use Growsurf\Campaign\Participant\ParticipantRecordTransactionResponse\UnionMemb
 use Growsurf\Campaign\Participant\ParticipantRecordTransactionResponse\UnionMember1;
 use Growsurf\Campaign\Participant\ParticipantRefundTransactionParams;
 use Growsurf\Campaign\Participant\ParticipantRefundTransactionResponse;
+use Growsurf\Campaign\Participant\ParticipantRetrieveAnalyticsParams;
+use Growsurf\Campaign\Participant\ParticipantRetrieveAnalyticsParams\Interval;
 use Growsurf\Campaign\Participant\ParticipantRetrieveParams;
 use Growsurf\Campaign\Participant\ParticipantSendInvitesParams;
 use Growsurf\Campaign\Participant\ParticipantSendInvitesResponse;
@@ -96,6 +105,8 @@ final class ParticipantRawService implements ParticipantRawContract
      *   firstName?: string,
      *   lastName?: string,
      *   metadata?: array<string,mixed>,
+     *   notes?: string,
+     *   paypalEmail?: string,
      *   referralStatus?: ReferralStatus|value-of<ReferralStatus>,
      *   referredBy?: string,
      *   unsubscribed?: bool,
@@ -160,6 +171,39 @@ final class ParticipantRawService implements ParticipantRawContract
             path: ['campaign/%1$s/participant/%2$s', $id, $participantIDOrEmail],
             options: $options,
             convert: ParticipantDeleteResponse::class,
+        );
+    }
+
+    /**
+     * @api
+     *
+     * Deletes a list of participants from a program in one request. Each entry in `participants` is a GrowSurf participant ID or an email address (mixed lists are allowed). Up to `200` entries per request — chunk larger lists across multiple calls. The response reports a per-row `status` for every submitted entry, so a `200` can include rows that were `NOT_FOUND` or failed. Deletion is permanent and removes the participants' referrals, rewards, commissions, and payout records.
+     *
+     * @param string $id growSurf program ID
+     * @param array{participants: list<string>}|ParticipantBulkDeleteParams $params
+     * @param RequestOpts|null $requestOptions
+     *
+     * @return BaseResponse<ParticipantBulkDeleteResponse>
+     *
+     * @throws APIException
+     */
+    public function bulkDelete(
+        string $id,
+        array|ParticipantBulkDeleteParams $params,
+        RequestOptions|array|null $requestOptions = null,
+    ): BaseResponse {
+        [$parsed, $options] = ParticipantBulkDeleteParams::parseRequest(
+            $params,
+            $requestOptions,
+        );
+
+        // @phpstan-ignore-next-line return.type
+        return $this->client->request(
+            method: 'post',
+            path: ['campaign/%1$s/participants/bulk-delete', $id],
+            body: (object) $parsed,
+            options: $options,
+            convert: ParticipantBulkDeleteResponse::class,
         );
     }
 
@@ -379,6 +423,8 @@ final class ParticipantRawService implements ParticipantRawContract
      *
      * Records a sale made by a referred customer and generates affiliate commissions for their referrer when applicable.
      *
+     * At least one transaction identifier is required: one of `externalId`, `transactionId`, `orderId`, `paymentId`, `invoiceId`, `paymentIntentId`, or `chargeId`. `customerId` and `subscriptionId` do not count, since they identify the customer or subscription rather than the specific transaction. Without an identifier, resending the same sale creates a duplicate commission and double-pays the referrer; the server rejects such requests with HTTP 400.
+     *
      * @param string $participantIDOrEmail path param: GrowSurf participant ID or URL-encoded participant email address
      * @param array{
      *   id: string,
@@ -495,7 +541,7 @@ final class ParticipantRawService implements ParticipantRawContract
     /**
      * @api
      *
-     * Sends email invites on behalf of a participant to a list of email addresses.
+     * Sends email invites on behalf of a participant to a list of email addresses. Sending invites via the API requires a verified custom email domain on the program; the request fails until one is verified.
      *
      * @param string $participantIDOrEmail path param: GrowSurf participant ID or URL-encoded participant email address
      * @param array{
@@ -602,6 +648,132 @@ final class ParticipantRawService implements ParticipantRawContract
             path: ['campaign/%1$s/participant/%2$s/ref', $id, $participantIDOrEmail],
             options: $options,
             convert: ParticipantTriggerReferralResponse::class,
+        );
+    }
+
+    /**
+     * @api
+     *
+     * Sends an email to a participant. Provide EITHER `emailType` to trigger one of the program's configured email templates, OR `subject` + `body` for a free-form email. Free-form emails are sent with the same compliance handling (company name, postal address, and an unsubscribe link are added automatically, and unsubscribed participants are suppressed). Sending requires the account to be verified by the GrowSurf team. Requires a verified custom email domain on the program (set up in Campaign Editor > 3. Emails > Email Settings). Returns `400` until one is verified. The email is accepted for delivery.
+     *
+     * @param string $participantIDOrEmail path param: GrowSurf participant ID or URL-encoded participant email address
+     * @param array{
+     *   id: string,
+     *   body?: string,
+     *   emailType?: string,
+     *   preheader?: string,
+     *   subject?: string,
+     * }|ParticipantEmailParams $params
+     * @param RequestOpts|null $requestOptions
+     *
+     * @return BaseResponse<ParticipantEmailResponse>
+     *
+     * @throws APIException
+     */
+    public function email(
+        string $participantIDOrEmail,
+        array|ParticipantEmailParams $params,
+        RequestOptions|array|null $requestOptions = null,
+    ): BaseResponse {
+        [$parsed, $options] = ParticipantEmailParams::parseRequest(
+            $params,
+            $requestOptions,
+        );
+        $id = $parsed['id'];
+        unset($parsed['id']);
+
+        // @phpstan-ignore-next-line return.type
+        return $this->client->request(
+            method: 'post',
+            path: ['campaign/%1$s/participant/%2$s/email', $id, $participantIDOrEmail],
+            body: (object) array_diff_key($parsed, array_flip(['id'])),
+            options: $options,
+            convert: ParticipantEmailResponse::class,
+        );
+    }
+
+    /**
+     * @api
+     *
+     * Retrieves analytics for a single participant — all-time engagement counters, leaderboard ranks, and per-channel share counts (plus affiliate money metrics for affiliate programs). Useful for segmenting and re-engaging participants.
+     *
+     * @param string $participantIDOrEmail growSurf participant ID or URL-encoded participant email address
+     * @param array{
+     *   id: string,
+     *   days?: int,
+     *   endDate?: int,
+     *   include?: string,
+     *   interval?: Interval|value-of<Interval>,
+     *   startDate?: int,
+     * }|ParticipantRetrieveAnalyticsParams $params
+     * @param RequestOpts|null $requestOptions
+     *
+     * @return BaseResponse<ParticipantGetAnalyticsResponse>
+     *
+     * @throws APIException
+     */
+    public function retrieveAnalytics(
+        string $participantIDOrEmail,
+        array|ParticipantRetrieveAnalyticsParams $params,
+        RequestOptions|array|null $requestOptions = null,
+    ): BaseResponse {
+        [$parsed, $options] = ParticipantRetrieveAnalyticsParams::parseRequest(
+            $params,
+            $requestOptions,
+        );
+        $id = $parsed['id'];
+        unset($parsed['id']);
+
+        // @phpstan-ignore-next-line return.type
+        return $this->client->request(
+            method: 'get',
+            path: [
+                'campaign/%1$s/participant/%2$s/analytics', $id, $participantIDOrEmail,
+            ],
+            query: $parsed,
+            options: $options,
+            convert: ParticipantGetAnalyticsResponse::class,
+        );
+    }
+
+    /**
+     * @api
+     *
+     * Returns a participant's activity logs, most recent first (offset/limit paginated).
+     *
+     * @param string $participantIDOrEmail path param: GrowSurf participant ID or URL-encoded participant email address
+     * @param array{
+     *   id: string, limit?: int, offset?: int
+     * }|ParticipantListActivityLogsParams $params
+     * @param RequestOpts|null $requestOptions
+     *
+     * @return BaseResponse<ParticipantListActivityLogsResponse>
+     *
+     * @throws APIException
+     */
+    public function listActivityLogs(
+        string $participantIDOrEmail,
+        array|ParticipantListActivityLogsParams $params,
+        RequestOptions|array|null $requestOptions = null,
+    ): BaseResponse {
+        [$parsed, $options] = ParticipantListActivityLogsParams::parseRequest(
+            $params,
+            $requestOptions,
+        );
+        $id = $parsed['id'];
+        unset($parsed['id']);
+
+        // @phpstan-ignore-next-line return.type
+        return $this->client->request(
+            method: 'get',
+            path: [
+                'campaign/%1$s/participant/%2$s/activity-logs',
+                $id,
+                $participantIDOrEmail,
+            ],
+            query: $parsed,
+            options: $options,
+            convert: ParticipantListActivityLogsResponse::class,
         );
     }
 }

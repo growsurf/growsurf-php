@@ -38,7 +38,7 @@ final class CampaignUpdateParams implements BaseModel
     public ?string $name;
 
     /**
-     * The program status. Transitions are validated; DELETED is not allowed.
+     * The requested program status. `IN_PROGRESS` publishes or resumes the program; `COMPLETE` ends it. Any other value returns a `400`.
      *
      * @var value-of<Status>|null $status
      */
@@ -98,7 +98,7 @@ final class CampaignUpdateParams implements BaseModel
     }
 
     /**
-     * The program status. Transitions are validated; DELETED is not allowed.
+     * The requested program status. `IN_PROGRESS` publishes or resumes the program; `COMPLETE` ends it. Any other value returns a `400`.
      *
      * @param Status|value-of<Status> $status
      */

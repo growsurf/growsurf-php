@@ -23,7 +23,7 @@ final class CampaignRewardListResponse implements BaseModel
     use SdkModel;
 
     /**
-     * The program's active, visible, and enabled rewards.
+     * The program's configured rewards.
      *
      * @var list<Reward> $rewards
      */
@@ -66,7 +66,7 @@ final class CampaignRewardListResponse implements BaseModel
     }
 
     /**
-     * The program's active, visible, and enabled rewards.
+     * The program's configured rewards.
      *
      * @param list<Reward|RewardShape> $rewards
      */

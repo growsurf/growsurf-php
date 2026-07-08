@@ -7,6 +7,7 @@ namespace Growsurf;
 use Growsurf\Core\BaseClient;
 use Growsurf\Core\Implementation\StreamingHttpClient;
 use Growsurf\Core\Util;
+use Growsurf\Services\AccountService;
 use Growsurf\Services\CampaignService;
 use Http\Discovery\Psr17FactoryDiscovery;
 use Http\Discovery\Psr18ClientDiscovery;
@@ -23,6 +24,11 @@ class Client extends BaseClient
      * @api
      */
     public CampaignService $campaign;
+
+    /**
+     * @api
+     */
+    public AccountService $account;
 
     /**
      * @param RequestOpts|null $requestOptions
@@ -83,6 +89,7 @@ class Client extends BaseClient
         );
 
         $this->campaign = new CampaignService($this);
+        $this->account = new AccountService($this);
     }
 
     /** @return array<string,string> */

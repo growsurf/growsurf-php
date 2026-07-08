@@ -8,5 +8,5 @@ enum Type: string
 {
     case PERCENT = 'PERCENT';
 
-    case AMOUNT = 'AMOUNT';
+    case FIXED = 'FIXED';
 }

@@ -86,7 +86,7 @@ final class Reward implements BaseModel
     public ?int $conversionsRequired;
 
     /**
-     * A coupon code.
+     * A legacy static coupon code shown to the referrer in the reward-won email and webhook. Display text only (GrowSurf does not create or validate it); superseded by a connected billing integration's issued coupon when one exists.
      */
     #[Optional(nullable: true)]
     public ?string $couponCode;
@@ -130,7 +130,7 @@ final class Reward implements BaseModel
     public ?string $nextMilestoneSuffix;
 
     /**
-     * The maximum number of participants that can earn this reward when `type` is `LEADERBOARD`. If `limitDuration` is `PER_MONTH`, the maximum number of participants who can earn the reward in a given month.
+     * The maximum number of winners. Only applies to `LEADERBOARD` rewards. When `limitDuration` is `PER_MONTH`, this many top referrers win each month; otherwise this many win in total.
      */
     #[Optional(nullable: true)]
     public ?int $numberOfWinners;
@@ -142,7 +142,7 @@ final class Reward implements BaseModel
     public ?int $order;
 
     /**
-     * The coupon code delivered to the referred friend (double-sided rewards).
+     * A legacy static coupon code shown to the referred friend in the reward-won email and webhook (double-sided rewards). Same caveats as `couponCode`.
      */
     #[Optional(nullable: true)]
     public ?string $referralCouponCode;
@@ -323,7 +323,7 @@ final class Reward implements BaseModel
     }
 
     /**
-     * A coupon code.
+     * A legacy static coupon code shown to the referrer in the reward-won email and webhook. Display text only (GrowSurf does not create or validate it); superseded by a connected billing integration's issued coupon when one exists.
      */
     public function withCouponCode(?string $couponCode): self
     {
@@ -403,7 +403,7 @@ final class Reward implements BaseModel
     }
 
     /**
-     * The maximum number of participants that can earn this reward when `type` is `LEADERBOARD`. If `limitDuration` is `PER_MONTH`, the maximum number of participants who can earn the reward in a given month.
+     * The maximum number of winners. Only applies to `LEADERBOARD` rewards. When `limitDuration` is `PER_MONTH`, this many top referrers win each month; otherwise this many win in total.
      */
     public function withNumberOfWinners(?int $numberOfWinners): self
     {
@@ -425,7 +425,7 @@ final class Reward implements BaseModel
     }
 
     /**
-     * The coupon code delivered to the referred friend (double-sided rewards).
+     * A legacy static coupon code shown to the referred friend in the reward-won email and webhook (double-sided rewards). Same caveats as `couponCode`.
      */
     public function withReferralCouponCode(?string $referralCouponCode): self
     {

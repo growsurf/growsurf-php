@@ -38,7 +38,7 @@ final class RewardsRawService implements RewardsRawContract
     /**
      * @api
      *
-     * Retrieves the list of a program's configured rewards (`CampaignReward`s). Returns the active, visible, and enabled rewards — the same set embedded in the `rewards` array of the campaign response.
+     * Retrieves the list of a program's configured rewards (`CampaignReward`s), the same set embedded in the `rewards` array of the campaign response.
      *
      * @param string $id growSurf program ID
      * @param RequestOpts|null $requestOptions
@@ -73,7 +73,6 @@ final class RewardsRawService implements RewardsRawContract
      *   couponCode?: string,
      *   description?: string,
      *   imageURL?: string,
-     *   isActive?: bool,
      *   isUnlimited?: bool,
      *   isVisible?: bool,
      *   limit?: int,
@@ -129,7 +128,6 @@ final class RewardsRawService implements RewardsRawContract
      *   couponCode?: string,
      *   description?: string,
      *   imageURL?: string,
-     *   isActive?: bool,
      *   isUnlimited?: bool,
      *   isVisible?: bool,
      *   limit?: int,

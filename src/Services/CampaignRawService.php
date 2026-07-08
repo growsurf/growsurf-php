@@ -21,11 +21,13 @@ use Growsurf\Campaign\CampaignListReferralsParams\SortBy;
 use Growsurf\Campaign\CampaignListResponse;
 use Growsurf\Campaign\CampaignNewMobileParticipantTokenResponse;
 use Growsurf\Campaign\CampaignRetrieveAnalyticsParams;
+use Growsurf\Campaign\CampaignRetrieveAnalyticsParams\Interval;
 use Growsurf\Campaign\CampaignUpdateParams;
 use Growsurf\Campaign\ParticipantCommissionList;
 use Growsurf\Campaign\ParticipantList;
 use Growsurf\Campaign\ParticipantPayoutList;
 use Growsurf\Campaign\ReferralList;
+use Growsurf\Campaign\ReferralFlowScreenshotsResponse;
 use Growsurf\Campaign\RewardCreateParams;
 use Growsurf\Client;
 use Growsurf\Core\Contracts\BaseResponse;
@@ -97,7 +99,7 @@ final class CampaignRawService implements CampaignRawContract
     /**
      * @api
      *
-     * Creates a new program pre-populated with type-appropriate defaults, plus any optional inline rewards. The new program is created in `DRAFT` status and owned by the API key's account. Requires a verified account email and a paid plan (referral) or a payment source on file (affiliate); subject to your plan's program limit.
+     * Creates a new program pre-populated with type-appropriate defaults, plus any optional inline rewards. The new program is created in `DRAFT` status and owned by the API key's account. Requires a verified account email.
      *
      * @param array{
      *   type: Type|value-of<Type>,
@@ -135,7 +137,7 @@ final class CampaignRawService implements CampaignRawContract
     /**
      * @api
      *
-     * Updates a program's configuration and/or status. Only the fields you send are changed. `type`, `urlId`, and `currencyISO` are immutable. Status changes are validated against the allowed transitions; the program cannot be deleted via this endpoint.
+     * Updates a program's identity and lifecycle. Only the fields you send are changed. `type`, `urlId`, and `currencyISO` are immutable. Editor-tab configuration (design, emails, options, installation) is edited via the dedicated config sub-resources, not here. The program cannot be deleted via this endpoint.
      *
      * @param string $id growSurf program ID
      * @param array{
@@ -192,6 +194,31 @@ final class CampaignRawService implements CampaignRawContract
             path: ['campaign/%1$s/clone', $id],
             options: $requestOptions,
             convert: Campaign::class,
+        );
+    }
+
+    /**
+     * @api
+     *
+     * Captures two preview screenshots for the program: the authenticated referrer view and the referred-friend view.
+     *
+     * @param string $id growSurf program ID
+     * @param RequestOpts|null $requestOptions
+     *
+     * @return BaseResponse<ReferralFlowScreenshotsResponse>
+     *
+     * @throws APIException
+     */
+    public function getReferralFlowScreenshots(
+        string $id,
+        RequestOptions|array|null $requestOptions = null
+    ): BaseResponse {
+        // @phpstan-ignore-next-line return.type
+        return $this->client->request(
+            method: 'get',
+            path: ['campaign/%1$s/referral-flow-screenshots', $id],
+            options: $requestOptions,
+            convert: ReferralFlowScreenshotsResponse::class,
         );
     }
 
@@ -433,7 +460,11 @@ final class CampaignRawService implements CampaignRawContract
      *
      * @param string $id growSurf program ID
      * @param array{
-     *   days?: int, endDate?: int, startDate?: int
+     *   days?: int,
+     *   endDate?: int,
+     *   include?: string,
+     *   interval?: Interval|value-of<Interval>,
+     *   startDate?: int,
      * }|CampaignRetrieveAnalyticsParams $params
      * @param RequestOpts|null $requestOptions
      *

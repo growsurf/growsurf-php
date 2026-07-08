@@ -5,7 +5,11 @@ declare(strict_types=1);
 namespace Growsurf\ServiceContracts\Campaign;
 
 use Growsurf\Campaign\Participant\Participant;
+use Growsurf\Campaign\Participant\ParticipantBulkDeleteResponse;
 use Growsurf\Campaign\Participant\ParticipantDeleteResponse;
+use Growsurf\Campaign\Participant\ParticipantEmailResponse;
+use Growsurf\Campaign\Participant\ParticipantGetAnalyticsResponse;
+use Growsurf\Campaign\Participant\ParticipantListActivityLogsResponse;
 use Growsurf\Campaign\Participant\ParticipantListCommissionsParams\Status;
 use Growsurf\Campaign\Participant\ParticipantListReferralsParams\SortBy;
 use Growsurf\Campaign\Participant\ParticipantListRewardsResponse;
@@ -13,6 +17,7 @@ use Growsurf\Campaign\Participant\ParticipantRecordTransactionResponse\UnionMemb
 use Growsurf\Campaign\Participant\ParticipantRecordTransactionResponse\UnionMember1;
 use Growsurf\Campaign\Participant\ParticipantRefundTransactionParams\AmendmentType;
 use Growsurf\Campaign\Participant\ParticipantRefundTransactionResponse;
+use Growsurf\Campaign\Participant\ParticipantRetrieveAnalyticsParams\Interval;
 use Growsurf\Campaign\Participant\ParticipantSendInvitesResponse;
 use Growsurf\Campaign\Participant\ParticipantTriggerReferralResponse;
 use Growsurf\Campaign\Participant\ParticipantUpdateParams\ReferralStatus;
@@ -51,6 +56,8 @@ interface ParticipantContract
      * @param string $firstName Body param
      * @param string $lastName Body param
      * @param array<string,mixed> $metadata body param: Shallow custom metadata object
+     * @param string $notes body param: Freeform internal notes about the participant (internal only, never exposed to participants)
+     * @param string $paypalEmail body param: The participant's PayPal email address, used for affiliate payouts
      * @param ReferralStatus|value-of<ReferralStatus> $referralStatus Body param
      * @param string $referredBy Body param
      * @param bool $unsubscribed Body param
@@ -66,6 +73,8 @@ interface ParticipantContract
         ?string $firstName = null,
         ?string $lastName = null,
         ?array $metadata = null,
+        ?string $notes = null,
+        ?string $paypalEmail = null,
         ReferralStatus|string|null $referralStatus = null,
         ?string $referredBy = null,
         ?bool $unsubscribed = null,
@@ -92,9 +101,24 @@ interface ParticipantContract
      * @api
      *
      * @param string $id growSurf program ID
+     * @param list<string> $participants GrowSurf participant IDs and/or email addresses to delete. Mixed entries are allowed.
+     * @param RequestOpts|null $requestOptions
+     *
+     * @throws APIException
+     */
+    public function bulkDelete(
+        string $id,
+        array $participants,
+        RequestOptions|array|null $requestOptions = null,
+    ): ParticipantBulkDeleteResponse;
+
+    /**
+     * @api
+     *
+     * @param string $id growSurf program ID
      * @param array<string,mixed> $metadata shallow custom metadata object
      * @param string $mobileInstanceID Optional app-install scoped identifier for native mobile anti-fraud. Recommended for mobile participant creation and mobile participant token flows. The official mobile SDKs generate this as a lowercase UUID.
-     * @param \Growsurf\Campaign\Participant\ParticipantAddParams\ReferralStatus|value-of<\Growsurf\Campaign\Participant\ParticipantAddParams\ReferralStatus> $referralStatus
+     * @param \Growsurf\Campaign\Participant\ParticipantAddParams\ReferralStatus|value-of<\Growsurf\Campaign\Participant\ParticipantAddParams\ReferralStatus> $referralStatus The referral credit status. Only meaningful when `referredBy` resolves to a referrer. When omitted, it is derived from the program's referral trigger (`CREDIT_AWARDED`, `CREDIT_PENDING`, or `CREDIT_EXPIRED`); left unset when no referrer resolves.
      * @param string $referredBy referrer participant ID or email address
      * @param RequestOpts|null $requestOptions
      *
@@ -366,4 +390,71 @@ interface ParticipantContract
         string $id,
         RequestOptions|array|null $requestOptions = null,
     ): ParticipantTriggerReferralResponse;
+
+    /**
+     * @api
+     *
+     * @param string $participantIDOrEmail path param: GrowSurf participant ID or URL-encoded participant email address
+     * @param string $id path param: GrowSurf program ID
+     * @param string $body body param: HTML body for a free-form email. You can personalize it with dynamic text, inserting `{{...}}` tokens like `{{firstName}}` or `{{shareUrl}}`. See [Guide to using dynamic text in GrowSurf emails](https://support.growsurf.com/article/213-guide-to-using-dynamic-text-in-growsurf-emails).
+     * @param string $emailType body param: The program email template to trigger (template mode). Send the camelCase email-type key; the available types depend on the program type, and `isEnabled` only controls automatic sends. System/transactional types (login link, PayPal confirmation, tax) and the invite email cannot be sent. Referral programs: welcomeNonReferred, referralLinkViewedFirstTime, referralLinkUsed, referredSignup, welcomeReferred, goalAchieved, campaignEndedWinners, campaignEndedNonWinners, progressUpdateMonthly. Affiliate programs: welcomeNonReferred, referralLinkViewedFirstTime, referredSignup, commissionGenerated, commissionAdjusted, payoutPending, payoutSentSuccess, progressUpdateMonthly.
+     * @param string $preheader body param: Optional preheader text for a free-form email
+     * @param string $subject body param: Subject line for a free-form email. Supports dynamic text (`{{...}}` tokens), the same as the body.
+     * @param RequestOpts|null $requestOptions
+     *
+     * @throws APIException
+     */
+    public function email(
+        string $participantIDOrEmail,
+        string $id,
+        ?string $body = null,
+        ?string $emailType = null,
+        ?string $preheader = null,
+        ?string $subject = null,
+        RequestOptions|array|null $requestOptions = null,
+    ): ParticipantEmailResponse;
+
+    /**
+     * @api
+     *
+     * @param string $participantIDOrEmail growSurf participant ID or URL-encoded participant email address
+     * @param string $id growSurf program ID
+     * @param int $days Last number of days to retrieve analytics for. Defaults to 365. Maximum 1825.
+     * @param int $endDate End date of the analytics timeframe as a Unix timestamp in milliseconds. Required if `days` is not set.
+     * @param string $include Set to `series` to also return this participant's own activity per period.
+     * @param Interval|value-of<Interval> $interval Bucket size for the `series` (only used with `include=series`). Defaults to `day`.
+     * @param int $startDate Start date of the analytics timeframe as a Unix timestamp in milliseconds. Required if `days` is not set.
+     * @param RequestOpts|null $requestOptions
+     *
+     * @throws APIException
+     */
+    public function retrieveAnalytics(
+        string $participantIDOrEmail,
+        string $id,
+        int $days = 365,
+        ?int $endDate = null,
+        ?string $include = null,
+        Interval|string|null $interval = null,
+        ?int $startDate = null,
+        RequestOptions|array|null $requestOptions = null,
+    ): ParticipantGetAnalyticsResponse;
+
+    /**
+     * @api
+     *
+     * @param string $participantIDOrEmail path param: GrowSurf participant ID or URL-encoded participant email address
+     * @param string $id path param: GrowSurf program ID
+     * @param int $limit query param: Number of logs to return (1–100, default 20)
+     * @param int $offset query param: Number of logs to skip
+     * @param RequestOpts|null $requestOptions
+     *
+     * @throws APIException
+     */
+    public function listActivityLogs(
+        string $participantIDOrEmail,
+        string $id,
+        int $limit = 20,
+        ?int $offset = null,
+        RequestOptions|array|null $requestOptions = null,
+    ): ParticipantListActivityLogsResponse;
 }

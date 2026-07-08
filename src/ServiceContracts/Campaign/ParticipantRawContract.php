@@ -6,9 +6,16 @@ namespace Growsurf\ServiceContracts\Campaign;
 
 use Growsurf\Campaign\Participant\Participant;
 use Growsurf\Campaign\Participant\ParticipantAddParams;
+use Growsurf\Campaign\Participant\ParticipantBulkDeleteParams;
+use Growsurf\Campaign\Participant\ParticipantBulkDeleteResponse;
 use Growsurf\Campaign\Participant\ParticipantCancelDelayedReferralParams;
 use Growsurf\Campaign\Participant\ParticipantDeleteParams;
 use Growsurf\Campaign\Participant\ParticipantDeleteResponse;
+use Growsurf\Campaign\Participant\ParticipantEmailParams;
+use Growsurf\Campaign\Participant\ParticipantEmailResponse;
+use Growsurf\Campaign\Participant\ParticipantGetAnalyticsResponse;
+use Growsurf\Campaign\Participant\ParticipantListActivityLogsParams;
+use Growsurf\Campaign\Participant\ParticipantListActivityLogsResponse;
 use Growsurf\Campaign\Participant\ParticipantListCommissionsParams;
 use Growsurf\Campaign\Participant\ParticipantListPayoutsParams;
 use Growsurf\Campaign\Participant\ParticipantListReferralsParams;
@@ -19,6 +26,7 @@ use Growsurf\Campaign\Participant\ParticipantRecordTransactionResponse\UnionMemb
 use Growsurf\Campaign\Participant\ParticipantRecordTransactionResponse\UnionMember1;
 use Growsurf\Campaign\Participant\ParticipantRefundTransactionParams;
 use Growsurf\Campaign\Participant\ParticipantRefundTransactionResponse;
+use Growsurf\Campaign\Participant\ParticipantRetrieveAnalyticsParams;
 use Growsurf\Campaign\Participant\ParticipantRetrieveParams;
 use Growsurf\Campaign\Participant\ParticipantSendInvitesParams;
 use Growsurf\Campaign\Participant\ParticipantSendInvitesResponse;
@@ -85,6 +93,23 @@ interface ParticipantRawContract
     public function delete(
         string $participantIDOrEmail,
         array|ParticipantDeleteParams $params,
+        RequestOptions|array|null $requestOptions = null,
+    ): BaseResponse;
+
+    /**
+     * @api
+     *
+     * @param string $id growSurf program ID
+     * @param array<string,mixed>|ParticipantBulkDeleteParams $params
+     * @param RequestOpts|null $requestOptions
+     *
+     * @return BaseResponse<ParticipantBulkDeleteResponse>
+     *
+     * @throws APIException
+     */
+    public function bulkDelete(
+        string $id,
+        array|ParticipantBulkDeleteParams $params,
         RequestOptions|array|null $requestOptions = null,
     ): BaseResponse;
 
@@ -255,6 +280,57 @@ interface ParticipantRawContract
     public function cancelDelayedReferral(
         string $participantIDOrEmail,
         array|ParticipantCancelDelayedReferralParams $params,
+        RequestOptions|array|null $requestOptions = null,
+    ): BaseResponse;
+
+    /**
+     * @api
+     *
+     * @param string $participantIDOrEmail path param: GrowSurf participant ID or URL-encoded participant email address
+     * @param array<string,mixed>|ParticipantEmailParams $params
+     * @param RequestOpts|null $requestOptions
+     *
+     * @return BaseResponse<ParticipantEmailResponse>
+     *
+     * @throws APIException
+     */
+    public function email(
+        string $participantIDOrEmail,
+        array|ParticipantEmailParams $params,
+        RequestOptions|array|null $requestOptions = null,
+    ): BaseResponse;
+
+    /**
+     * @api
+     *
+     * @param string $participantIDOrEmail growSurf participant ID or URL-encoded participant email address
+     * @param array<string,mixed>|ParticipantRetrieveAnalyticsParams $params
+     * @param RequestOpts|null $requestOptions
+     *
+     * @return BaseResponse<ParticipantGetAnalyticsResponse>
+     *
+     * @throws APIException
+     */
+    public function retrieveAnalytics(
+        string $participantIDOrEmail,
+        array|ParticipantRetrieveAnalyticsParams $params,
+        RequestOptions|array|null $requestOptions = null,
+    ): BaseResponse;
+
+    /**
+     * @api
+     *
+     * @param string $participantIDOrEmail path param: GrowSurf participant ID or URL-encoded participant email address
+     * @param array<string,mixed>|ParticipantListActivityLogsParams $params
+     * @param RequestOpts|null $requestOptions
+     *
+     * @return BaseResponse<ParticipantListActivityLogsResponse>
+     *
+     * @throws APIException
+     */
+    public function listActivityLogs(
+        string $participantIDOrEmail,
+        array|ParticipantListActivityLogsParams $params,
         RequestOptions|array|null $requestOptions = null,
     ): BaseResponse;
 }

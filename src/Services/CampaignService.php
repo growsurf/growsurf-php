@@ -13,10 +13,12 @@ use Growsurf\Campaign\CampaignListLeaderboardParams\LeaderboardType;
 use Growsurf\Campaign\CampaignListReferralsParams\SortBy;
 use Growsurf\Campaign\CampaignListResponse;
 use Growsurf\Campaign\CampaignNewMobileParticipantTokenResponse;
+use Growsurf\Campaign\CampaignRetrieveAnalyticsParams\Interval;
 use Growsurf\Campaign\ParticipantCommissionList;
 use Growsurf\Campaign\ParticipantList;
 use Growsurf\Campaign\ParticipantPayoutList;
 use Growsurf\Campaign\ReferralList;
+use Growsurf\Campaign\ReferralFlowScreenshotsResponse;
 use Growsurf\Campaign\RewardCreateParams;
 use Growsurf\Client;
 use Growsurf\Core\Exceptions\APIException;
@@ -31,6 +33,7 @@ use Growsurf\Services\Campaign\OptionsService;
 use Growsurf\Services\Campaign\ParticipantService;
 use Growsurf\Services\Campaign\RewardService;
 use Growsurf\Services\Campaign\RewardsService;
+use Growsurf\Services\Campaign\WebhooksService;
 
 /**
  * @phpstan-import-type RequestOpts from \Growsurf\RequestOptions
@@ -84,6 +87,11 @@ final class CampaignService implements CampaignContract
     public InstallationService $installation;
 
     /**
+     * @api
+     */
+    public WebhooksService $webhooks;
+
+    /**
      * @internal
      */
     public function __construct(private Client $client)
@@ -97,6 +105,7 @@ final class CampaignService implements CampaignContract
         $this->emails = new EmailsService($client);
         $this->options = new OptionsService($client);
         $this->installation = new InstallationService($client);
+        $this->webhooks = new WebhooksService($client);
     }
 
     /**
@@ -140,7 +149,7 @@ final class CampaignService implements CampaignContract
     /**
      * @api
      *
-     * Creates a new program pre-populated with type-appropriate defaults, plus any optional inline rewards. The new program is created in `DRAFT` status and owned by the API key's account. Requires a verified account email and a paid plan (referral) or a payment source on file (affiliate); subject to your plan's program limit.
+     * Creates a new program pre-populated with type-appropriate defaults, plus any optional inline rewards. The new program is created in `DRAFT` status and owned by the API key's account. Requires a verified account email.
      *
      * @param Type|value-of<Type> $type The program type. Immutable after creation.
      * @param string $currencyISO ISO 4217 currency code. Defaults to USD. Chosen when the program is created and immutable afterward — it cannot be changed on update.
@@ -179,10 +188,10 @@ final class CampaignService implements CampaignContract
     /**
      * @api
      *
-     * Updates a program's configuration and/or status. Only the fields you send are changed. `type`, `urlId`, and `currencyISO` are immutable. Status changes are validated against the allowed transitions; the program cannot be deleted via this endpoint.
+     * Updates a program's identity and lifecycle. Only the fields you send are changed. `type`, `urlId`, and `currencyISO` are immutable. Editor-tab configuration (design, emails, options, installation) is edited via the dedicated config sub-resources, not here. The program cannot be deleted via this endpoint.
      *
      * @param string $id growSurf program ID
-     * @param \Growsurf\Campaign\CampaignUpdateParams\Status|value-of<\Growsurf\Campaign\CampaignUpdateParams\Status> $status The program status. Transitions are validated; DELETED is not allowed.
+     * @param \Growsurf\Campaign\CampaignUpdateParams\Status|value-of<\Growsurf\Campaign\CampaignUpdateParams\Status> $status The requested program status. `IN_PROGRESS` publishes or resumes the program; `COMPLETE` ends it. Any other value returns a `400`.
      * @param RequestOpts|null $requestOptions
      *
      * @throws APIException
@@ -226,6 +235,26 @@ final class CampaignService implements CampaignContract
     ): Campaign {
         // @phpstan-ignore-next-line argument.type
         $response = $this->raw->clone($id, requestOptions: $requestOptions);
+
+        return $response->parse();
+    }
+
+    /**
+     * @api
+     *
+     * Captures two preview screenshots for the program: the authenticated referrer view and the referred-friend view.
+     *
+     * @param string $id growSurf program ID
+     * @param RequestOpts|null $requestOptions
+     *
+     * @throws APIException
+     */
+    public function getReferralFlowScreenshots(
+        string $id,
+        RequestOptions|array|null $requestOptions = null
+    ): ReferralFlowScreenshotsResponse {
+        // @phpstan-ignore-next-line argument.type
+        $response = $this->raw->getReferralFlowScreenshots($id, requestOptions: $requestOptions);
 
         return $response->parse();
     }
@@ -460,6 +489,8 @@ final class CampaignService implements CampaignContract
      * @param string $id growSurf program ID
      * @param int $days Last number of days to retrieve analytics for. Defaults to 365. Maximum 1825.
      * @param int $endDate End date of the analytics timeframe as a Unix timestamp in milliseconds. Required if `days` is not set.
+     * @param string $include Comma-separated list of optional enrichments (opt-in to keep the default response lean): `previousPeriod` adds totals for the equal-length window immediately before the requested one; `statusCounts` adds reward (and, for affiliate programs, affiliate/commission/payout) status breakdowns; `rates` adds derived referral rates.
+     * @param Interval|value-of<Interval> $interval When set to `day`, `week`, or `month`, the response also includes a `series` array with per-period totals. Defaults to `total` (no series).
      * @param int $startDate Start date of the analytics timeframe as a Unix timestamp in milliseconds. Required if `days` is not set.
      * @param RequestOpts|null $requestOptions
      *
@@ -469,11 +500,19 @@ final class CampaignService implements CampaignContract
         string $id,
         int $days = 365,
         ?int $endDate = null,
+        ?string $include = null,
+        Interval|string|null $interval = null,
         ?int $startDate = null,
         RequestOptions|array|null $requestOptions = null,
     ): CampaignGetAnalyticsResponse {
         $params = Util::removeNulls(
-            ['days' => $days, 'endDate' => $endDate, 'startDate' => $startDate]
+            [
+                'days' => $days,
+                'endDate' => $endDate,
+                'include' => $include,
+                'interval' => $interval,
+                'startDate' => $startDate,
+            ],
         );
 
         // @phpstan-ignore-next-line argument.type

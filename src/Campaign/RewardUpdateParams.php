@@ -26,7 +26,6 @@ use Growsurf\Core\Contracts\BaseModel;
  *   couponCode?: string|null,
  *   description?: string|null,
  *   imageURL?: string|null,
- *   isActive?: bool|null,
  *   isUnlimited?: bool|null,
  *   isVisible?: bool|null,
  *   limit?: int|null,
@@ -65,6 +64,9 @@ final class RewardUpdateParams implements BaseModel
     #[Optional]
     public ?int $conversionsRequired;
 
+    /**
+     * A legacy static coupon code shown to the referrer in the reward-won email and webhook. Display text only (GrowSurf does not create or validate it); superseded by a connected billing integration's issued coupon when one exists.
+     */
     #[Optional]
     public ?string $couponCode;
 
@@ -81,19 +83,13 @@ final class RewardUpdateParams implements BaseModel
     public ?string $imageURL;
 
     /**
-     * Whether the reward is active (awardable).
-     */
-    #[Optional]
-    public ?bool $isActive;
-
-    /**
-     * Whether the reward can be earned an unlimited number of times.
+     * Whether the reward can be earned an unlimited number of times. Defaults to `true`, except `MILESTONE` rewards, which can only be earned once.
      */
     #[Optional]
     public ?bool $isUnlimited;
 
     /**
-     * Whether the reward is visible.
+     * Whether the reward is enabled. When `false`, the reward is disabled: no longer awarded (including to participants who already earned it) and hidden from participants.
      */
     #[Optional]
     public ?bool $isVisible;
@@ -120,14 +116,20 @@ final class RewardUpdateParams implements BaseModel
     #[Optional(map: 'mixed')]
     public ?array $metadata;
 
+    /**
+     * Text shown before a participant's referral count in milestone progress copy (e.g. "You are only"). Applies to `MILESTONE` rewards.
+     */
     #[Optional]
     public ?string $nextMilestonePrefix;
 
+    /**
+     * Text shown after a participant's referral count in milestone progress copy (e.g. "referrals away from your next reward!"). Applies to `MILESTONE` rewards.
+     */
     #[Optional]
     public ?string $nextMilestoneSuffix;
 
     /**
-     * The maximum number of winners (LEADERBOARD rewards).
+     * The maximum number of winners. Only applies to `LEADERBOARD` rewards. When `limitDuration` is `PER_MONTH`, this many top referrers win each month; otherwise this many win in total. Defaults to `3` when omitted.
      */
     #[Optional]
     public ?int $numberOfWinners;
@@ -138,6 +140,9 @@ final class RewardUpdateParams implements BaseModel
     #[Optional]
     public ?int $order;
 
+    /**
+     * A legacy static coupon code shown to the referred friend in the reward-won email and webhook (double-sided rewards). Same caveats as `couponCode`.
+     */
     #[Optional]
     public ?string $referralCouponCode;
 
@@ -208,7 +213,6 @@ final class RewardUpdateParams implements BaseModel
         ?string $couponCode = null,
         ?string $description = null,
         ?string $imageURL = null,
-        ?bool $isActive = null,
         ?bool $isUnlimited = null,
         ?bool $isVisible = null,
         ?int $limit = null,
@@ -234,7 +238,6 @@ final class RewardUpdateParams implements BaseModel
         null !== $couponCode && $self['couponCode'] = $couponCode;
         null !== $description && $self['description'] = $description;
         null !== $imageURL && $self['imageURL'] = $imageURL;
-        null !== $isActive && $self['isActive'] = $isActive;
         null !== $isUnlimited && $self['isUnlimited'] = $isUnlimited;
         null !== $isVisible && $self['isVisible'] = $isVisible;
         null !== $limit && $self['limit'] = $limit;
@@ -287,6 +290,9 @@ final class RewardUpdateParams implements BaseModel
         return $self;
     }
 
+    /**
+     * A legacy static coupon code shown to the referrer in the reward-won email and webhook. Display text only (GrowSurf does not create or validate it); superseded by a connected billing integration's issued coupon when one exists.
+     */
     public function withCouponCode(?string $couponCode): self
     {
         $self = clone $this;
@@ -318,18 +324,7 @@ final class RewardUpdateParams implements BaseModel
     }
 
     /**
-     * Whether the reward is active (awardable).
-     */
-    public function withIsActive(bool $isActive): self
-    {
-        $self = clone $this;
-        $self['isActive'] = $isActive;
-
-        return $self;
-    }
-
-    /**
-     * Whether the reward can be earned an unlimited number of times.
+     * Whether the reward can be earned an unlimited number of times. Defaults to `true`, except `MILESTONE` rewards, which can only be earned once.
      */
     public function withIsUnlimited(bool $isUnlimited): self
     {
@@ -340,7 +335,7 @@ final class RewardUpdateParams implements BaseModel
     }
 
     /**
-     * Whether the reward is visible.
+     * Whether the reward is enabled. When `false`, the reward is disabled: no longer awarded (including to participants who already earned it) and hidden from participants.
      */
     public function withIsVisible(bool $isVisible): self
     {
@@ -387,6 +382,9 @@ final class RewardUpdateParams implements BaseModel
         return $self;
     }
 
+    /**
+     * Text shown before a participant's referral count in milestone progress copy (e.g. "You are only"). Applies to `MILESTONE` rewards.
+     */
     public function withNextMilestonePrefix(?string $nextMilestonePrefix): self
     {
         $self = clone $this;
@@ -395,6 +393,9 @@ final class RewardUpdateParams implements BaseModel
         return $self;
     }
 
+    /**
+     * Text shown after a participant's referral count in milestone progress copy (e.g. "referrals away from your next reward!"). Applies to `MILESTONE` rewards.
+     */
     public function withNextMilestoneSuffix(?string $nextMilestoneSuffix): self
     {
         $self = clone $this;
@@ -404,7 +405,7 @@ final class RewardUpdateParams implements BaseModel
     }
 
     /**
-     * The maximum number of winners (LEADERBOARD rewards).
+     * The maximum number of winners. Only applies to `LEADERBOARD` rewards. When `limitDuration` is `PER_MONTH`, this many top referrers win each month; otherwise this many win in total. Defaults to `3` when omitted.
      */
     public function withNumberOfWinners(int $numberOfWinners): self
     {
@@ -425,6 +426,9 @@ final class RewardUpdateParams implements BaseModel
         return $self;
     }
 
+    /**
+     * A legacy static coupon code shown to the referred friend in the reward-won email and webhook (double-sided rewards). Same caveats as `couponCode`.
+     */
     public function withReferralCouponCode(?string $referralCouponCode): self
     {
         $self = clone $this;

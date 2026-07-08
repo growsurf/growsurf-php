@@ -27,7 +27,7 @@ final class DesignRawService implements DesignRawContract
     /**
      * @api
      *
-     * Retrieves a program's design configuration — the same surface as the dashboard Program Editor's **Design** tab. This is a large object whose available fields depend on the program type; see the API reference for the full field list.
+     * Retrieves a program's design configuration — the same surface as the dashboard Program Editor's **Design** tab. This is a large object whose available fields depend on the program type; the response includes every field and its current value, which is the same shape you send back on `PATCH`.
      *
      * @param string $id growSurf program ID
      * @param RequestOpts|null $requestOptions
@@ -52,7 +52,7 @@ final class DesignRawService implements DesignRawContract
     /**
      * @api
      *
-     * Updates a program's design configuration. Only the fields you send are changed (a surgical merge). Unknown fields, fields not available for the program type, and invalid values return a `400`. See the API reference for the full field list.
+     * Updates a program's design configuration. Only the fields you send are changed; anything you leave out is untouched (arrays such as `signup.fields` replace wholesale). Unknown fields, fields not available for the program type, and invalid values return a `400`. Landing-page custom code and JavaScript are not editable via the API. To see the full object with every field and its current value, `GET` this resource, then `PATCH` back only the fields you want to change.
      *
      * @param string $id growSurf program ID
      * @param array<string,mixed> $body partial `CampaignDesign` (see API reference)

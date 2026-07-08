@@ -1,0 +1,25 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Growsurf\Campaign;
+
+/**
+ * A webhook event name.
+ */
+enum WebhookEvent: string
+{
+    case PARTICIPANT_REACHED_A_GOAL = 'PARTICIPANT_REACHED_A_GOAL';
+
+    case NEW_PARTICIPANT_ADDED = 'NEW_PARTICIPANT_ADDED';
+
+    case CAMPAIGN_ENDED = 'CAMPAIGN_ENDED';
+
+    case PARTICIPANT_FRAUD_STATUS_UPDATED = 'PARTICIPANT_FRAUD_STATUS_UPDATED';
+
+    case NEW_COMMISSION_ADDED = 'NEW_COMMISSION_ADDED';
+
+    case COMMISSION_ADJUSTED = 'COMMISSION_ADJUSTED';
+
+    case NEW_PAYOUT_ISSUED = 'NEW_PAYOUT_ISSUED';
+}

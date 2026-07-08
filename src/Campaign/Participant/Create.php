@@ -58,6 +58,8 @@ final class Create implements BaseModel
     public ?string $mobileInstanceID;
 
     /**
+     * The referral credit status. Only meaningful when `referredBy` resolves to a referrer. When omitted, it is derived from the program's referral trigger (`CREDIT_AWARDED`, `CREDIT_PENDING`, or `CREDIT_EXPIRED`); left unset when no referrer resolves.
+     *
      * @var value-of<ReferralStatus>|null $referralStatus
      */
     #[Optional(enum: ReferralStatus::class)]
@@ -188,6 +190,8 @@ final class Create implements BaseModel
     }
 
     /**
+     * The referral credit status. Only meaningful when `referredBy` resolves to a referrer. When omitted, it is derived from the program's referral trigger (`CREDIT_AWARDED`, `CREDIT_PENDING`, or `CREDIT_EXPIRED`); left unset when no referrer resolves.
+     *
      * @param ReferralStatus|value-of<ReferralStatus> $referralStatus
      */
     public function withReferralStatus(

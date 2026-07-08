@@ -13,10 +13,12 @@ use Growsurf\Campaign\CampaignListLeaderboardParams\LeaderboardType;
 use Growsurf\Campaign\CampaignListReferralsParams\SortBy;
 use Growsurf\Campaign\CampaignListResponse;
 use Growsurf\Campaign\CampaignNewMobileParticipantTokenResponse;
+use Growsurf\Campaign\CampaignRetrieveAnalyticsParams\Interval;
 use Growsurf\Campaign\ParticipantCommissionList;
 use Growsurf\Campaign\ParticipantList;
 use Growsurf\Campaign\ParticipantPayoutList;
 use Growsurf\Campaign\ReferralList;
+use Growsurf\Campaign\ReferralFlowScreenshotsResponse;
 use Growsurf\Campaign\RewardCreateParams;
 use Growsurf\Core\Exceptions\APIException;
 use Growsurf\RequestOptions;
@@ -76,7 +78,7 @@ interface CampaignContract
      * @api
      *
      * @param string $id growSurf program ID
-     * @param \Growsurf\Campaign\CampaignUpdateParams\Status|value-of<\Growsurf\Campaign\CampaignUpdateParams\Status> $status The program status. Transitions are validated; DELETED is not allowed.
+     * @param \Growsurf\Campaign\CampaignUpdateParams\Status|value-of<\Growsurf\Campaign\CampaignUpdateParams\Status> $status The requested program status. `IN_PROGRESS` publishes or resumes the program; `COMPLETE` ends it. Any other value returns a `400`.
      * @param RequestOpts|null $requestOptions
      *
      * @throws APIException
@@ -102,6 +104,19 @@ interface CampaignContract
         string $id,
         RequestOptions|array|null $requestOptions = null
     ): Campaign;
+
+    /**
+     * @api
+     *
+     * @param string $id growSurf program ID
+     * @param RequestOpts|null $requestOptions
+     *
+     * @throws APIException
+     */
+    public function getReferralFlowScreenshots(
+        string $id,
+        RequestOptions|array|null $requestOptions = null
+    ): ReferralFlowScreenshotsResponse;
 
     /**
      * @api
@@ -242,6 +257,8 @@ interface CampaignContract
      * @param string $id growSurf program ID
      * @param int $days Last number of days to retrieve analytics for. Defaults to 365. Maximum 1825.
      * @param int $endDate End date of the analytics timeframe as a Unix timestamp in milliseconds. Required if `days` is not set.
+     * @param string $include Comma-separated list of optional enrichments (opt-in to keep the default response lean): `previousPeriod` adds totals for the equal-length window immediately before the requested one; `statusCounts` adds reward (and, for affiliate programs, affiliate/commission/payout) status breakdowns; `rates` adds derived referral rates.
+     * @param Interval|value-of<Interval> $interval When set to `day`, `week`, or `month`, the response also includes a `series` array with per-period totals. Defaults to `total` (no series).
      * @param int $startDate Start date of the analytics timeframe as a Unix timestamp in milliseconds. Required if `days` is not set.
      * @param RequestOpts|null $requestOptions
      *
@@ -251,6 +268,8 @@ interface CampaignContract
         string $id,
         int $days = 365,
         ?int $endDate = null,
+        ?string $include = null,
+        Interval|string|null $interval = null,
         ?int $startDate = null,
         RequestOptions|array|null $requestOptions = null,
     ): CampaignGetAnalyticsResponse;

@@ -6,6 +6,7 @@ use Growsurf\Campaign\Campaign;
 use Growsurf\Campaign\CampaignGetAnalyticsResponse;
 use Growsurf\Campaign\CampaignListResponse;
 use Growsurf\Campaign\CampaignNewMobileParticipantTokenResponse;
+use Growsurf\Campaign\ReferralFlowScreenshotsResponse;
 use Growsurf\Campaign\ParticipantCommissionList;
 use Growsurf\Campaign\ParticipantList;
 use Growsurf\Campaign\ParticipantPayoutList;
@@ -140,6 +141,19 @@ final class CampaignTest extends TestCase
     }
 
     #[Test]
+    public function testGetReferralFlowScreenshots(): void
+    {
+        if (UnsupportedMockTests::$skip) {
+            $this->markTestSkipped('Mock server tests are disabled');
+        }
+
+        $result = $this->client->campaign->getReferralFlowScreenshots('id');
+
+        // @phpstan-ignore-next-line method.alreadyNarrowedType
+        $this->assertInstanceOf(ReferralFlowScreenshotsResponse::class, $result);
+    }
+
+    #[Test]
     public function testCreateMobileParticipantToken(): void
     {
         if (UnsupportedMockTests::$skip) {
@@ -258,6 +272,24 @@ final class CampaignTest extends TestCase
         }
 
         $result = $this->client->campaign->retrieveAnalytics('id');
+
+        // @phpstan-ignore-next-line method.alreadyNarrowedType
+        $this->assertInstanceOf(CampaignGetAnalyticsResponse::class, $result);
+    }
+
+    #[Test]
+    public function testRetrieveAnalyticsWithOptionalParams(): void
+    {
+        if (UnsupportedMockTests::$skip) {
+            $this->markTestSkipped('Mock server tests are disabled');
+        }
+
+        $result = $this->client->campaign->retrieveAnalytics(
+            'id',
+            days: 365,
+            include: 'previousPeriod,statusCounts,rates',
+            interval: 'month',
+        );
 
         // @phpstan-ignore-next-line method.alreadyNarrowedType
         $this->assertInstanceOf(CampaignGetAnalyticsResponse::class, $result);

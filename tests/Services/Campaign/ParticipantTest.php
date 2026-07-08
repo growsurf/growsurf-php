@@ -3,7 +3,11 @@
 namespace Tests\Services\Campaign;
 
 use Growsurf\Campaign\Participant\Participant;
+use Growsurf\Campaign\Participant\ParticipantBulkDeleteResponse;
 use Growsurf\Campaign\Participant\ParticipantDeleteResponse;
+use Growsurf\Campaign\Participant\ParticipantEmailResponse;
+use Growsurf\Campaign\Participant\ParticipantGetAnalyticsResponse;
+use Growsurf\Campaign\Participant\ParticipantListActivityLogsResponse;
 use Growsurf\Campaign\Participant\ParticipantListRewardsResponse;
 use Growsurf\Campaign\Participant\ParticipantRefundTransactionResponse;
 use Growsurf\Campaign\Participant\ParticipantSendInvitesResponse;
@@ -99,6 +103,8 @@ final class ParticipantTest extends TestCase
             firstName: 'Gavin',
             lastName: 'Belson',
             metadata: ['company' => 'bar'],
+            notes: 'VIP affiliate — follow up in Q3',
+            paypalEmail: 'payouts@piedpiper.com',
             referralStatus: 'CREDIT_PENDING',
             referredBy: 'referredBy',
             unsubscribed: false,
@@ -139,6 +145,38 @@ final class ParticipantTest extends TestCase
 
         // @phpstan-ignore-next-line method.alreadyNarrowedType
         $this->assertInstanceOf(ParticipantDeleteResponse::class, $result);
+    }
+
+    #[Test]
+    public function testBulkDelete(): void
+    {
+        if (UnsupportedMockTests::$skip) {
+            $this->markTestSkipped('Mock server tests are disabled');
+        }
+
+        $result = $this->client->campaign->participant->bulkDelete(
+            'id',
+            participants: ['gavin@hooli.com', 'f8g9nl']
+        );
+
+        // @phpstan-ignore-next-line method.alreadyNarrowedType
+        $this->assertInstanceOf(ParticipantBulkDeleteResponse::class, $result);
+    }
+
+    #[Test]
+    public function testBulkDeleteWithOptionalParams(): void
+    {
+        if (UnsupportedMockTests::$skip) {
+            $this->markTestSkipped('Mock server tests are disabled');
+        }
+
+        $result = $this->client->campaign->participant->bulkDelete(
+            'id',
+            participants: ['gavin@hooli.com', 'f8g9nl']
+        );
+
+        // @phpstan-ignore-next-line method.alreadyNarrowedType
+        $this->assertInstanceOf(ParticipantBulkDeleteResponse::class, $result);
     }
 
     #[Test]
@@ -531,5 +569,108 @@ final class ParticipantTest extends TestCase
 
         // @phpstan-ignore-next-line method.alreadyNarrowedType
         $this->assertInstanceOf(ParticipantTriggerReferralResponse::class, $result);
+    }
+
+    #[Test]
+    public function testEmail(): void
+    {
+        if (UnsupportedMockTests::$skip) {
+            $this->markTestSkipped('Mock server tests are disabled');
+        }
+
+        $result = $this->client->campaign->participant->email(
+            'participantIdOrEmail',
+            id: 'id'
+        );
+
+        // @phpstan-ignore-next-line method.alreadyNarrowedType
+        $this->assertInstanceOf(ParticipantEmailResponse::class, $result);
+    }
+
+    #[Test]
+    public function testEmailWithOptionalParams(): void
+    {
+        if (UnsupportedMockTests::$skip) {
+            $this->markTestSkipped('Mock server tests are disabled');
+        }
+
+        $result = $this->client->campaign->participant->email(
+            'participantIdOrEmail',
+            id: 'id',
+            body: "<p>Hi {{firstName}}, thanks for spreading the word — you're at {{referrals}} referrals!</p>",
+            subject: 'A quick update from Pied Piper',
+        );
+
+        // @phpstan-ignore-next-line method.alreadyNarrowedType
+        $this->assertInstanceOf(ParticipantEmailResponse::class, $result);
+    }
+
+    #[Test]
+    public function testRetrieveAnalytics(): void
+    {
+        if (UnsupportedMockTests::$skip) {
+            $this->markTestSkipped('Mock server tests are disabled');
+        }
+
+        $result = $this->client->campaign->participant->retrieveAnalytics(
+            'participantIdOrEmail',
+            id: 'id'
+        );
+
+        // @phpstan-ignore-next-line method.alreadyNarrowedType
+        $this->assertInstanceOf(ParticipantGetAnalyticsResponse::class, $result);
+    }
+
+    #[Test]
+    public function testRetrieveAnalyticsWithOptionalParams(): void
+    {
+        if (UnsupportedMockTests::$skip) {
+            $this->markTestSkipped('Mock server tests are disabled');
+        }
+
+        $result = $this->client->campaign->participant->retrieveAnalytics(
+            'participantIdOrEmail',
+            id: 'id',
+            days: 365,
+            include: 'series',
+            interval: 'day',
+        );
+
+        // @phpstan-ignore-next-line method.alreadyNarrowedType
+        $this->assertInstanceOf(ParticipantGetAnalyticsResponse::class, $result);
+    }
+
+    #[Test]
+    public function testListActivityLogs(): void
+    {
+        if (UnsupportedMockTests::$skip) {
+            $this->markTestSkipped('Mock server tests are disabled');
+        }
+
+        $result = $this->client->campaign->participant->listActivityLogs(
+            'participantIdOrEmail',
+            id: 'id'
+        );
+
+        // @phpstan-ignore-next-line method.alreadyNarrowedType
+        $this->assertInstanceOf(ParticipantListActivityLogsResponse::class, $result);
+    }
+
+    #[Test]
+    public function testListActivityLogsWithOptionalParams(): void
+    {
+        if (UnsupportedMockTests::$skip) {
+            $this->markTestSkipped('Mock server tests are disabled');
+        }
+
+        $result = $this->client->campaign->participant->listActivityLogs(
+            'participantIdOrEmail',
+            id: 'id',
+            limit: 20,
+            offset: 0,
+        );
+
+        // @phpstan-ignore-next-line method.alreadyNarrowedType
+        $this->assertInstanceOf(ParticipantListActivityLogsResponse::class, $result);
     }
 }

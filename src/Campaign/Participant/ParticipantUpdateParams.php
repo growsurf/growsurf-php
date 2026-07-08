@@ -22,6 +22,8 @@ use Growsurf\Core\Contracts\BaseModel;
  *   firstName?: string|null,
  *   lastName?: string|null,
  *   metadata?: array<string,mixed>|null,
+ *   notes?: string|null,
+ *   paypalEmail?: string|null,
  *   referralStatus?: null|\Growsurf\Campaign\Participant\ParticipantUpdateParams\ReferralStatus|value-of<\Growsurf\Campaign\Participant\ParticipantUpdateParams\ReferralStatus>,
  *   referredBy?: string|null,
  *   unsubscribed?: bool|null,
@@ -53,6 +55,18 @@ final class ParticipantUpdateParams implements BaseModel
      */
     #[Optional(map: 'mixed')]
     public ?array $metadata;
+
+    /**
+     * Freeform internal notes about the participant (internal only, never exposed to participants).
+     */
+    #[Optional]
+    public ?string $notes;
+
+    /**
+     * The participant's PayPal email address, used for affiliate payouts.
+     */
+    #[Optional]
+    public ?string $paypalEmail;
 
     /**
      * @var value-of<ReferralStatus>|null $referralStatus
@@ -106,6 +120,8 @@ final class ParticipantUpdateParams implements BaseModel
         ?string $firstName = null,
         ?string $lastName = null,
         ?array $metadata = null,
+        ?string $notes = null,
+        ?string $paypalEmail = null,
         ReferralStatus|string|null $referralStatus = null,
         ?string $referredBy = null,
         ?bool $unsubscribed = null,
@@ -119,6 +135,8 @@ final class ParticipantUpdateParams implements BaseModel
         null !== $firstName && $self['firstName'] = $firstName;
         null !== $lastName && $self['lastName'] = $lastName;
         null !== $metadata && $self['metadata'] = $metadata;
+        null !== $notes && $self['notes'] = $notes;
+        null !== $paypalEmail && $self['paypalEmail'] = $paypalEmail;
         null !== $referralStatus && $self['referralStatus'] = $referralStatus;
         null !== $referredBy && $self['referredBy'] = $referredBy;
         null !== $unsubscribed && $self['unsubscribed'] = $unsubscribed;
@@ -168,6 +186,28 @@ final class ParticipantUpdateParams implements BaseModel
     {
         $self = clone $this;
         $self['metadata'] = $metadata;
+
+        return $self;
+    }
+
+    /**
+     * Freeform internal notes about the participant (internal only, never exposed to participants).
+     */
+    public function withNotes(string $notes): self
+    {
+        $self = clone $this;
+        $self['notes'] = $notes;
+
+        return $self;
+    }
+
+    /**
+     * The participant's PayPal email address, used for affiliate payouts.
+     */
+    public function withPaypalEmail(string $paypalEmail): self
+    {
+        $self = clone $this;
+        $self['paypalEmail'] = $paypalEmail;
 
         return $self;
     }

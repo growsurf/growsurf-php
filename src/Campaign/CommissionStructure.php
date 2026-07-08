@@ -12,6 +12,7 @@ use Growsurf\Core\Contracts\BaseModel;
 /**
  * @phpstan-type CommissionStructureShape = array{
  *   amount?: int|null,
+ *   amountISO?: string|null,
  *   approvalRequired?: bool|null,
  *   duration?: string|null,
  *   durationInMonths?: int|null,
@@ -39,6 +40,9 @@ final class CommissionStructure implements BaseModel
 
     #[Optional(nullable: true)]
     public ?int $amount;
+
+    #[Optional(nullable: true)]
+    public ?string $amountISO;
 
     #[Optional(nullable: true)]
     public ?bool $approvalRequired;
@@ -109,6 +113,7 @@ final class CommissionStructure implements BaseModel
      */
     public static function with(
         ?int $amount = null,
+        ?string $amountISO = null,
         ?bool $approvalRequired = null,
         ?string $duration = null,
         ?int $durationInMonths = null,
@@ -131,6 +136,7 @@ final class CommissionStructure implements BaseModel
         $self = new self;
 
         null !== $amount && $self['amount'] = $amount;
+        null !== $amountISO && $self['amountISO'] = $amountISO;
         null !== $approvalRequired && $self['approvalRequired'] = $approvalRequired;
         null !== $duration && $self['duration'] = $duration;
         null !== $durationInMonths && $self['durationInMonths'] = $durationInMonths;
@@ -157,6 +163,14 @@ final class CommissionStructure implements BaseModel
     {
         $self = clone $this;
         $self['amount'] = $amount;
+
+        return $self;
+    }
+
+    public function withAmountISO(?string $amountISO): self
+    {
+        $self = clone $this;
+        $self['amountISO'] = $amountISO;
 
         return $self;
     }

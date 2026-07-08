@@ -32,7 +32,7 @@ final class InstallationService implements InstallationContract
     /**
      * @api
      *
-     * Retrieves a program's installation configuration — the same surface as the dashboard Program Editor's **Installation** tab (plus the Mobile SDK settings): referral trigger, signup tracking method, share URL and whitelist, custom-form signup settings, and mobile SDK settings. See the API reference for the full field list.
+     * Retrieves a program's installation configuration — the same surface as the dashboard Program Editor's **Installation** tab (plus the Mobile SDK settings): referral trigger, signup tracking method, share URL and whitelist, custom-form signup settings, and mobile SDK settings. The response includes every field and its current value, which is the same shape you send back on `PATCH`.
      *
      * @param string $id growSurf program ID
      * @param RequestOpts|null $requestOptions
@@ -54,7 +54,7 @@ final class InstallationService implements InstallationContract
     /**
      * @api
      *
-     * Updates a program's installation configuration. Only the fields you send are changed (a surgical merge). `referralTrigger` is only available for referral programs; some fields are read-only. URLs must include an explicit `http://` or `https://` scheme. See the API reference for the full field list.
+     * Updates a program's installation configuration. Only the fields you send are changed. `referralTrigger` is only available for referral programs; some fields are read-only. URLs must include an explicit `http://` or `https://` scheme. To see the full object with every field and its current value, `GET` this resource, then `PATCH` back only the fields you want to change.
      *
      * @param string $id growSurf program ID
      * @param array<string,mixed> $body partial `CampaignInstallation` (see API reference)

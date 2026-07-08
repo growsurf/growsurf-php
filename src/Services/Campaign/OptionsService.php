@@ -32,7 +32,7 @@ final class OptionsService implements OptionsContract
     /**
      * @api
      *
-     * Retrieves a program's options — the same surface as the dashboard Program Editor's **Options** tab (reward/fraud approval, anti-fraud lists, referral windows, reCAPTCHA, payout/tax settings, and notification emails). Secret values such as the reCAPTCHA secret key are never returned. See the API reference for the full field list.
+     * Retrieves a program's options — the same surface as the dashboard Program Editor's **Options** tab (reward/fraud approval, anti-fraud lists, referral windows, reCAPTCHA, payout/tax settings, and notification emails). Secret values such as the reCAPTCHA secret key are never returned. The response includes every field and its current value, which is the same shape you send back on `PATCH`.
      *
      * @param string $id growSurf program ID
      * @param RequestOpts|null $requestOptions
@@ -54,7 +54,7 @@ final class OptionsService implements OptionsContract
     /**
      * @api
      *
-     * Updates a program's options. Only the fields you send are changed (a surgical merge). Some fields are program-type specific and some are write-only. See the API reference for the full field list.
+     * Updates a program's options. Only the fields you send are changed. Some fields are program-type specific and some are write-only. To see the full object with every field and its current value, `GET` this resource, then `PATCH` back only the fields you want to change.
      *
      * @param string $id growSurf program ID
      * @param array<string,mixed> $body partial `CampaignOptions` (see API reference)
