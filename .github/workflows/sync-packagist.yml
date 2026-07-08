@@ -1,0 +1,92 @@
+name: Sync Packagist
+
+on:
+  release:
+    types:
+      - published
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Expected Packagist version to verify, with or without a leading v
+        required: false
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  sync_packagist:
+    name: sync packagist
+    runs-on: ubuntu-latest
+    if: github.repository == 'growsurf/growsurf-php'
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Check release environment
+        run: bash ./bin/check-release-environment
+        env:
+          PACKAGIST_USERNAME: ${{ secrets.GROWSURF_PACKAGIST_USERNAME || secrets.PACKAGIST_USERNAME }}
+          PACKAGIST_SAFE_KEY: ${{ secrets.GROWSURF_PACKAGIST_SAFE_KEY || secrets.PACKAGIST_SAFE_KEY }}
+
+      - name: Trigger Packagist update
+        run: bash ./bin/sync-packagist
+        env:
+          PACKAGIST_USERNAME: ${{ secrets.GROWSURF_PACKAGIST_USERNAME || secrets.PACKAGIST_USERNAME }}
+          PACKAGIST_SAFE_KEY: ${{ secrets.GROWSURF_PACKAGIST_SAFE_KEY || secrets.PACKAGIST_SAFE_KEY }}
+
+      - name: Resolve expected version
+        id: expected
+        shell: bash
+        run: |
+          if [ "${{ github.event_name }}" = "release" ]; then
+            expected="${{ github.event.release.tag_name }}"
+          else
+            expected="${{ inputs.version }}"
+          fi
+
+          if [ -z "$expected" ]; then
+            echo "Expected version is required for workflow_dispatch runs." >&2
+            exit 1
+          fi
+
+          echo "version=${expected#v}" >> "$GITHUB_OUTPUT"
+
+      - name: Verify Packagist metadata
+        env:
+          EXPECTED_VERSION: ${{ steps.expected.outputs.version }}
+        run: |
+          python3 <<'PY'
+          import json
+          import os
+          import sys
+          import time
+          import urllib.request
+
+          package_name = "growsurf/growsurf-php"
+          expected_version = os.environ["EXPECTED_VERSION"].lstrip("v")
+          url = f"https://repo.packagist.org/p2/{package_name}.json"
+
+          for attempt in range(1, 21):
+              with urllib.request.urlopen(url, timeout=30) as response:
+                  payload = json.load(response)
+
+              versions = [
+                  package["version"].lstrip("v")
+                  for package in payload.get("packages", {}).get(package_name, [])
+              ]
+
+              if expected_version in versions:
+                  print(f"Packagist has {package_name} {expected_version}.")
+                  sys.exit(0)
+
+              newest = versions[0] if versions else "none"
+              print(
+                  f"Attempt {attempt}/20: Packagist newest is {newest}; "
+                  f"waiting for {expected_version}."
+              )
+              time.sleep(15)
+
+          print(f"Packagist did not publish {package_name} {expected_version}.", file=sys.stderr)
+          sys.exit(1)
+          PY

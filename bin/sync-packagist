@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+errors=()
+
+if [ -z "${PACKAGIST_USERNAME:-}" ]; then
+  errors+=("PACKAGIST_USERNAME is required")
+fi
+
+if [ -z "${PACKAGIST_SAFE_KEY:-}" ]; then
+  errors+=("PACKAGIST_SAFE_KEY is required")
+fi
+
+if [ "${#errors[@]}" -gt 0 ]; then
+  echo "Cannot sync Packagist:"
+  for error in "${errors[@]}"; do
+    echo "- $error"
+  done
+  exit 1
+fi
+
+repository="${PACKAGIST_REPOSITORY_URL:-https://github.com/growsurf/growsurf-php}"
+endpoint="${PACKAGIST_UPDATE_ENDPOINT:-https://packagist.org/api/update-package}"
+payload="$(printf '{"repository":"%s"}' "$repository")"
+
+curl --fail-with-body --silent --show-error --location \
+  --request POST \
+  --header "Content-Type: application/json" \
+  --header "Authorization: Bearer ${PACKAGIST_USERNAME}:${PACKAGIST_SAFE_KEY}" \
+  --header "User-Agent: GrowSurfReleaseSync/1.0 (mailto:support@growsurf.com)" \
+  --data "$payload" \
+  "$endpoint"
