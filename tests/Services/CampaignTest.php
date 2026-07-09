@@ -6,7 +6,6 @@ use Growsurf\Campaign\Campaign;
 use Growsurf\Campaign\CampaignGetAnalyticsResponse;
 use Growsurf\Campaign\CampaignListResponse;
 use Growsurf\Campaign\CampaignNewMobileParticipantTokenResponse;
-use Growsurf\Campaign\ReferralFlowScreenshotsResponse;
 use Growsurf\Campaign\ParticipantCommissionList;
 use Growsurf\Campaign\ParticipantList;
 use Growsurf\Campaign\ParticipantPayoutList;
@@ -138,19 +137,6 @@ final class CampaignTest extends TestCase
 
         // @phpstan-ignore-next-line method.alreadyNarrowedType
         $this->assertInstanceOf(Campaign::class, $result);
-    }
-
-    #[Test]
-    public function testGetReferralFlowScreenshots(): void
-    {
-        if (UnsupportedMockTests::$skip) {
-            $this->markTestSkipped('Mock server tests are disabled');
-        }
-
-        $result = $this->client->campaign->getReferralFlowScreenshots('id');
-
-        // @phpstan-ignore-next-line method.alreadyNarrowedType
-        $this->assertInstanceOf(ReferralFlowScreenshotsResponse::class, $result);
     }
 
     #[Test]

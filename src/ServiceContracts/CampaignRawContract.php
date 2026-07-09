@@ -21,7 +21,6 @@ use Growsurf\Campaign\ParticipantCommissionList;
 use Growsurf\Campaign\ParticipantList;
 use Growsurf\Campaign\ParticipantPayoutList;
 use Growsurf\Campaign\ReferralList;
-use Growsurf\Campaign\ReferralFlowScreenshotsResponse;
 use Growsurf\Core\Contracts\BaseResponse;
 use Growsurf\Core\Exceptions\APIException;
 use Growsurf\RequestOptions;
@@ -102,21 +101,6 @@ interface CampaignRawContract
      * @throws APIException
      */
     public function clone(
-        string $id,
-        RequestOptions|array|null $requestOptions = null
-    ): BaseResponse;
-
-    /**
-     * @api
-     *
-     * @param string $id growSurf program ID
-     * @param RequestOpts|null $requestOptions
-     *
-     * @return BaseResponse<ReferralFlowScreenshotsResponse>
-     *
-     * @throws APIException
-     */
-    public function getReferralFlowScreenshots(
         string $id,
         RequestOptions|array|null $requestOptions = null
     ): BaseResponse;

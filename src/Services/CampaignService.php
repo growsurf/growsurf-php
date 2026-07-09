@@ -18,7 +18,6 @@ use Growsurf\Campaign\ParticipantCommissionList;
 use Growsurf\Campaign\ParticipantList;
 use Growsurf\Campaign\ParticipantPayoutList;
 use Growsurf\Campaign\ReferralList;
-use Growsurf\Campaign\ReferralFlowScreenshotsResponse;
 use Growsurf\Campaign\RewardCreateParams;
 use Growsurf\Client;
 use Growsurf\Core\Exceptions\APIException;
@@ -235,26 +234,6 @@ final class CampaignService implements CampaignContract
     ): Campaign {
         // @phpstan-ignore-next-line argument.type
         $response = $this->raw->clone($id, requestOptions: $requestOptions);
-
-        return $response->parse();
-    }
-
-    /**
-     * @api
-     *
-     * Captures two preview screenshots for the program: the authenticated referrer view and the referred-friend view.
-     *
-     * @param string $id growSurf program ID
-     * @param RequestOpts|null $requestOptions
-     *
-     * @throws APIException
-     */
-    public function getReferralFlowScreenshots(
-        string $id,
-        RequestOptions|array|null $requestOptions = null
-    ): ReferralFlowScreenshotsResponse {
-        // @phpstan-ignore-next-line argument.type
-        $response = $this->raw->getReferralFlowScreenshots($id, requestOptions: $requestOptions);
 
         return $response->parse();
     }

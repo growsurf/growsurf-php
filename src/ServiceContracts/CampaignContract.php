@@ -18,7 +18,6 @@ use Growsurf\Campaign\ParticipantCommissionList;
 use Growsurf\Campaign\ParticipantList;
 use Growsurf\Campaign\ParticipantPayoutList;
 use Growsurf\Campaign\ReferralList;
-use Growsurf\Campaign\ReferralFlowScreenshotsResponse;
 use Growsurf\Campaign\RewardCreateParams;
 use Growsurf\Core\Exceptions\APIException;
 use Growsurf\RequestOptions;
@@ -104,19 +103,6 @@ interface CampaignContract
         string $id,
         RequestOptions|array|null $requestOptions = null
     ): Campaign;
-
-    /**
-     * @api
-     *
-     * @param string $id growSurf program ID
-     * @param RequestOpts|null $requestOptions
-     *
-     * @throws APIException
-     */
-    public function getReferralFlowScreenshots(
-        string $id,
-        RequestOptions|array|null $requestOptions = null
-    ): ReferralFlowScreenshotsResponse;
 
     /**
      * @api
