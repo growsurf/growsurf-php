@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.1](https://github.com/growsurf/growsurf-php/compare/v1.1.0...v1.1.1) (2026-07-09)
+
+
+### Bug Fixes
+
+* remove referral screenshot REST surface ([aaad158](https://github.com/growsurf/growsurf-php/commit/aaad15858b32072d97579b39a1ba7a7a6a99feca))
+
 ## [1.1.0](https://github.com/growsurf/growsurf-php/compare/v1.0.0...v1.1.0) (2026-07-08)
 
 
