@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.2](https://github.com/growsurf/growsurf-php/compare/v1.1.1...v1.1.2) (2026-07-11)
+
+
+### Bug Fixes
+
+* support retry-safe API key rotation ([166a1cc](https://github.com/growsurf/growsurf-php/commit/166a1ccd59c71690b2220744a050fdc02eac67e2))
+
 ## [1.1.1](https://github.com/growsurf/growsurf-php/compare/v1.1.0...v1.1.1) (2026-07-09)
 
 
