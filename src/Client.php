@@ -85,6 +85,7 @@ class Client extends BaseClient
         parent::__construct(
             headers: $headers,
             baseUrl: $baseUrl,
+            idempotencyHeader: 'Idempotency-Key',
             options: $options
         );
 

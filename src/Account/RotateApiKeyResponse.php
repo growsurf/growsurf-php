@@ -17,7 +17,7 @@ final class RotateApiKeyResponse implements BaseModel
     use SdkModel;
 
     /**
-     * The new API key. The previous key is revoked immediately.
+     * The new API key. Store it now; the key used for rotation stops working immediately.
      */
     #[Required]
     public string $apiKey;
@@ -56,7 +56,7 @@ final class RotateApiKeyResponse implements BaseModel
     }
 
     /**
-     * The new API key. The previous key is revoked immediately.
+     * The new API key. Store it now; the key used for rotation stops working immediately.
      */
     public function withAPIKey(string $apiKey): self
     {

@@ -41,4 +41,31 @@ class ClientTest extends TestCase
             $this->assertNotEmpty($sent);
         }
     }
+
+    public function testApiKeyRotationHasAnIdempotencyKey(): void
+    {
+        $transporter = new Client;
+        $mockRsp = Psr17FactoryDiscovery::findResponseFactory()
+            ->createResponse()
+            ->withStatus(200)
+            ->withHeader('Content-Type', 'application/json')
+            ->withBody(Psr17FactoryDiscovery::findStreamFactory()->createStream(
+                json_encode(['apiKey' => 'sk_api_0123456789abcdef0123456789abcdef_newsecret'], flags: Util::JSON_ENCODE_FLAGS) ?: ''
+            ))
+        ;
+        $transporter->setDefaultResponse($mockRsp);
+        $client = new \Growsurf\Client(
+            baseUrl: 'http://localhost',
+            apiKey: 'My API Key',
+            requestOptions: ['transporter' => $transporter],
+        );
+
+        $client->account->rotateApiKey();
+
+        $this->assertNotFalse($requested = $transporter->getRequests()[0] ?? false);
+        $this->assertMatchesRegularExpression(
+            '/^stainless-php-retry-/',
+            $requested->getHeaderLine('Idempotency-Key'),
+        );
+    }
 }
