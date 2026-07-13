@@ -636,7 +636,7 @@ final class ParticipantService implements ParticipantContract
     /**
      * @api
      *
-     * Sends an email to a participant. Provide EITHER `emailType` to trigger one of the program's configured email templates, OR `subject` + `body` for a free-form email. Free-form emails are sent with the same compliance handling (company name, postal address, and an unsubscribe link are added automatically, and unsubscribed participants are suppressed). Sending requires the account to be verified by the GrowSurf team. Requires a verified custom email domain on the program (set up in Campaign Editor > 3. Emails > Email Settings). Returns `400` until one is verified. The email is accepted for delivery.
+     * Sends an email to a participant. Provide EITHER `emailType` to trigger one of the program's configured email templates, OR `subject` + `body` for a free-form email. Free-form emails are sent with the same compliance handling (company name, postal address, and an unsubscribe link are added automatically, and unsubscribed participants are suppressed). Sending requires the team to be verified by GrowSurf. Requires a verified custom email domain on the program (set up in Campaign Editor > 3. Emails > Email Settings). Returns `400` until one is verified. The email is accepted for delivery.
      *
      * @param string $participantIDOrEmail path param: GrowSurf participant ID or URL-encoded participant email address
      * @param string $id path param: GrowSurf program ID

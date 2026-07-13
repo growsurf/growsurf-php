@@ -98,7 +98,7 @@ final class CampaignRawService implements CampaignRawContract
     /**
      * @api
      *
-     * Creates a new program pre-populated with type-appropriate defaults, plus any optional inline rewards. The new program is created in `DRAFT` status and owned by the API key's account. Requires a verified account email.
+     * Creates a new program pre-populated with type-appropriate defaults, plus any optional inline rewards. The new program is created in `DRAFT` status and owned by the API key's bound team. Requires the team owner's verified email.
      *
      * @param array{
      *   type: Type|value-of<Type>,

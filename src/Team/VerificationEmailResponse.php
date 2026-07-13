@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Growsurf\Account;
+namespace Growsurf\Team;
 
-use Growsurf\Account\VerificationEmailResponse\Status;
 use Growsurf\Core\Attributes\Required;
 use Growsurf\Core\Concerns\SdkModel;
 use Growsurf\Core\Contracts\BaseModel;
+use Growsurf\Team\VerificationEmailResponse\Status;
 
 /**
  * @phpstan-type VerificationEmailResponseShape = array{
@@ -26,36 +26,17 @@ final class VerificationEmailResponse implements BaseModel
     #[Required]
     public bool $success;
 
-    /**
-     * `new VerificationEmailResponse()` is missing required properties by the API.
-     *
-     * To enforce required parameters use
-     * ```
-     * VerificationEmailResponse::with(status: ..., success: ...)
-     * ```
-     *
-     * Otherwise ensure the following setters are called
-     *
-     * ```
-     * (new VerificationEmailResponse)->withStatus(...)->withSuccess(...)
-     * ```
-     */
     public function __construct()
     {
         $this->initialize();
     }
 
     /**
-     * Construct an instance from the required parameters.
-     *
-     * You must use named parameters to construct any parameters with a default value.
-     *
      * @param Status|value-of<Status> $status
      */
     public static function with(Status|string $status, bool $success): self
     {
         $self = new self;
-
         $self['status'] = $status;
         $self['success'] = $success;
 

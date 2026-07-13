@@ -10,7 +10,6 @@ use Growsurf\Core\Contracts\BaseModel;
 
 /**
  * @phpstan-type CreateAccountResponseShape = array{
- *   id: string,
  *   email: string,
  *   apiKey: string,
  *   verificationStatus: VerificationStatus|value-of<VerificationStatus>,
@@ -20,12 +19,6 @@ final class CreateAccountResponse implements BaseModel
 {
     /** @use SdkModel<CreateAccountResponseShape> */
     use SdkModel;
-
-    /**
-     * The new account's unique identifier.
-     */
-    #[Required]
-    public string $id;
 
     #[Required]
     public string $email;
@@ -48,7 +41,6 @@ final class CreateAccountResponse implements BaseModel
      * To enforce required parameters use
      * ```
      * CreateAccountResponse::with(
-     *   id: ...,
      *   email: ...,
      *   apiKey: ...,
      *   verificationStatus: ...,
@@ -59,7 +51,6 @@ final class CreateAccountResponse implements BaseModel
      *
      * ```
      * (new CreateAccountResponse)
-     *   ->withID(...)
      *   ->withEmail(...)
      *   ->withAPIKey(...)
      *   ->withVerificationStatus(...)
@@ -78,28 +69,15 @@ final class CreateAccountResponse implements BaseModel
      * @param VerificationStatus|value-of<VerificationStatus> $verificationStatus
      */
     public static function with(
-        string $id,
         string $email,
         string $apiKey,
         VerificationStatus|string $verificationStatus,
     ): self {
         $self = new self;
 
-        $self['id'] = $id;
         $self['email'] = $email;
         $self['apiKey'] = $apiKey;
         $self['verificationStatus'] = $verificationStatus;
-
-        return $self;
-    }
-
-    /**
-     * The new account's unique identifier.
-     */
-    public function withID(string $id): self
-    {
-        $self = clone $this;
-        $self['id'] = $id;
 
         return $self;
     }

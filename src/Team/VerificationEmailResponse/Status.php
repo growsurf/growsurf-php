@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Growsurf\Account\VerificationEmailResponse;
+namespace Growsurf\Team\VerificationEmailResponse;
 
 enum Status: string
 {

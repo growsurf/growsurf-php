@@ -134,17 +134,29 @@ abstract class BaseClient
             $options->extraQueryParams ?? []
         );
         $uri = Util::joinUri($this->baseUrl, path: $parsedPath, query: $mergedQuery)->__toString();
-        $idempotencyHeaders = $this->idempotencyHeader && !array_key_exists($this->idempotencyHeader, array: $headers)
-            ? [$this->idempotencyHeader => $this->generateIdempotencyKey()]
-            : [];
 
         /** @var array<string,string|list<string>|null> $mergedHeaders */
         $mergedHeaders = [
             ...$this->headers,
             ...$headers,
             ...($options->extraHeaders ?? []),
-            ...$idempotencyHeaders,
         ];
+
+        // Treat header names case-insensitively and only generate after every caller-controlled
+        // source has been merged, so an explicit retry key is never overwritten.
+        $hasIdempotencyHeader = false;
+        if ($this->idempotencyHeader) {
+            foreach (array_keys($mergedHeaders) as $headerName) {
+                if (0 === strcasecmp($headerName, $this->idempotencyHeader)) {
+                    $hasIdempotencyHeader = true;
+
+                    break;
+                }
+            }
+        }
+        if ($this->idempotencyHeader && !$hasIdempotencyHeader) {
+            $mergedHeaders[$this->idempotencyHeader] = $this->generateIdempotencyKey();
+        }
 
         $req = ['method' => strtoupper($method), 'path' => $uri, 'query' => $mergedQuery, 'headers' => $mergedHeaders, 'body' => $body];
 

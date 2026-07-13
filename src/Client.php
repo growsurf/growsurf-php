@@ -9,6 +9,7 @@ use Growsurf\Core\Implementation\StreamingHttpClient;
 use Growsurf\Core\Util;
 use Growsurf\Services\AccountService;
 use Growsurf\Services\CampaignService;
+use Growsurf\Services\TeamService;
 use Http\Discovery\Psr17FactoryDiscovery;
 use Http\Discovery\Psr18ClientDiscovery;
 
@@ -29,6 +30,11 @@ class Client extends BaseClient
      * @api
      */
     public AccountService $account;
+
+    /**
+     * @api
+     */
+    public TeamService $team;
 
     /**
      * @param RequestOpts|null $requestOptions
@@ -91,6 +97,7 @@ class Client extends BaseClient
 
         $this->campaign = new CampaignService($this);
         $this->account = new AccountService($this);
+        $this->team = new TeamService($this);
     }
 
     /** @return array<string,string> */

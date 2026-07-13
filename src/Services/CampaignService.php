@@ -148,7 +148,7 @@ final class CampaignService implements CampaignContract
     /**
      * @api
      *
-     * Creates a new program pre-populated with type-appropriate defaults, plus any optional inline rewards. The new program is created in `DRAFT` status and owned by the API key's account. Requires a verified account email.
+     * Creates a new program pre-populated with type-appropriate defaults, plus any optional inline rewards. The new program is created in `DRAFT` status and owned by the API key's bound team. Requires the team owner's verified email.
      *
      * @param Type|value-of<Type> $type The program type. Immutable after creation.
      * @param string $currencyISO ISO 4217 currency code. Defaults to USD. Chosen when the program is created and immutable afterward — it cannot be changed on update.

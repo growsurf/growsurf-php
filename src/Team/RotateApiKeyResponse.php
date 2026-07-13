@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Growsurf\Account;
+namespace Growsurf\Team;
 
 use Growsurf\Core\Attributes\Required;
 use Growsurf\Core\Concerns\SdkModel;
@@ -22,34 +22,14 @@ final class RotateApiKeyResponse implements BaseModel
     #[Required]
     public string $apiKey;
 
-    /**
-     * `new RotateApiKeyResponse()` is missing required properties by the API.
-     *
-     * To enforce required parameters use
-     * ```
-     * RotateApiKeyResponse::with(apiKey: ...)
-     * ```
-     *
-     * Otherwise ensure the following setters are called
-     *
-     * ```
-     * (new RotateApiKeyResponse)->withAPIKey(...)
-     * ```
-     */
     public function __construct()
     {
         $this->initialize();
     }
 
-    /**
-     * Construct an instance from the required parameters.
-     *
-     * You must use named parameters to construct any parameters with a default value.
-     */
     public static function with(string $apiKey): self
     {
         $self = new self;
-
         $self['apiKey'] = $apiKey;
 
         return $self;
