@@ -35,7 +35,7 @@ final class TeamService implements TeamContract
     /**
      * @api
      *
-     * Retrieves the team bound to the API key or OAuth connection. `verificationStatus` is `VERIFIED` once GrowSurf has verified the team, which is required before a program can send participant emails. A credential that can act across multiple teams cannot use this operation because it has no single Team resource.
+     * Retrieves the team bound to the API key or OAuth connection. `verificationStatus` is `VERIFIED` once GrowSurf has verified the team, which is required before a program can send participant emails.
      *
      * @param RequestOpts|null $requestOptions
      *
