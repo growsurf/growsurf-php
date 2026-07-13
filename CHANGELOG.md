@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.0](https://github.com/growsurf/growsurf-php/compare/v1.1.2...v1.2.0) (2026-07-13)
+
+
+### Features
+
+* **api:** add Team resource ([cd6e833](https://github.com/growsurf/growsurf-php/commit/cd6e833d294dc07e01ca56602277a0f73fbcfb6d))
+
 ## [1.1.2](https://github.com/growsurf/growsurf-php/compare/v1.1.1...v1.1.2) (2026-07-11)
 
 
