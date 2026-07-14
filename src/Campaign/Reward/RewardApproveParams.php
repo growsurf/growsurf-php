@@ -11,7 +11,7 @@ use Growsurf\Core\Concerns\SdkParams;
 use Growsurf\Core\Contracts\BaseModel;
 
 /**
- * Approves a manually approved reward earned by a participant.
+ * Approves a manually approved reward earned by a participant. This requires `reward:write`. When the request also sets `fulfill` to `true`, it additionally requires `reward:fulfill`.
  *
  * @see Growsurf\Services\Campaign\RewardService::approve()
  *

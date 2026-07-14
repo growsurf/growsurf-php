@@ -10,7 +10,7 @@ use Growsurf\Core\Concerns\SdkParams;
 use Growsurf\Core\Contracts\BaseModel;
 
 /**
- * Deletes a campaign reward (`CampaignReward`). The reward is deactivated, removed from the program's reward set, and any connected upfront-discount coupons are cleaned up.
+ * Deletes a campaign reward (`CampaignReward`). The reward is deactivated, removed from the program's reward set, and any connected upfront-discount coupons are cleaned up. If campaign copy still references any of the reward's metadata keys via `{{campaignReward[…]}}` tokens, the delete returns a `409` listing the referencing fields — update those fields first.
  *
  * @see Growsurf\Services\Campaign\RewardsService::delete()
  *

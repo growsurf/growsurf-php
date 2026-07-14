@@ -11,7 +11,7 @@ use Growsurf\Core\Concerns\SdkParams;
 use Growsurf\Core\Contracts\BaseModel;
 
 /**
- * Retrieves analytics for a program.
+ * Retrieves analytics for a program. Pass `interval` to also get a time-series (`series`) alongside the totals, and `include` to add previous-period totals, status breakdowns, or derived rates — useful for detecting trends over time.
  *
  * @see Growsurf\Services\CampaignService::retrieveAnalytics()
  *

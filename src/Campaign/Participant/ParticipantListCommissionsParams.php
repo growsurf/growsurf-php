@@ -12,7 +12,7 @@ use Growsurf\Core\Concerns\SdkParams;
 use Growsurf\Core\Contracts\BaseModel;
 
 /**
- * Retrieves a paged list of commissions earned by a participant.
+ * **Affiliate programs only.** Retrieves a paged list of commissions earned by a participant.
  *
  * @see Growsurf\Services\Campaign\ParticipantService::listCommissions()
  *

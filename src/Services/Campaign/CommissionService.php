@@ -35,7 +35,7 @@ final class CommissionService implements CommissionContract
     /**
      * @api
      *
-     * Removes a pending participant commission.
+     * **Affiliate programs only.** Removes a pending participant commission.
      *
      * @param string $commissionID participant commission ID
      * @param string $id growSurf program ID
@@ -59,7 +59,7 @@ final class CommissionService implements CommissionContract
     /**
      * @api
      *
-     * Approves a pending participant commission so it can become eligible for payout.
+     * **Affiliate programs only.** Approves a pending participant commission so it can become eligible for payout.
      *
      * @param string $commissionID participant commission ID
      * @param string $id growSurf program ID

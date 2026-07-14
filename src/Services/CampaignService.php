@@ -148,7 +148,7 @@ final class CampaignService implements CampaignContract
     /**
      * @api
      *
-     * Creates a new program pre-populated with type-appropriate defaults, plus any optional inline rewards. The new program is created in `DRAFT` status and owned by the API key's bound team. Requires the team owner's verified email.
+     * Creates a new program, plus any optional program rewards. The new program is created in `DRAFT` status and owned by the API key's bound team.
      *
      * @param Type|value-of<Type> $type The program type. Immutable after creation.
      * @param string $currencyISO ISO 4217 currency code. Defaults to USD. Chosen when the program is created and immutable afterward — it cannot be changed on update.
@@ -288,7 +288,7 @@ final class CampaignService implements CampaignContract
     /**
      * @api
      *
-     * Retrieves a paged list of all participant commissions in an affiliate program.
+     * **Affiliate programs only.** Retrieves a paged list of all participant commissions in an affiliate program.
      *
      * @param string $id growSurf program ID
      * @param int $limit Number of results to return. Maximum 100.
@@ -381,7 +381,7 @@ final class CampaignService implements CampaignContract
     /**
      * @api
      *
-     * Retrieves a paged list of all participant payouts in an affiliate program.
+     * **Affiliate programs only.** Retrieves a paged list of all participant payouts in an affiliate program.
      *
      * @param string $id growSurf program ID
      * @param int $limit Number of results to return. Maximum 100.
@@ -463,7 +463,7 @@ final class CampaignService implements CampaignContract
     /**
      * @api
      *
-     * Retrieves analytics for a program.
+     * Retrieves analytics for a program. Pass `interval` to also get a time-series (`series`) alongside the totals, and `include` to add previous-period totals, status breakdowns, or derived rates — useful for detecting trends over time.
      *
      * @param string $id growSurf program ID
      * @param int $days Last number of days to retrieve analytics for. Defaults to 365. Maximum 1825.

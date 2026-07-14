@@ -70,7 +70,7 @@ final class TeamService implements TeamContract
     /**
      * @api
      *
-     * Generates a new API key and makes the key used on this request stop working when rotation succeeds. The SDK sends a retry-safe `Idempotency-Key`; store the returned API key, then update every integration that used the old key. This operation is available only through the REST API or a GrowSurf API SDK, not through MCP.
+     * Generates a new API key and makes the key used on this request stop working when rotation succeeds. Send a unique, random `Idempotency-Key`. If the response is interrupted, immediately retry with the original API key and the same `Idempotency-Key` to receive the same new key. Update every integration that used the old key. The team owner is notified by email whenever the key is rotated. GrowSurf SDKs generate the idempotency key automatically. This endpoint accepts an API key with `api_key:rotate`. If this scope is unavailable, rotate the key in the authenticated dashboard instead. This operation is available only through the REST API or a GrowSurf API SDK, not through MCP.
      *
      * @param RequestOpts|null $requestOptions
      *
@@ -85,7 +85,7 @@ final class TeamService implements TeamContract
     /**
      * @api
      *
-     * Requests GrowSurf to verify the bound team. Calling it again while a request is pending does not create a duplicate.
+     * Requests GrowSurf to verify the bound team (required before a program can email its participants). Idempotent — calling it again while a request is pending does not create a duplicate. Returns the team with its updated `verificationStatus`.
      *
      * @param RequestOpts|null $requestOptions
      *
@@ -100,7 +100,7 @@ final class TeamService implements TeamContract
     /**
      * @api
      *
-     * Resends the email-verification message to the bound team's owner. The response never reveals the owner's email address.
+     * Resends the email-verification message to the bound team's owner. The response never reveals the owner's email address. A `200` with `status: SENT` is returned only when an email was actually dispatched. Returns `400` if the email is already verified, and `429` if a verification email was sent too recently — wait a moment, then retry.
      *
      * @param RequestOpts|null $requestOptions
      *

@@ -10,7 +10,7 @@ use Growsurf\Core\Concerns\SdkParams;
 use Growsurf\Core\Contracts\BaseModel;
 
 /**
- * Sends email invites on behalf of a participant to a list of email addresses.
+ * Sends email invites on behalf of a participant to a list of email addresses. Sending invites via the API requires a **verified custom email domain** on the program; the request fails until one is verified.
  *
  * @see Growsurf\Services\Campaign\ParticipantService::sendInvites()
  *

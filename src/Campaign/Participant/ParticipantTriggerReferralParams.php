@@ -11,7 +11,7 @@ use Growsurf\Core\Concerns\SdkParams;
 use Growsurf\Core\Contracts\BaseModel;
 
 /**
- * Triggers referral credit for an existing referred participant by GrowSurf participant ID or email address.
+ * Triggers referral credit for an existing referred participant by GrowSurf participant ID or email address. Optionally pass `delayInDays` to hold the credit for a number of days before it is awarded (for example, to cover your own refund window). A delayed trigger can be cancelled before it is awarded with the Cancel delayed referral trigger request (DELETE on this same path).
  *
  * @see Growsurf\Services\Campaign\ParticipantService::triggerReferral()
  *

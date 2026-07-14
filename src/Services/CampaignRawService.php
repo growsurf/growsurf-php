@@ -98,7 +98,7 @@ final class CampaignRawService implements CampaignRawContract
     /**
      * @api
      *
-     * Creates a new program pre-populated with type-appropriate defaults, plus any optional inline rewards. The new program is created in `DRAFT` status and owned by the API key's bound team. Requires the team owner's verified email.
+     * Creates a new program, plus any optional program rewards. The new program is created in `DRAFT` status and owned by the API key's bound team.
      *
      * @param array{
      *   type: Type|value-of<Type>,
@@ -242,7 +242,7 @@ final class CampaignRawService implements CampaignRawContract
     /**
      * @api
      *
-     * Retrieves a paged list of all participant commissions in an affiliate program.
+     * **Affiliate programs only.** Retrieves a paged list of all participant commissions in an affiliate program.
      *
      * @param string $id growSurf program ID
      * @param array{
@@ -350,7 +350,7 @@ final class CampaignRawService implements CampaignRawContract
     /**
      * @api
      *
-     * Retrieves a paged list of all participant payouts in an affiliate program.
+     * **Affiliate programs only.** Retrieves a paged list of all participant payouts in an affiliate program.
      *
      * @param string $id growSurf program ID
      * @param array{
@@ -430,7 +430,7 @@ final class CampaignRawService implements CampaignRawContract
     /**
      * @api
      *
-     * Retrieves analytics for a program.
+     * Retrieves analytics for a program. Pass `interval` to also get a time-series (`series`) alongside the totals, and `include` to add previous-period totals, status breakdowns, or derived rates — useful for detecting trends over time.
      *
      * @param string $id growSurf program ID
      * @param array{

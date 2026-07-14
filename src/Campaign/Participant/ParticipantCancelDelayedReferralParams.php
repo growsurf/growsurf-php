@@ -10,7 +10,7 @@ use Growsurf\Core\Concerns\SdkParams;
 use Growsurf\Core\Contracts\BaseModel;
 
 /**
- * Cancels a pending delayed referral trigger for a participant by GrowSurf participant ID or email address.
+ * Cancels a pending delayed referral trigger for a participant (the companion to a delayed Trigger referral request). Use this to undo a scheduled referral credit before it is awarded, for example when a refund occurs inside your refund window. If the participant has no pending delayed trigger, `success` is returned as `false`.
  *
  * @see Growsurf\Services\Campaign\ParticipantService::cancelDelayedReferral()
  *

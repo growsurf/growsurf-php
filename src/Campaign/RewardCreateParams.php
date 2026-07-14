@@ -13,7 +13,7 @@ use Growsurf\Core\Concerns\SdkParams;
 use Growsurf\Core\Contracts\BaseModel;
 
 /**
- * Creates a new campaign reward (`CampaignReward`) with a server-generated ID. The reward type must be compatible with the program type.
+ * Creates a new campaign reward (`CampaignReward`) with a GrowSurf-assigned ID. The reward type must be compatible with the program type (affiliate programs support only `AFFILIATE` rewards; referral programs support all other types). Enabling an active reward of a type automatically enables that reward type on the program.
  *
  * @see Growsurf\Services\Campaign\RewardsService::create()
  *

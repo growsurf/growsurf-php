@@ -60,7 +60,7 @@ final class RewardService implements RewardContract
     /**
      * @api
      *
-     * Approves a manually approved reward earned by a participant. Requires `reward:write`. Passing `fulfill: true` also requires `reward:fulfill`.
+     * Approves a manually approved reward earned by a participant. This requires `reward:write`. When the request also sets `fulfill` to `true`, it additionally requires `reward:fulfill`.
      *
      * @param string $rewardID path param: Participant reward ID
      * @param string $id path param: GrowSurf program ID
@@ -86,7 +86,7 @@ final class RewardService implements RewardContract
     /**
      * @api
      *
-     * Marks an approved participant reward as fulfilled. Requires `reward:fulfill`.
+     * Marks an approved participant reward as fulfilled.
      *
      * @param string $rewardID participant reward ID
      * @param string $id growSurf program ID

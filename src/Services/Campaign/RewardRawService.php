@@ -66,7 +66,7 @@ final class RewardRawService implements RewardRawContract
     /**
      * @api
      *
-     * Approves a manually approved reward earned by a participant. Requires `reward:write`. Passing `fulfill: true` also requires `reward:fulfill`.
+     * Approves a manually approved reward earned by a participant. This requires `reward:write`. When the request also sets `fulfill` to `true`, it additionally requires `reward:fulfill`.
      *
      * @param string $rewardID path param: Participant reward ID
      * @param array{id: string, fulfill?: bool}|RewardApproveParams $params
@@ -101,7 +101,7 @@ final class RewardRawService implements RewardRawContract
     /**
      * @api
      *
-     * Marks an approved participant reward as fulfilled. Requires `reward:fulfill`.
+     * Marks an approved participant reward as fulfilled.
      *
      * @param string $rewardID participant reward ID
      * @param array{id: string}|RewardFulfillParams $params

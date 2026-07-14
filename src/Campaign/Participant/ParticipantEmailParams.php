@@ -11,7 +11,7 @@ use Growsurf\Core\Concerns\SdkParams;
 use Growsurf\Core\Contracts\BaseModel;
 
 /**
- * Sends an email to a participant. Provide EITHER `emailType` to trigger one of the program's configured email templates, OR `subject` + `body` for a free-form email.
+ * Sends an email to a participant. Provide EITHER `emailType` to trigger one of the program's configured email templates, OR `subject` + `body` for a free-form email. Free-form emails are sent with the same compliance handling (company name, postal address, and an unsubscribe link are added automatically, and unsubscribed participants are suppressed). Sending requires the team to be verified by GrowSurf. Requires a **verified custom email domain** on the program (which can be completed in *Campaign Editor > 3. Emails > Email Settings*). Returns `400` until one is verified. The email is accepted for delivery.
  *
  * @see Growsurf\Services\Campaign\ParticipantService::email()
  *

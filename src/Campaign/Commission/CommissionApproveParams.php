@@ -10,7 +10,7 @@ use Growsurf\Core\Concerns\SdkParams;
 use Growsurf\Core\Contracts\BaseModel;
 
 /**
- * Approves a pending participant commission so it can become eligible for payout.
+ * **Affiliate programs only.** Approves a pending participant commission so it can become eligible for payout.
  *
  * @see Growsurf\Services\Campaign\CommissionService::approve()
  *

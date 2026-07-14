@@ -11,7 +11,7 @@ use Growsurf\Core\Concerns\SdkParams;
 use Growsurf\Core\Contracts\BaseModel;
 
 /**
- * Retrieves a paged list of all participant payouts in an affiliate program.
+ * **Affiliate programs only.** Retrieves a paged list of all participant payouts in an affiliate program.
  *
  * @see Growsurf\Services\CampaignService::listPayouts()
  *

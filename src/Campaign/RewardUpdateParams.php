@@ -12,7 +12,7 @@ use Growsurf\Core\Concerns\SdkParams;
 use Growsurf\Core\Contracts\BaseModel;
 
 /**
- * Updates an existing campaign reward (`CampaignReward`). All fields are optional; `type` is immutable and must not be supplied.
+ * Updates an existing campaign reward (`CampaignReward`). The reward `type` is immutable and cannot be changed. When the update replaces `metadata`, renamed keys automatically rewrite any `{{campaignReward[…]}}` references in campaign copy; removing a key that campaign copy still references returns a `409` listing the referencing fields.
  *
  * @see Growsurf\Services\Campaign\RewardsService::update()
  *

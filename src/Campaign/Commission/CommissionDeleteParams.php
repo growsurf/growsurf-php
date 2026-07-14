@@ -10,7 +10,7 @@ use Growsurf\Core\Concerns\SdkParams;
 use Growsurf\Core\Contracts\BaseModel;
 
 /**
- * Removes a pending participant commission.
+ * **Affiliate programs only.** Removes a pending participant commission.
  *
  * @see Growsurf\Services\Campaign\CommissionService::delete()
  *

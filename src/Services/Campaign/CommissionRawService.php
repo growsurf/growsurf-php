@@ -30,7 +30,7 @@ final class CommissionRawService implements CommissionRawContract
     /**
      * @api
      *
-     * Removes a pending participant commission.
+     * **Affiliate programs only.** Removes a pending participant commission.
      *
      * @param string $commissionID participant commission ID
      * @param array{id: string}|CommissionDeleteParams $params
@@ -64,7 +64,7 @@ final class CommissionRawService implements CommissionRawContract
     /**
      * @api
      *
-     * Approves a pending participant commission so it can become eligible for payout.
+     * **Affiliate programs only.** Approves a pending participant commission so it can become eligible for payout.
      *
      * @param string $commissionID participant commission ID
      * @param array{id: string}|CommissionApproveParams $params
