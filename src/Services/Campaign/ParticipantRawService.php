@@ -14,6 +14,8 @@ use Growsurf\Campaign\Participant\ParticipantDeleteResponse;
 use Growsurf\Campaign\Participant\ParticipantEmailParams;
 use Growsurf\Campaign\Participant\ParticipantEmailResponse;
 use Growsurf\Campaign\Participant\ParticipantGetAnalyticsResponse;
+use Growsurf\Campaign\Participant\ParticipantGetPayoutDestinationParams;
+use Growsurf\Campaign\Participant\ParticipantGetPayoutDestinationResponse;
 use Growsurf\Campaign\Participant\ParticipantListActivityLogsParams;
 use Growsurf\Campaign\Participant\ParticipantListActivityLogsResponse;
 use Growsurf\Campaign\Participant\ParticipantListCommissionsParams;
@@ -29,6 +31,8 @@ use Growsurf\Campaign\Participant\ParticipantRecordTransactionResponse\UnionMemb
 use Growsurf\Campaign\Participant\ParticipantRecordTransactionResponse\UnionMember1;
 use Growsurf\Campaign\Participant\ParticipantRefundTransactionParams;
 use Growsurf\Campaign\Participant\ParticipantRefundTransactionResponse;
+use Growsurf\Campaign\Participant\ParticipantRequestPayoutDestinationConfirmationParams;
+use Growsurf\Campaign\Participant\ParticipantRequestPayoutDestinationConfirmationResponse;
 use Growsurf\Campaign\Participant\ParticipantRetrieveAnalyticsParams;
 use Growsurf\Campaign\Participant\ParticipantRetrieveAnalyticsParams\Interval;
 use Growsurf\Campaign\Participant\ParticipantRetrieveParams;
@@ -37,6 +41,7 @@ use Growsurf\Campaign\Participant\ParticipantSendInvitesResponse;
 use Growsurf\Campaign\Participant\ParticipantTriggerReferralParams;
 use Growsurf\Campaign\Participant\ParticipantTriggerReferralResponse;
 use Growsurf\Campaign\Participant\ParticipantUpdateParams;
+use Growsurf\Campaign\Participant\ParticipantUpdateParams\AffiliateStatus;
 use Growsurf\Campaign\Participant\ParticipantUpdateParams\ReferralStatus;
 use Growsurf\Campaign\ParticipantCommissionList;
 use Growsurf\Campaign\ParticipantPayoutList;
@@ -96,17 +101,17 @@ final class ParticipantRawService implements ParticipantRawContract
     /**
      * @api
      *
-     * Updates a participant by GrowSurf participant ID or email address.
+     * Updates a participant by GrowSurf participant ID or email address. For affiliate programs, set `affiliateStatus` to `APPROVED`, `SUSPENDED`, or `BANNED`. `APPROVED` enrolls the participant as an affiliate. `SUSPENDED` and `BANNED` require an existing affiliate. This endpoint does not accept `isAffiliate`, and affiliate enrollment cannot be removed through REST.
      *
      * @param string $participantIDOrEmail path param: GrowSurf participant ID or URL-encoded participant email address
      * @param array{
      *   id: string,
+     *   affiliateStatus?: AffiliateStatus|value-of<AffiliateStatus>,
      *   email?: string,
      *   firstName?: string,
      *   lastName?: string,
      *   metadata?: array<string,mixed>,
      *   notes?: string,
-     *   paypalEmail?: string,
      *   referralStatus?: ReferralStatus|value-of<ReferralStatus>,
      *   referredBy?: string,
      *   unsubscribed?: bool,
@@ -210,7 +215,7 @@ final class ParticipantRawService implements ParticipantRawContract
     /**
      * @api
      *
-     * Adds a new participant to the program. If the email already exists, the existing participant is returned.
+     * Adds a new participant to the program. If the email already exists, the existing participant is returned unchanged. For affiliate programs, set `isAffiliate` to `true` to enroll a new participant as an approved affiliate or `false` to create a non-affiliate. If you omit `isAffiliate`, a valid `referredBy` creates a referred non-affiliate; without a valid referrer, the new participant is enrolled as an approved affiliate. You can send a valid `referredBy` with `isAffiliate: true` to keep the referral attribution and enroll the participant as an affiliate.
      *
      * @param string $id growSurf program ID
      * @param array{
@@ -218,6 +223,7 @@ final class ParticipantRawService implements ParticipantRawContract
      *   fingerprint?: string,
      *   firstName?: string,
      *   ipAddress?: string,
+     *   isAffiliate?: bool,
      *   lastName?: string,
      *   metadata?: array<string,mixed>,
      *   mobileInstanceID?: string,
@@ -693,7 +699,7 @@ final class ParticipantRawService implements ParticipantRawContract
     /**
      * @api
      *
-     * Retrieves analytics for a single participant — all-time engagement counters, leaderboard ranks, and per-channel share counts (plus affiliate money metrics for affiliate programs). Useful for segmenting and re-engaging participants. Pass `include=series` to also get this participant's own activity over time.
+     * Retrieves analytics for a single participant — all-time engagement counters, leaderboard ranks, and per-channel share counts (plus affiliate revenue, commission, and payout metrics for affiliate programs). Pass `include=email` for `sent` (accepted for delivery), `delivered`, `opened`, `clicked`, `bounced`, and `spamComplaints` metrics attributed to this participant, including invitations they sent. Use `include=email,series` to include the same counts in each UTC series bucket.
      *
      * @param string $participantIDOrEmail growSurf participant ID or URL-encoded participant email address
      * @param array{
@@ -772,6 +778,86 @@ final class ParticipantRawService implements ParticipantRawContract
             query: $parsed,
             options: $options,
             convert: ParticipantListActivityLogsResponse::class,
+        );
+    }
+
+    /**
+     * @api
+     *
+     * Returns a participant's payout-destination status across every payout provider enabled for the program (PayPal and/or Wise). For each provider it reports the current status, the confirmed claim email, the legal recipient type, and — when a delivery bounced or a recipient was invalidated — the repair reason. `activeProvider` is the provider that currently gets paid, or `null` until the participant confirms one.
+     *
+     * @param string $participantIDOrEmail growSurf participant ID or URL-encoded participant email address
+     * @param array{id: string}|ParticipantGetPayoutDestinationParams $params
+     * @param RequestOpts|null $requestOptions
+     *
+     * @return BaseResponse<ParticipantGetPayoutDestinationResponse>
+     *
+     * @throws APIException
+     */
+    public function getPayoutDestination(
+        string $participantIDOrEmail,
+        array|ParticipantGetPayoutDestinationParams $params,
+        RequestOptions|array|null $requestOptions = null,
+    ): BaseResponse {
+        [$parsed, $options] = ParticipantGetPayoutDestinationParams::parseRequest(
+            $params,
+            $requestOptions,
+        );
+        $id = $parsed['id'];
+        unset($parsed['id']);
+
+        // @phpstan-ignore-next-line return.type
+        return $this->client->request(
+            method: 'get',
+            path: [
+                'campaign/%1$s/participant/%2$s/payout-destination',
+                $id,
+                $participantIDOrEmail,
+            ],
+            options: $options,
+            convert: ParticipantGetPayoutDestinationResponse::class,
+        );
+    }
+
+    /**
+     * @api
+     *
+     * Sends the participant a one-time link to confirm their payout destination for the chosen provider. Only the participant can open the link and confirm — this endpoint just triggers the message. The provider must be enabled for the program.
+     *
+     * @param string $participantIDOrEmail path param: GrowSurf participant ID or URL-encoded participant email address
+     * @param array{
+     *   id: string,
+     *   provider: ParticipantRequestPayoutDestinationConfirmationParams\Provider|value-of<ParticipantRequestPayoutDestinationConfirmationParams\Provider>,
+     * }|ParticipantRequestPayoutDestinationConfirmationParams $params
+     * @param RequestOpts|null $requestOptions
+     *
+     * @return BaseResponse<ParticipantRequestPayoutDestinationConfirmationResponse>
+     *
+     * @throws APIException
+     */
+    public function requestPayoutDestinationConfirmation(
+        string $participantIDOrEmail,
+        array|ParticipantRequestPayoutDestinationConfirmationParams $params,
+        RequestOptions|array|null $requestOptions = null,
+    ): BaseResponse {
+        [$parsed, $options] = ParticipantRequestPayoutDestinationConfirmationParams::parseRequest(
+            $params,
+            $requestOptions,
+        );
+        $id = $parsed['id'];
+        unset($parsed['id']);
+
+        // @phpstan-ignore-next-line return.type
+        return $this->client->request(
+            method: 'post',
+            path: [
+                'campaign/%1$s/participant/%2$s/payout-destination/request-confirmation',
+                $id,
+                $participantIDOrEmail,
+            ],
+            body: (object) array_diff_key($parsed, array_flip(['id'])),
+            options: $options,
+            convert: ParticipantRequestPayoutDestinationConfirmationResponse::class,
         );
     }
 }

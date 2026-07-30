@@ -12,7 +12,7 @@ use Growsurf\Core\Concerns\SdkParams;
 use Growsurf\Core\Contracts\BaseModel;
 
 /**
- * Retrieves analytics for a single participant — all-time engagement counters, leaderboard ranks, and per-channel share counts (plus affiliate money metrics for affiliate programs). Useful for segmenting and re-engaging participants. Pass `include=series` to also get this participant's own activity over time.
+ * Retrieves analytics for a single participant — all-time engagement counters, leaderboard ranks, and per-channel share counts (plus affiliate revenue, commission, and payout metrics for affiliate programs). Pass `include=email` for `sent` (accepted for delivery), `delivered`, `opened`, `clicked`, `bounced`, and `spamComplaints` metrics attributed to this participant, including invitations they sent. Use `include=email,series` to include the same counts in each UTC series bucket.
  *
  * @see Growsurf\Services\Campaign\ParticipantService::retrieveAnalytics()
  *
@@ -47,13 +47,19 @@ final class ParticipantRetrieveAnalyticsParams implements BaseModel
     public ?int $endDate;
 
     /**
-     * Set to `series` to also return this participant's own activity per period.
+     * Comma-separated optional data. `series` returns this participant's own activity per period;
+     * `email` returns `sent`, `delivered`, `opened`, `clicked`, `bounced`, `spamComplaints`, and
+     * per-email-type metrics attributed to the participant for the requested analytics window
+     * (including invitations they sent). Request both in either order to add email counts to
+     * every series item for emails sent during that period. Only documented tokens are accepted;
+     * an unknown token returns `400`.
      */
     #[Optional]
     public ?string $include;
 
     /**
-     * Bucket size for the `series` (only used with `include=series`). Defaults to `day`.
+     * Bucket size for the `series` (only used when `include` contains `series`). Defaults to
+     * `day`.
      *
      * @var value-of<Interval>|null $interval
      */
@@ -144,7 +150,12 @@ final class ParticipantRetrieveAnalyticsParams implements BaseModel
     }
 
     /**
-     * Set to `series` to also return this participant's own activity per period.
+     * Comma-separated optional data. `series` returns this participant's own activity per period;
+     * `email` returns `sent`, `delivered`, `opened`, `clicked`, `bounced`, `spamComplaints`, and
+     * per-email-type metrics attributed to the participant for the requested analytics window
+     * (including invitations they sent). Request both in either order to add email counts to
+     * every series item for emails sent during that period. Only documented tokens are accepted;
+     * an unknown token returns `400`.
      */
     public function withInclude(string $include): self
     {
@@ -155,7 +166,8 @@ final class ParticipantRetrieveAnalyticsParams implements BaseModel
     }
 
     /**
-     * Bucket size for the `series` (only used with `include=series`). Defaults to `day`.
+     * Bucket size for the `series` (only used when `include` contains `series`). Defaults to
+     * `day`.
      *
      * @param Interval|value-of<Interval> $interval
      */

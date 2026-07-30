@@ -10,7 +10,7 @@ use Growsurf\Core\Concerns\SdkModel;
 use Growsurf\Core\Contracts\BaseModel;
 
 /**
- * Payout-related actions the participant must complete before a payout can be released (e.g. confirming a PayPal email or submitting a W-9/W-8 tax form). Always present; the requiredActions array is empty when no action is required.
+ * Payout-related actions the participant must complete before a payout can be released (e.g. configuring a payout destination or submitting a W-9/W-8 tax form). Always present; the requiredActions array is empty when no action is required.
  *
  * @phpstan-type PayoutSettingsShape = array{
  *   requiredActions?: list<RequiredAction|value-of<RequiredAction>>|null

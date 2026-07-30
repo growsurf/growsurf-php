@@ -11,9 +11,11 @@ use Growsurf\Core\Attributes\Optional;
 use Growsurf\Core\Attributes\Required;
 use Growsurf\Core\Concerns\SdkModel;
 use Growsurf\Core\Contracts\BaseModel;
+use Growsurf\EmailAnalytics;
 
 /**
  * @phpstan-import-type AnalyticsShape from \Growsurf\Campaign\Participant\ParticipantGetAnalyticsResponse\Analytics
+ * @phpstan-import-type EmailAnalyticsShape from \Growsurf\EmailAnalytics
  * @phpstan-import-type RanksShape from \Growsurf\Campaign\Participant\ParticipantGetAnalyticsResponse\Ranks
  * @phpstan-import-type SeriesShape from \Growsurf\Campaign\Participant\ParticipantGetAnalyticsResponse\Series
  *
@@ -21,6 +23,7 @@ use Growsurf\Core\Contracts\BaseModel;
  *   analytics: Analytics|AnalyticsShape,
  *   ranks: Ranks|RanksShape,
  *   shareCount: array<string,int>,
+ *   email?: null|EmailAnalytics|EmailAnalyticsShape,
  *   endDate?: int|null,
  *   series?: list<Series|SeriesShape>|null,
  *   startDate?: int|null,
@@ -45,14 +48,19 @@ final class ParticipantGetAnalyticsResponse implements BaseModel
     #[Required(map: 'int')]
     public array $shareCount;
 
+    /** Present only when `include` contains `email`. */
+    #[Optional]
+    public ?EmailAnalytics $email;
+
     /**
-     * Present only with `include=series`. Window end (Unix ms).
+     * Present only when `include` contains `series` or `email`. Window end (Unix ms).
      */
     #[Optional]
     public ?int $endDate;
 
     /**
-     * Present only when `include=series`. This participant's own referral-link activity per period (ascending), windowed by `days`/`startDate`/`endDate` and bucketed by `interval`.
+     * Present only when `include=series`. This participant's own referral-link activity per
+     * period (ascending), windowed by `days`/`startDate`/`endDate` and bucketed by `interval`.
      *
      * @var list<Series>|null $series
      */
@@ -60,7 +68,7 @@ final class ParticipantGetAnalyticsResponse implements BaseModel
     public ?array $series;
 
     /**
-     * Present only with `include=series`. Window start (Unix ms).
+     * Present only when `include` contains `series` or `email`. Window start (Unix ms).
      */
     #[Optional]
     public ?int $startDate;
@@ -97,6 +105,7 @@ final class ParticipantGetAnalyticsResponse implements BaseModel
      * You must use named parameters to construct any parameters with a default value.
      *
      * @param Analytics|AnalyticsShape $analytics
+     * @param EmailAnalytics|EmailAnalyticsShape|null $email
      * @param Ranks|RanksShape $ranks
      * @param array<string,int> $shareCount
      * @param list<Series|SeriesShape>|null $series
@@ -108,6 +117,7 @@ final class ParticipantGetAnalyticsResponse implements BaseModel
         ?int $endDate = null,
         ?array $series = null,
         ?int $startDate = null,
+        EmailAnalytics|array|null $email = null,
     ): self {
         $self = new self;
 
@@ -115,6 +125,7 @@ final class ParticipantGetAnalyticsResponse implements BaseModel
         $self['ranks'] = $ranks;
         $self['shareCount'] = $shareCount;
 
+        null !== $email && $self['email'] = $email;
         null !== $endDate && $self['endDate'] = $endDate;
         null !== $series && $self['series'] = $series;
         null !== $startDate && $self['startDate'] = $startDate;
@@ -157,8 +168,17 @@ final class ParticipantGetAnalyticsResponse implements BaseModel
         return $self;
     }
 
+    /** @param EmailAnalytics|EmailAnalyticsShape $email */
+    public function withEmail(EmailAnalytics|array $email): self
+    {
+        $self = clone $this;
+        $self['email'] = $email;
+
+        return $self;
+    }
+
     /**
-     * Present only with `include=series`. Window end (Unix ms).
+     * Present only when `include` contains `series` or `email`. Window end (Unix ms).
      */
     public function withEndDate(int $endDate): self
     {
@@ -182,7 +202,7 @@ final class ParticipantGetAnalyticsResponse implements BaseModel
     }
 
     /**
-     * Present only with `include=series`. Window start (Unix ms).
+     * Present only when `include` contains `series` or `email`. Window start (Unix ms).
      */
     public function withStartDate(int $startDate): self
     {

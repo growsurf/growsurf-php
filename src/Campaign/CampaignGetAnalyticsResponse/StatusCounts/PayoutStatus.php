@@ -17,6 +17,7 @@ use Growsurf\Core\Contracts\BaseModel;
  *   failed?: null|PayoutStatusMetric|PayoutStatusMetricShape,
  *   issued?: null|PayoutStatusMetric|PayoutStatusMetricShape,
  *   queued?: null|PayoutStatusMetric|PayoutStatusMetricShape,
+ *   reversed?: null|PayoutStatusMetric|PayoutStatusMetricShape,
  *   upcoming?: null|PayoutStatusMetric|PayoutStatusMetricShape,
  * }
  */
@@ -35,6 +36,9 @@ final class PayoutStatus implements BaseModel
     public ?PayoutStatusMetric $queued;
 
     #[Optional]
+    public ?PayoutStatusMetric $reversed;
+
+    #[Optional]
     public ?PayoutStatusMetric $upcoming;
 
     public function __construct()
@@ -50,12 +54,14 @@ final class PayoutStatus implements BaseModel
      * @param PayoutStatusMetric|PayoutStatusMetricShape|null $failed
      * @param PayoutStatusMetric|PayoutStatusMetricShape|null $issued
      * @param PayoutStatusMetric|PayoutStatusMetricShape|null $queued
+     * @param PayoutStatusMetric|PayoutStatusMetricShape|null $reversed
      * @param PayoutStatusMetric|PayoutStatusMetricShape|null $upcoming
      */
     public static function with(
         PayoutStatusMetric|array|null $failed = null,
         PayoutStatusMetric|array|null $issued = null,
         PayoutStatusMetric|array|null $queued = null,
+        PayoutStatusMetric|array|null $reversed = null,
         PayoutStatusMetric|array|null $upcoming = null,
     ): self {
         $self = new self;
@@ -63,6 +69,7 @@ final class PayoutStatus implements BaseModel
         null !== $failed && $self['failed'] = $failed;
         null !== $issued && $self['issued'] = $issued;
         null !== $queued && $self['queued'] = $queued;
+        null !== $reversed && $self['reversed'] = $reversed;
         null !== $upcoming && $self['upcoming'] = $upcoming;
 
         return $self;
@@ -97,6 +104,17 @@ final class PayoutStatus implements BaseModel
     {
         $self = clone $this;
         $self['queued'] = $queued;
+
+        return $self;
+    }
+
+    /**
+     * @param PayoutStatusMetric|PayoutStatusMetricShape $reversed
+     */
+    public function withReversed(PayoutStatusMetric|array $reversed): self
+    {
+        $self = clone $this;
+        $self['reversed'] = $reversed;
 
         return $self;
     }

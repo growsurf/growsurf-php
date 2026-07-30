@@ -28,6 +28,7 @@ use Growsurf\Core\Contracts\BaseModel;
  *   issuedAt?: int|null,
  *   provider?: string|null,
  *   queuedAt?: int|null,
+ *   reversedAt?: int|null,
  * }
  */
 final class Payout implements BaseModel
@@ -84,6 +85,9 @@ final class Payout implements BaseModel
 
     #[Optional]
     public ?int $queuedAt;
+
+    #[Optional]
+    public ?int $reversedAt;
 
     /**
      * `new Payout()` is missing required properties by the API.
@@ -144,6 +148,7 @@ final class Payout implements BaseModel
         ?int $issuedAt = null,
         ?string $provider = null,
         ?int $queuedAt = null,
+        ?int $reversedAt = null,
     ): self {
         $self = new self;
 
@@ -164,6 +169,7 @@ final class Payout implements BaseModel
         null !== $issuedAt && $self['issuedAt'] = $issuedAt;
         null !== $provider && $self['provider'] = $provider;
         null !== $queuedAt && $self['queuedAt'] = $queuedAt;
+        null !== $reversedAt && $self['reversedAt'] = $reversedAt;
 
         return $self;
     }
@@ -299,6 +305,14 @@ final class Payout implements BaseModel
     {
         $self = clone $this;
         $self['queuedAt'] = $queuedAt;
+
+        return $self;
+    }
+
+    public function withReversedAt(int $reversedAt): self
+    {
+        $self = clone $this;
+        $self['reversedAt'] = $reversedAt;
 
         return $self;
     }

@@ -7,6 +7,7 @@ namespace Growsurf\Campaign\Participant\ParticipantGetAnalyticsResponse;
 use Growsurf\Core\Attributes\Optional;
 use Growsurf\Core\Concerns\SdkModel;
 use Growsurf\Core\Contracts\BaseModel;
+use Growsurf\EmailAnalytics\Counts;
 
 /**
  * A per-period analytics total for this participant. Present only when `include=series`.
@@ -59,6 +60,10 @@ final class Series implements BaseModel
 
     #[Optional]
     public ?int $emailShares;
+
+    /** Per-period email counts when both `series` and `email` are requested. */
+    #[Optional]
+    public ?Counts $email;
 
     #[Optional]
     public ?int $facebookShares;

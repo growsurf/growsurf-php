@@ -27,7 +27,7 @@ final class DesignRawService implements DesignRawContract
     /**
      * @api
      *
-     * Retrieves a program's design configuration — the same surface as the dashboard Program Editor's **Design** tab: the GrowSurf window layout, header, share channels + invite, signup form, portal/landing pages, theme styling, and the referral/affiliate summary + status sections. This is a large object whose available fields depend on the program type; the response includes every field and its current value, which is the same shape you send back on `PATCH`.
+     * Retrieves a program's configured design fields: the dashboard Program Editor's **Design** tab plus the payout-destination confirmation page copy configured from payout integration cards. This includes the GrowSurf window layout, header, share channels and invites, signup form, portal and landing pages, theme styling, and referral or affiliate summary and status sections. The available fields depend on the program type. `payoutDestinationConfirmation` is omitted when no confirmation fields are stored. Stored `null` fields are returned as `null`; omitted and `null` fields use localized defaults.
      *
      * @param string $id growSurf program ID
      * @param RequestOpts|null $requestOptions
@@ -52,7 +52,11 @@ final class DesignRawService implements DesignRawContract
     /**
      * @api
      *
-     * Updates a program's design configuration. Only the fields you send are changed; anything you leave out is untouched (arrays such as `signup.fields` replace wholesale). Unknown fields, fields not available for the program type, and invalid values return a `400`. Landing-page custom code and JavaScript are not editable via the API.
+     * Updates a program's design configuration, including the payout-destination confirmation
+     * page copy configured from payout integration cards. Only the fields you send are changed;
+     * anything you leave out is untouched (arrays such as `signup.fields` replace wholesale).
+     * Unknown fields, fields not available for the program type, and invalid values return a
+     * `400`. Landing-page custom code and JavaScript are not editable via the API.
      *
      * @param string $id growSurf program ID
      * @param array<string,mixed> $body partial `CampaignDesign` (see API reference)

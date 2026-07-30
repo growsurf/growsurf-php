@@ -6,7 +6,7 @@ namespace Growsurf\Campaign\Participant\Participant\PayoutSettings;
 
 enum RequiredAction: string
 {
-    case PAYPAL_EMAIL = 'PAYPAL_EMAIL';
+    case PAYOUT_DESTINATION = 'PAYOUT_DESTINATION';
 
     case TAX_INFO = 'TAX_INFO';
 }
