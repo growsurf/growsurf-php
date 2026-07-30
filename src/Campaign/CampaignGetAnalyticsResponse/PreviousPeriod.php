@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace Growsurf\Campaign\CampaignGetAnalyticsResponse;
 
+use Growsurf\Core\Attributes\Optional;
 use Growsurf\Core\Attributes\Required;
 use Growsurf\Core\Concerns\SdkModel;
 use Growsurf\Core\Contracts\BaseModel;
+use Growsurf\EmailAnalytics;
 
 /**
  * Totals for the equal-length window immediately preceding the requested one. Present only when `include` contains `previousPeriod`.
@@ -24,6 +26,10 @@ final class PreviousPeriod implements BaseModel
 
     #[Required]
     public Analytics $analytics;
+
+    /** Present when the parent request includes both `previousPeriod` and `email`. */
+    #[Optional]
+    public ?EmailAnalytics $email;
 
     #[Required]
     public int $endDate;

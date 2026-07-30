@@ -27,6 +27,7 @@ use Growsurf\Core\Contracts\BaseModel;
  *   couponCode?: string|null,
  *   description?: string|null,
  *   imageURL?: string|null,
+ *   isVisible?: bool|null,
  *   limit?: int|null,
  *   limitDuration?: null|LimitDuration|value-of<LimitDuration>,
  *   nextMilestonePrefix?: string|null,
@@ -37,6 +38,7 @@ use Growsurf\Core\Contracts\BaseModel;
  *   referralDescription?: string|null,
  *   referredRewardUpfront?: bool|null,
  *   referredValue?: null|RewardTaxValuation|RewardTaxValuationShape,
+ *   title?: string|null,
  *   value?: null|RewardTaxValuation|RewardTaxValuationShape,
  * }
  */
@@ -104,6 +106,12 @@ final class Reward implements BaseModel
     public ?string $imageURL;
 
     /**
+     * Whether the reward is enabled. When `false`, the reward is disabled: no longer awarded (including to participants who already earned it) and hidden from participants.
+     */
+    #[Optional]
+    public ?bool $isVisible;
+
+    /**
      * The number of times a participant can earn this reward (overridden when `isUnlimited` is `true`). `-1` represents an unlimited reward in REST responses.
      */
     #[Optional(nullable: true)]
@@ -166,6 +174,12 @@ final class Reward implements BaseModel
     public ?RewardTaxValuation $referredValue;
 
     /**
+     * The reward title (internal label).
+     */
+    #[Optional(nullable: true)]
+    public ?string $title;
+
+    /**
      * Tax valuation for the reward (the referrer's side of a double-sided reward).
      */
     #[Optional(nullable: true)]
@@ -216,6 +230,7 @@ final class Reward implements BaseModel
         ?string $couponCode = null,
         ?string $description = null,
         ?string $imageURL = null,
+        ?bool $isVisible = null,
         ?int $limit = null,
         LimitDuration|string|null $limitDuration = null,
         ?string $nextMilestonePrefix = null,
@@ -226,6 +241,7 @@ final class Reward implements BaseModel
         ?string $referralDescription = null,
         ?bool $referredRewardUpfront = null,
         RewardTaxValuation|array|null $referredValue = null,
+        ?string $title = null,
         RewardTaxValuation|array|null $value = null,
     ): self {
         $self = new self;
@@ -240,6 +256,7 @@ final class Reward implements BaseModel
         null !== $couponCode && $self['couponCode'] = $couponCode;
         null !== $description && $self['description'] = $description;
         null !== $imageURL && $self['imageURL'] = $imageURL;
+        null !== $isVisible && $self['isVisible'] = $isVisible;
         null !== $limit && $self['limit'] = $limit;
         null !== $limitDuration && $self['limitDuration'] = $limitDuration;
         null !== $nextMilestonePrefix && $self['nextMilestonePrefix'] = $nextMilestonePrefix;
@@ -250,6 +267,7 @@ final class Reward implements BaseModel
         null !== $referralDescription && $self['referralDescription'] = $referralDescription;
         null !== $referredRewardUpfront && $self['referredRewardUpfront'] = $referredRewardUpfront;
         null !== $referredValue && $self['referredValue'] = $referredValue;
+        null !== $title && $self['title'] = $title;
         null !== $value && $self['value'] = $value;
 
         return $self;
@@ -351,6 +369,17 @@ final class Reward implements BaseModel
     {
         $self = clone $this;
         $self['imageURL'] = $imageURL;
+
+        return $self;
+    }
+
+    /**
+     * Whether the reward is enabled. When `false`, the reward is disabled: no longer awarded (including to participants who already earned it) and hidden from participants.
+     */
+    public function withIsVisible(bool $isVisible): self
+    {
+        $self = clone $this;
+        $self['isVisible'] = $isVisible;
 
         return $self;
     }
@@ -467,6 +496,17 @@ final class Reward implements BaseModel
     ): self {
         $self = clone $this;
         $self['referredValue'] = $referredValue;
+
+        return $self;
+    }
+
+    /**
+     * The reward title (internal label).
+     */
+    public function withTitle(?string $title): self
+    {
+        $self = clone $this;
+        $self['title'] = $title;
 
         return $self;
     }

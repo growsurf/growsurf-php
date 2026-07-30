@@ -11,7 +11,7 @@ use Growsurf\Core\Concerns\SdkParams;
 use Growsurf\Core\Contracts\BaseModel;
 
 /**
- * Retrieves analytics for a program. Pass `interval` to also get a time-series (`series`) alongside the totals, and `include` to add previous-period totals, status breakdowns, or derived rates — useful for detecting trends over time.
+ * Retrieves analytics for a program. Pass `interval` for a time series and `include` for previous-period, status, rate, or email metrics.
  *
  * @see Growsurf\Services\CampaignService::retrieveAnalytics()
  *
@@ -42,7 +42,7 @@ final class CampaignRetrieveAnalyticsParams implements BaseModel
     public ?int $endDate;
 
     /**
-     * Comma-separated list of optional enrichments (opt-in to keep the default response lean): `previousPeriod` adds totals for the equal-length window immediately before the requested one; `statusCounts` adds reward (and, for affiliate programs, affiliate/commission/payout) status breakdowns; `rates` adds derived referral rates.
+     * Comma-separated list of optional data to include: `previousPeriod` adds totals for the equal-length window immediately before the requested one; `statusCounts` adds reward (and, for affiliate programs, affiliate/commission/payout) status breakdowns; `rates` adds derived referral rates; `email` adds `sent`, `delivered`, `opened`, `clicked`, `bounced`, `spamComplaints`, and per-email-type metrics. When `email` and an interval are both requested, each `series` item also contains counts for emails sent during that period. Combine `email` with `previousPeriod` to include the same email metrics in both windows.
      */
     #[Optional]
     public ?string $include;
@@ -114,7 +114,13 @@ final class CampaignRetrieveAnalyticsParams implements BaseModel
     }
 
     /**
-     * Comma-separated list of optional enrichments (opt-in to keep the default response lean): `previousPeriod` adds totals for the equal-length window immediately before the requested one; `statusCounts` adds reward (and, for affiliate programs, affiliate/commission/payout) status breakdowns; `rates` adds derived referral rates.
+     * Comma-separated list of optional data to include: `previousPeriod` adds totals for the
+     * equal-length window immediately before the requested one; `statusCounts` adds reward (and,
+     * for affiliate programs, affiliate/commission/payout) status breakdowns; `rates` adds
+     * derived referral rates; `email` adds `sent`, `delivered`, `opened`, `clicked`, `bounced`,
+     * `spamComplaints`, and per-email-type metrics. When `email` and an interval are both
+     * requested, each `series` item also contains counts for emails sent during that period.
+     * Combine `email` with `previousPeriod` to include the same email metrics in both windows.
      */
     public function withInclude(string $include): self
     {

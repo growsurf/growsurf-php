@@ -14,6 +14,8 @@ use Growsurf\Campaign\Participant\ParticipantDeleteResponse;
 use Growsurf\Campaign\Participant\ParticipantEmailParams;
 use Growsurf\Campaign\Participant\ParticipantEmailResponse;
 use Growsurf\Campaign\Participant\ParticipantGetAnalyticsResponse;
+use Growsurf\Campaign\Participant\ParticipantGetPayoutDestinationParams;
+use Growsurf\Campaign\Participant\ParticipantGetPayoutDestinationResponse;
 use Growsurf\Campaign\Participant\ParticipantListActivityLogsParams;
 use Growsurf\Campaign\Participant\ParticipantListActivityLogsResponse;
 use Growsurf\Campaign\Participant\ParticipantListCommissionsParams;
@@ -26,6 +28,8 @@ use Growsurf\Campaign\Participant\ParticipantRecordTransactionResponse\UnionMemb
 use Growsurf\Campaign\Participant\ParticipantRecordTransactionResponse\UnionMember1;
 use Growsurf\Campaign\Participant\ParticipantRefundTransactionParams;
 use Growsurf\Campaign\Participant\ParticipantRefundTransactionResponse;
+use Growsurf\Campaign\Participant\ParticipantRequestPayoutDestinationConfirmationParams;
+use Growsurf\Campaign\Participant\ParticipantRequestPayoutDestinationConfirmationResponse;
 use Growsurf\Campaign\Participant\ParticipantRetrieveAnalyticsParams;
 use Growsurf\Campaign\Participant\ParticipantRetrieveParams;
 use Growsurf\Campaign\Participant\ParticipantSendInvitesParams;
@@ -331,6 +335,40 @@ interface ParticipantRawContract
     public function listActivityLogs(
         string $participantIDOrEmail,
         array|ParticipantListActivityLogsParams $params,
+        RequestOptions|array|null $requestOptions = null,
+    ): BaseResponse;
+
+    /**
+     * @api
+     *
+     * @param string $participantIDOrEmail growSurf participant ID or URL-encoded participant email address
+     * @param array<string,mixed>|ParticipantGetPayoutDestinationParams $params
+     * @param RequestOpts|null $requestOptions
+     *
+     * @return BaseResponse<ParticipantGetPayoutDestinationResponse>
+     *
+     * @throws APIException
+     */
+    public function getPayoutDestination(
+        string $participantIDOrEmail,
+        array|ParticipantGetPayoutDestinationParams $params,
+        RequestOptions|array|null $requestOptions = null,
+    ): BaseResponse;
+
+    /**
+     * @api
+     *
+     * @param string $participantIDOrEmail path param: GrowSurf participant ID or URL-encoded participant email address
+     * @param array<string,mixed>|ParticipantRequestPayoutDestinationConfirmationParams $params
+     * @param RequestOpts|null $requestOptions
+     *
+     * @return BaseResponse<ParticipantRequestPayoutDestinationConfirmationResponse>
+     *
+     * @throws APIException
+     */
+    public function requestPayoutDestinationConfirmation(
+        string $participantIDOrEmail,
+        array|ParticipantRequestPayoutDestinationConfirmationParams $params,
         RequestOptions|array|null $requestOptions = null,
     ): BaseResponse;
 }

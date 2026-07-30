@@ -13,4 +13,6 @@ enum Status: string
     case ISSUED = 'ISSUED';
 
     case FAILED = 'FAILED';
+
+    case REVERSED = 'REVERSED';
 }

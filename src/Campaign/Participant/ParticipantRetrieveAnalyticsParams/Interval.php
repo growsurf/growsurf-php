@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Growsurf\Campaign\Participant\ParticipantRetrieveAnalyticsParams;
 
 /**
- * Bucket size for the `series` (only used with `include=series`). Defaults to `day`.
+ * Bucket size for the `series` (only used when `include` contains `series`). Defaults to `day`.
  */
 enum Interval: string
 {

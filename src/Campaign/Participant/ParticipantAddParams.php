@@ -12,7 +12,7 @@ use Growsurf\Core\Concerns\SdkParams;
 use Growsurf\Core\Contracts\BaseModel;
 
 /**
- * Adds a new participant to the program. If the email already exists, the existing participant is returned.
+ * Adds a new participant to the program. If the email already exists, the existing participant is returned unchanged. For affiliate programs, set `isAffiliate` to `true` to enroll a new participant as an approved affiliate or `false` to create a non-affiliate. If you omit `isAffiliate`, a valid `referredBy` creates a referred non-affiliate; without a valid referrer, the new participant is enrolled as an approved affiliate. You can send a valid `referredBy` with `isAffiliate: true` to keep the referral attribution and enroll the participant as an affiliate.
  *
  * @see Growsurf\Services\Campaign\ParticipantService::add()
  *
@@ -21,6 +21,7 @@ use Growsurf\Core\Contracts\BaseModel;
  *   fingerprint?: string|null,
  *   firstName?: string|null,
  *   ipAddress?: string|null,
+ *   isAffiliate?: bool|null,
  *   lastName?: string|null,
  *   metadata?: array<string,mixed>|null,
  *   mobileInstanceID?: string|null,
@@ -45,6 +46,12 @@ final class ParticipantAddParams implements BaseModel
 
     #[Optional]
     public ?string $ipAddress;
+
+    /**
+     * Affiliate programs only. Controls affiliate enrollment for a new participant. `true` enrolls the participant with `affiliateStatus: APPROVED`; `false` creates a non-affiliate without `affiliateStatus`. Existing participants are returned unchanged.
+     */
+    #[Optional]
+    public ?bool $isAffiliate;
 
     #[Optional]
     public ?string $lastName;
@@ -111,6 +118,7 @@ final class ParticipantAddParams implements BaseModel
         ?string $fingerprint = null,
         ?string $firstName = null,
         ?string $ipAddress = null,
+        ?bool $isAffiliate = null,
         ?string $lastName = null,
         ?array $metadata = null,
         ?string $mobileInstanceID = null,
@@ -124,6 +132,7 @@ final class ParticipantAddParams implements BaseModel
         null !== $fingerprint && $self['fingerprint'] = $fingerprint;
         null !== $firstName && $self['firstName'] = $firstName;
         null !== $ipAddress && $self['ipAddress'] = $ipAddress;
+        null !== $isAffiliate && $self['isAffiliate'] = $isAffiliate;
         null !== $lastName && $self['lastName'] = $lastName;
         null !== $metadata && $self['metadata'] = $metadata;
         null !== $mobileInstanceID && $self['mobileInstanceID'] = $mobileInstanceID;
@@ -161,6 +170,17 @@ final class ParticipantAddParams implements BaseModel
     {
         $self = clone $this;
         $self['ipAddress'] = $ipAddress;
+
+        return $self;
+    }
+
+    /**
+     * Affiliate programs only. Controls affiliate enrollment for a new participant. `true` enrolls the participant with `affiliateStatus: APPROVED`; `false` creates a non-affiliate without `affiliateStatus`. Existing participants are returned unchanged.
+     */
+    public function withIsAffiliate(bool $isAffiliate): self
+    {
+        $self = clone $this;
+        $self['isAffiliate'] = $isAffiliate;
 
         return $self;
     }

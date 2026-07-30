@@ -27,7 +27,7 @@ final class OptionsRawService implements OptionsRawContract
     /**
      * @api
      *
-     * Retrieves a program's options — the same surface as the dashboard Program Editor's **Options** tab. Includes reward/fraud approval, anti-fraud lists + toggles, referral cookie/credit windows, reCAPTCHA, payout threshold + tax settings (affiliate only), and notification-email settings. `fraud.recaptcha.secretKey` is never returned.
+     * Retrieves a program's options — the same surface as the dashboard Program Editor's **Options** tab. Includes reward/fraud approval, anti-fraud lists + toggles, referral cookie/credit windows, reCAPTCHA, affiliate enrollment + application review, payout threshold + tax settings (affiliate only), and notification-email settings. `fraud.recaptcha.secretKey` is never returned.
      *
      * @param string $id growSurf program ID
      * @param RequestOpts|null $requestOptions
@@ -52,7 +52,7 @@ final class OptionsRawService implements OptionsRawContract
     /**
      * @api
      *
-     * Updates a program's options. Only the fields you send are changed. Some fields are program-type specific (`requireManualRewardApproval`/`autoFulfillRewards` are referral-only; `payoutThreshold`/`taxDocumentation` are affiliate-only, and affiliate programs require `requireParticipantAuth: true`). `fraud.recaptcha.secretKey` is write-only. `referralCreditWindowDays: null` means "never expires".
+     * Updates a program's options. Only the fields you send are changed. Some fields are program-type specific (`requireManualRewardApproval`/`autoFulfillRewards` are referral-only; `affiliateApplicationMode`/`affiliateReapplicationPolicy` and `payoutThreshold`/`taxDocumentation` are affiliate-only, and affiliate programs require `requireParticipantAuth: true`). `fraud.recaptcha.secretKey` is write-only. `referralCreditWindowDays: null` means "never expires".
      *
      * @param string $id growSurf program ID
      * @param array<string,mixed> $body partial `CampaignOptions` (see API reference)

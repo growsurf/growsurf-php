@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace Growsurf\ServiceContracts;
 
+use Growsurf\Campaign\AffiliateApplication;
+use Growsurf\Campaign\AffiliateApplicationListResponse;
+use Growsurf\Campaign\AffiliateInvite;
+use Growsurf\Campaign\AffiliateInviteListResponse;
 use Growsurf\Campaign\Campaign;
 use Growsurf\Campaign\CampaignCreateMobileParticipantTokenParams\ReferralStatus;
 use Growsurf\Campaign\CampaignCreateParams\Type;
@@ -243,7 +247,7 @@ interface CampaignContract
      * @param string $id growSurf program ID
      * @param int $days Last number of days to retrieve analytics for. Defaults to 365. Maximum 1825.
      * @param int $endDate End date of the analytics timeframe as a Unix timestamp in milliseconds. Required if `days` is not set.
-     * @param string $include Comma-separated list of optional enrichments (opt-in to keep the default response lean): `previousPeriod` adds totals for the equal-length window immediately before the requested one; `statusCounts` adds reward (and, for affiliate programs, affiliate/commission/payout) status breakdowns; `rates` adds derived referral rates.
+     * @param string $include comma-separated list of optional data to include: `previousPeriod` adds totals for the equal-length window immediately before the requested one; `statusCounts` adds reward (and, for affiliate programs, affiliate/commission/payout) status breakdowns; `rates` adds derived referral rates; `email` adds `sent`, `delivered`, `opened`, `clicked`, `bounced`, `spamComplaints`, and per-email-type metrics. When `email` and an interval are both requested, each `series` item also contains counts for emails sent during that period. Combine `email` with `previousPeriod` to include the same email metrics in both windows
      * @param Interval|value-of<Interval> $interval When set to `day`, `week`, or `month`, the response also includes a `series` array with per-period totals. Defaults to `total` (no series).
      * @param int $startDate Start date of the analytics timeframe as a Unix timestamp in milliseconds. Required if `days` is not set.
      * @param RequestOpts|null $requestOptions
@@ -259,4 +263,131 @@ interface CampaignContract
         ?int $startDate = null,
         RequestOptions|array|null $requestOptions = null,
     ): CampaignGetAnalyticsResponse;
+
+    /**
+     * @api
+     *
+     * @param string $id growSurf program ID
+     * @param int $limit how many applications to return per page (1-100)
+     * @param int $offset offset number used to skip through a result set
+     * @param \Growsurf\Campaign\CampaignListAffiliateApplicationsParams\Status|value-of<\Growsurf\Campaign\CampaignListAffiliateApplicationsParams\Status> $status only return applications with this status
+     * @param RequestOpts|null $requestOptions
+     *
+     * @throws APIException
+     */
+    public function listAffiliateApplications(
+        string $id,
+        int $limit = 10,
+        ?int $offset = null,
+        \Growsurf\Campaign\CampaignListAffiliateApplicationsParams\Status|string|null $status = null,
+        RequestOptions|array|null $requestOptions = null,
+    ): AffiliateApplicationListResponse;
+
+    /**
+     * @api
+     *
+     * @param string $id growSurf program ID
+     * @param string $applicationID affiliate application ID
+     * @param RequestOpts|null $requestOptions
+     *
+     * @throws APIException
+     */
+    public function retrieveAffiliateApplication(
+        string $id,
+        string $applicationID,
+        RequestOptions|array|null $requestOptions = null,
+    ): AffiliateApplication;
+
+    /**
+     * @api
+     *
+     * @param string $id growSurf program ID
+     * @param string $applicationID affiliate application ID
+     * @param bool $allowImmediateReapply when denying, let the applicant reapply right away instead of waiting out the program's reapplication cooldown; only valid when `status` is `DENIED`
+     * @param int $reapplyAllowedAt For an already-denied application, move the reapplication window to this earlier time, in Unix milliseconds. Send without `status`.
+     * @param string $rejectionReason short reason recorded with a denial; only valid when `status` is `DENIED`; maximum 255 characters
+     * @param string $reviewNote Private note recorded with a denial; only valid when `status` is `DENIED`; never shown to the applicant; maximum 500 characters
+     * @param \Growsurf\Campaign\CampaignReviewAffiliateApplicationParams\Status|value-of<\Growsurf\Campaign\CampaignReviewAffiliateApplicationParams\Status> $status The decision. `APPROVED` enrolls the applicant as an affiliate; `DENIED` closes the application.
+     * @param RequestOpts|null $requestOptions
+     *
+     * @throws APIException
+     */
+    public function reviewAffiliateApplication(
+        string $id,
+        string $applicationID,
+        ?bool $allowImmediateReapply = null,
+        ?int $reapplyAllowedAt = null,
+        ?string $rejectionReason = null,
+        ?string $reviewNote = null,
+        \Growsurf\Campaign\CampaignReviewAffiliateApplicationParams\Status|string|null $status = null,
+        RequestOptions|array|null $requestOptions = null,
+    ): AffiliateApplication;
+
+    /**
+     * @api
+     *
+     * @param string $id growSurf program ID
+     * @param int $limit how many invites to return per page (1-100)
+     * @param int $offset offset number used to skip through a result set
+     * @param \Growsurf\Campaign\CampaignListAffiliateInvitesParams\Status|value-of<\Growsurf\Campaign\CampaignListAffiliateInvitesParams\Status> $status only return invites with this status
+     * @param RequestOpts|null $requestOptions
+     *
+     * @throws APIException
+     */
+    public function listAffiliateInvites(
+        string $id,
+        int $limit = 10,
+        ?int $offset = null,
+        \Growsurf\Campaign\CampaignListAffiliateInvitesParams\Status|string|null $status = null,
+        RequestOptions|array|null $requestOptions = null,
+    ): AffiliateInviteListResponse;
+
+    /**
+     * @api
+     *
+     * @param string $id growSurf program ID
+     * @param string $email valid email address to invite; maximum 255 characters
+     * @param string $firstName invitee first name, used in the invite email; maximum 255 characters
+     * @param string $lastName invitee last name; maximum 255 characters
+     * @param RequestOpts|null $requestOptions
+     *
+     * @throws APIException
+     */
+    public function createAffiliateInvite(
+        string $id,
+        string $email,
+        ?string $firstName = null,
+        ?string $lastName = null,
+        RequestOptions|array|null $requestOptions = null,
+    ): AffiliateInvite;
+
+    /**
+     * @api
+     *
+     * @param string $id growSurf program ID
+     * @param string $inviteID affiliate invite ID
+     * @param RequestOpts|null $requestOptions
+     *
+     * @throws APIException
+     */
+    public function revokeAffiliateInvite(
+        string $id,
+        string $inviteID,
+        RequestOptions|array|null $requestOptions = null,
+    ): AffiliateInvite;
+
+    /**
+     * @api
+     *
+     * @param string $id growSurf program ID
+     * @param string $inviteID affiliate invite ID
+     * @param RequestOpts|null $requestOptions
+     *
+     * @throws APIException
+     */
+    public function resendAffiliateInvite(
+        string $id,
+        string $inviteID,
+        RequestOptions|array|null $requestOptions = null,
+    ): AffiliateInvite;
 }

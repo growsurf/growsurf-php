@@ -2,6 +2,10 @@
 
 namespace Tests\Services;
 
+use Growsurf\Campaign\AffiliateApplication;
+use Growsurf\Campaign\AffiliateApplicationListResponse;
+use Growsurf\Campaign\AffiliateInvite;
+use Growsurf\Campaign\AffiliateInviteListResponse;
 use Growsurf\Campaign\Campaign;
 use Growsurf\Campaign\CampaignGetAnalyticsResponse;
 use Growsurf\Campaign\CampaignListResponse;
@@ -279,5 +283,150 @@ final class CampaignTest extends TestCase
 
         // @phpstan-ignore-next-line method.alreadyNarrowedType
         $this->assertInstanceOf(CampaignGetAnalyticsResponse::class, $result);
+    }
+
+    #[Test]
+    public function testListAffiliateApplications(): void
+    {
+        if (UnsupportedMockTests::$skip) {
+            $this->markTestSkipped('Mock server tests are disabled');
+        }
+
+        $result = $this->client->campaign->listAffiliateApplications('id');
+
+        // @phpstan-ignore-next-line method.alreadyNarrowedType
+        $this->assertInstanceOf(AffiliateApplicationListResponse::class, $result);
+    }
+
+    #[Test]
+    public function testRetrieveAffiliateApplication(): void
+    {
+        if (UnsupportedMockTests::$skip) {
+            $this->markTestSkipped('Mock server tests are disabled');
+        }
+
+        $result = $this->client->campaign->retrieveAffiliateApplication(
+            'id',
+            'applicationId'
+        );
+
+        // @phpstan-ignore-next-line method.alreadyNarrowedType
+        $this->assertInstanceOf(AffiliateApplication::class, $result);
+    }
+
+    #[Test]
+    public function testReviewAffiliateApplication(): void
+    {
+        if (UnsupportedMockTests::$skip) {
+            $this->markTestSkipped('Mock server tests are disabled');
+        }
+
+        $result = $this->client->campaign->reviewAffiliateApplication(
+            'id',
+            'applicationId'
+        );
+
+        // @phpstan-ignore-next-line method.alreadyNarrowedType
+        $this->assertInstanceOf(AffiliateApplication::class, $result);
+    }
+
+    #[Test]
+    public function testReviewAffiliateApplicationWithOptionalParams(): void
+    {
+        if (UnsupportedMockTests::$skip) {
+            $this->markTestSkipped('Mock server tests are disabled');
+        }
+
+        $result = $this->client->campaign->reviewAffiliateApplication(
+            'id',
+            'applicationId',
+            allowImmediateReapply: true,
+            reapplyAllowedAt: 0,
+            rejectionReason: 'rejectionReason',
+            reviewNote: 'reviewNote',
+            status: 'APPROVED',
+        );
+
+        // @phpstan-ignore-next-line method.alreadyNarrowedType
+        $this->assertInstanceOf(AffiliateApplication::class, $result);
+    }
+
+    #[Test]
+    public function testListAffiliateInvites(): void
+    {
+        if (UnsupportedMockTests::$skip) {
+            $this->markTestSkipped('Mock server tests are disabled');
+        }
+
+        $result = $this->client->campaign->listAffiliateInvites('id');
+
+        // @phpstan-ignore-next-line method.alreadyNarrowedType
+        $this->assertInstanceOf(AffiliateInviteListResponse::class, $result);
+    }
+
+    #[Test]
+    public function testCreateAffiliateInvite(): void
+    {
+        if (UnsupportedMockTests::$skip) {
+            $this->markTestSkipped('Mock server tests are disabled');
+        }
+
+        $result = $this->client->campaign->createAffiliateInvite(
+            'id',
+            email: 'dev@stainless.com'
+        );
+
+        // @phpstan-ignore-next-line method.alreadyNarrowedType
+        $this->assertInstanceOf(AffiliateInvite::class, $result);
+    }
+
+    #[Test]
+    public function testCreateAffiliateInviteWithOptionalParams(): void
+    {
+        if (UnsupportedMockTests::$skip) {
+            $this->markTestSkipped('Mock server tests are disabled');
+        }
+
+        $result = $this->client->campaign->createAffiliateInvite(
+            'id',
+            email: 'dev@stainless.com',
+            firstName: 'firstName',
+            lastName: 'lastName',
+        );
+
+        // @phpstan-ignore-next-line method.alreadyNarrowedType
+        $this->assertInstanceOf(AffiliateInvite::class, $result);
+    }
+
+    #[Test]
+    public function testRevokeAffiliateInvite(): void
+    {
+        if (UnsupportedMockTests::$skip) {
+            $this->markTestSkipped('Mock server tests are disabled');
+        }
+
+        $result = $this->client->campaign->revokeAffiliateInvite(
+            'id',
+            'inviteId'
+        );
+
+        // @phpstan-ignore-next-line method.alreadyNarrowedType
+        $this->assertInstanceOf(AffiliateInvite::class, $result);
+    }
+
+    #[Test]
+    public function testResendAffiliateInvite(): void
+    {
+        if (UnsupportedMockTests::$skip) {
+            $this->markTestSkipped('Mock server tests are disabled');
+        }
+
+        $result = $this->client->campaign->resendAffiliateInvite(
+            'id',
+            'inviteId'
+        );
+
+        // @phpstan-ignore-next-line method.alreadyNarrowedType
+        $this->assertInstanceOf(AffiliateInvite::class, $result);
     }
 }

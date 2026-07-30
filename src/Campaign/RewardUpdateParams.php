@@ -159,7 +159,7 @@ final class RewardUpdateParams implements BaseModel
     public ?bool $referredRewardUpfront;
 
     /**
-     * Tax valuation for the referred friend's side of a double-sided reward. Defaults to not tax-reportable (a purchase rebate).
+     * Tax treatment override for the referred friend's side of a double-sided reward. Null inherits the program's confirmed default.
      */
     #[Optional]
     public ?RewardTaxValuation $referredValue;
@@ -460,7 +460,7 @@ final class RewardUpdateParams implements BaseModel
     }
 
     /**
-     * Tax valuation for the referred friend's side of a double-sided reward. Defaults to not tax-reportable (a purchase rebate).
+     * Tax treatment override for the referred friend's side of a double-sided reward. Null inherits the program's confirmed default.
      *
      * @param RewardTaxValuation|RewardTaxValuationShape|null $referredValue
      */

@@ -7,9 +7,11 @@ use Growsurf\Campaign\Participant\ParticipantBulkDeleteResponse;
 use Growsurf\Campaign\Participant\ParticipantDeleteResponse;
 use Growsurf\Campaign\Participant\ParticipantEmailResponse;
 use Growsurf\Campaign\Participant\ParticipantGetAnalyticsResponse;
+use Growsurf\Campaign\Participant\ParticipantGetPayoutDestinationResponse;
 use Growsurf\Campaign\Participant\ParticipantListActivityLogsResponse;
 use Growsurf\Campaign\Participant\ParticipantListRewardsResponse;
 use Growsurf\Campaign\Participant\ParticipantRefundTransactionResponse;
+use Growsurf\Campaign\Participant\ParticipantRequestPayoutDestinationConfirmationResponse;
 use Growsurf\Campaign\Participant\ParticipantSendInvitesResponse;
 use Growsurf\Campaign\Participant\ParticipantTriggerReferralResponse;
 use Growsurf\Campaign\Participant\ReferralStatus;
@@ -99,12 +101,12 @@ final class ParticipantTest extends TestCase
         $result = $this->client->campaign->participant->update(
             'participantIdOrEmail',
             id: 'id',
+            affiliateStatus: 'APPROVED',
             email: 'dev@stainless.com',
             firstName: 'Gavin',
             lastName: 'Belson',
             metadata: ['company' => 'bar'],
             notes: 'VIP affiliate — follow up in Q3',
-            paypalEmail: 'payouts@piedpiper.com',
             referralStatus: 'CREDIT_PENDING',
             referredBy: 'referredBy',
             unsubscribed: false,
@@ -208,6 +210,7 @@ final class ParticipantTest extends TestCase
             fingerprint: 'fingerprint',
             firstName: 'firstName',
             ipAddress: 'ipAddress',
+            isAffiliate: true,
             lastName: 'lastName',
             metadata: ['foo' => 'bar'],
             mobileInstanceID: 'mobileInstanceId',
@@ -672,5 +675,38 @@ final class ParticipantTest extends TestCase
 
         // @phpstan-ignore-next-line method.alreadyNarrowedType
         $this->assertInstanceOf(ParticipantListActivityLogsResponse::class, $result);
+    }
+
+    #[Test]
+    public function testGetPayoutDestination(): void
+    {
+        if (UnsupportedMockTests::$skip) {
+            $this->markTestSkipped('Mock server tests are disabled');
+        }
+
+        $result = $this->client->campaign->participant->getPayoutDestination(
+            'participantIdOrEmail',
+            id: 'id'
+        );
+
+        // @phpstan-ignore-next-line method.alreadyNarrowedType
+        $this->assertInstanceOf(ParticipantGetPayoutDestinationResponse::class, $result);
+    }
+
+    #[Test]
+    public function testRequestPayoutDestinationConfirmation(): void
+    {
+        if (UnsupportedMockTests::$skip) {
+            $this->markTestSkipped('Mock server tests are disabled');
+        }
+
+        $result = $this->client->campaign->participant->requestPayoutDestinationConfirmation(
+            'participantIdOrEmail',
+            id: 'id',
+            provider: 'PAYPAL',
+        );
+
+        // @phpstan-ignore-next-line method.alreadyNarrowedType
+        $this->assertInstanceOf(ParticipantRequestPayoutDestinationConfirmationResponse::class, $result);
     }
 }

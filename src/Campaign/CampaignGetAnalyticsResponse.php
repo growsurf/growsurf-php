@@ -13,9 +13,11 @@ use Growsurf\Core\Attributes\Optional;
 use Growsurf\Core\Attributes\Required;
 use Growsurf\Core\Concerns\SdkModel;
 use Growsurf\Core\Contracts\BaseModel;
+use Growsurf\EmailAnalytics;
 
 /**
  * @phpstan-import-type AnalyticsShape from \Growsurf\Campaign\CampaignGetAnalyticsResponse\Analytics
+ * @phpstan-import-type EmailAnalyticsShape from \Growsurf\EmailAnalytics
  * @phpstan-import-type PreviousPeriodShape from \Growsurf\Campaign\CampaignGetAnalyticsResponse\PreviousPeriod
  * @phpstan-import-type RatesShape from \Growsurf\Campaign\CampaignGetAnalyticsResponse\Rates
  * @phpstan-import-type SeriesShape from \Growsurf\Campaign\CampaignGetAnalyticsResponse\Series
@@ -25,6 +27,7 @@ use Growsurf\Core\Contracts\BaseModel;
  *   analytics: Analytics|AnalyticsShape,
  *   endDate: int,
  *   startDate: int,
+ *   email?: null|EmailAnalytics|EmailAnalyticsShape,
  *   previousPeriod?: null|PreviousPeriod|PreviousPeriodShape,
  *   rates?: null|Rates|RatesShape,
  *   series?: list<Series|SeriesShape>|null,
@@ -44,6 +47,10 @@ final class CampaignGetAnalyticsResponse implements BaseModel
 
     #[Required]
     public int $startDate;
+
+    /** Present only when `include` contains `email`. */
+    #[Optional]
+    public ?EmailAnalytics $email;
 
     /**
      * Present only when `interval` is `day`, `week`, or `month`. Per-period totals, ascending.
@@ -99,6 +106,7 @@ final class CampaignGetAnalyticsResponse implements BaseModel
      * You must use named parameters to construct any parameters with a default value.
      *
      * @param Analytics|AnalyticsShape $analytics
+     * @param EmailAnalytics|EmailAnalyticsShape|null $email
      * @param PreviousPeriod|PreviousPeriodShape|null $previousPeriod
      * @param Rates|RatesShape|null $rates
      * @param list<Series|SeriesShape>|null $series
@@ -112,6 +120,7 @@ final class CampaignGetAnalyticsResponse implements BaseModel
         Rates|array|null $rates = null,
         ?array $series = null,
         StatusCounts|array|null $statusCounts = null,
+        EmailAnalytics|array|null $email = null,
     ): self {
         $self = new self;
 
@@ -119,6 +128,7 @@ final class CampaignGetAnalyticsResponse implements BaseModel
         $self['endDate'] = $endDate;
         $self['startDate'] = $startDate;
 
+        null !== $email && $self['email'] = $email;
         null !== $previousPeriod && $self['previousPeriod'] = $previousPeriod;
         null !== $rates && $self['rates'] = $rates;
         null !== $series && $self['series'] = $series;
@@ -150,6 +160,15 @@ final class CampaignGetAnalyticsResponse implements BaseModel
     {
         $self = clone $this;
         $self['startDate'] = $startDate;
+
+        return $self;
+    }
+
+    /** @param EmailAnalytics|EmailAnalyticsShape $email */
+    public function withEmail(EmailAnalytics|array $email): self
+    {
+        $self = clone $this;
+        $self['email'] = $email;
 
         return $self;
     }

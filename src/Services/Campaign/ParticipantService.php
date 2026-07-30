@@ -9,6 +9,7 @@ use Growsurf\Campaign\Participant\ParticipantBulkDeleteResponse;
 use Growsurf\Campaign\Participant\ParticipantDeleteResponse;
 use Growsurf\Campaign\Participant\ParticipantEmailResponse;
 use Growsurf\Campaign\Participant\ParticipantGetAnalyticsResponse;
+use Growsurf\Campaign\Participant\ParticipantGetPayoutDestinationResponse;
 use Growsurf\Campaign\Participant\ParticipantListActivityLogsResponse;
 use Growsurf\Campaign\Participant\ParticipantListCommissionsParams\Status;
 use Growsurf\Campaign\Participant\ParticipantListReferralsParams\SortBy;
@@ -17,9 +18,12 @@ use Growsurf\Campaign\Participant\ParticipantRecordTransactionResponse\UnionMemb
 use Growsurf\Campaign\Participant\ParticipantRecordTransactionResponse\UnionMember1;
 use Growsurf\Campaign\Participant\ParticipantRefundTransactionParams\AmendmentType;
 use Growsurf\Campaign\Participant\ParticipantRefundTransactionResponse;
+use Growsurf\Campaign\Participant\ParticipantRequestPayoutDestinationConfirmationParams\Provider;
+use Growsurf\Campaign\Participant\ParticipantRequestPayoutDestinationConfirmationResponse;
 use Growsurf\Campaign\Participant\ParticipantRetrieveAnalyticsParams\Interval;
 use Growsurf\Campaign\Participant\ParticipantSendInvitesResponse;
 use Growsurf\Campaign\Participant\ParticipantTriggerReferralResponse;
+use Growsurf\Campaign\Participant\ParticipantUpdateParams\AffiliateStatus;
 use Growsurf\Campaign\Participant\ParticipantUpdateParams\ReferralStatus;
 use Growsurf\Campaign\ParticipantCommissionList;
 use Growsurf\Campaign\ParticipantPayoutList;
@@ -75,16 +79,16 @@ final class ParticipantService implements ParticipantContract
     /**
      * @api
      *
-     * Updates a participant by GrowSurf participant ID or email address.
+     * Updates a participant by GrowSurf participant ID or email address. For affiliate programs, set `affiliateStatus` to `APPROVED`, `SUSPENDED`, or `BANNED`. `APPROVED` enrolls the participant as an affiliate. `SUSPENDED` and `BANNED` require an existing affiliate. This endpoint does not accept `isAffiliate`, and affiliate enrollment cannot be removed through REST.
      *
      * @param string $participantIDOrEmail path param: GrowSurf participant ID or URL-encoded participant email address
      * @param string $id path param: GrowSurf program ID
+     * @param AffiliateStatus|value-of<AffiliateStatus> $affiliateStatus Body param: Affiliate programs only. Sets the affiliate status. `APPROVED` also enrolls a participant who is not yet an affiliate. `SUSPENDED` and `BANNED` are rejected for non-affiliates.
      * @param string $email Body param
      * @param string $firstName Body param
      * @param string $lastName Body param
      * @param array<string,mixed> $metadata body param: Shallow custom metadata object
      * @param string $notes body param: Freeform internal notes about the participant (internal only, never exposed to participants)
-     * @param string $paypalEmail body param: The participant's PayPal email address, used for affiliate payouts
      * @param ReferralStatus|value-of<ReferralStatus> $referralStatus Body param
      * @param string $referredBy Body param
      * @param bool $unsubscribed Body param
@@ -96,12 +100,12 @@ final class ParticipantService implements ParticipantContract
     public function update(
         string $participantIDOrEmail,
         string $id,
+        AffiliateStatus|string|null $affiliateStatus = null,
         ?string $email = null,
         ?string $firstName = null,
         ?string $lastName = null,
         ?array $metadata = null,
         ?string $notes = null,
-        ?string $paypalEmail = null,
         ReferralStatus|string|null $referralStatus = null,
         ?string $referredBy = null,
         ?bool $unsubscribed = null,
@@ -111,12 +115,12 @@ final class ParticipantService implements ParticipantContract
         $params = Util::removeNulls(
             [
                 'id' => $id,
+                'affiliateStatus' => $affiliateStatus,
                 'email' => $email,
                 'firstName' => $firstName,
                 'lastName' => $lastName,
                 'metadata' => $metadata,
                 'notes' => $notes,
-                'paypalEmail' => $paypalEmail,
                 'referralStatus' => $referralStatus,
                 'referredBy' => $referredBy,
                 'unsubscribed' => $unsubscribed,
@@ -181,9 +185,10 @@ final class ParticipantService implements ParticipantContract
     /**
      * @api
      *
-     * Adds a new participant to the program. If the email already exists, the existing participant is returned.
+     * Adds a new participant to the program. If the email already exists, the existing participant is returned unchanged. For affiliate programs, set `isAffiliate` to `true` to enroll a new participant as an approved affiliate or `false` to create a non-affiliate. If you omit `isAffiliate`, a valid `referredBy` creates a referred non-affiliate; without a valid referrer, the new participant is enrolled as an approved affiliate. You can send a valid `referredBy` with `isAffiliate: true` to keep the referral attribution and enroll the participant as an affiliate.
      *
      * @param string $id growSurf program ID
+     * @param bool $isAffiliate Affiliate programs only. Controls affiliate enrollment for a new participant. `true` enrolls the participant with `affiliateStatus: APPROVED`; `false` creates a non-affiliate without `affiliateStatus`. Existing participants are returned unchanged.
      * @param array<string,mixed> $metadata shallow custom metadata object
      * @param string $mobileInstanceID Optional app-install scoped identifier for native mobile anti-fraud. Recommended for mobile participant creation and mobile participant token flows. The official mobile SDKs generate this as a lowercase UUID.
      * @param \Growsurf\Campaign\Participant\ParticipantAddParams\ReferralStatus|value-of<\Growsurf\Campaign\Participant\ParticipantAddParams\ReferralStatus> $referralStatus The referral credit status. Only meaningful when `referredBy` resolves to a referrer. When omitted, it is derived from the program's referral trigger (`CREDIT_AWARDED`, `CREDIT_PENDING`, or `CREDIT_EXPIRED`); left unset when no referrer resolves.
@@ -198,6 +203,7 @@ final class ParticipantService implements ParticipantContract
         ?string $fingerprint = null,
         ?string $firstName = null,
         ?string $ipAddress = null,
+        ?bool $isAffiliate = null,
         ?string $lastName = null,
         ?array $metadata = null,
         ?string $mobileInstanceID = null,
@@ -211,6 +217,7 @@ final class ParticipantService implements ParticipantContract
                 'fingerprint' => $fingerprint,
                 'firstName' => $firstName,
                 'ipAddress' => $ipAddress,
+                'isAffiliate' => $isAffiliate,
                 'lastName' => $lastName,
                 'metadata' => $metadata,
                 'mobileInstanceID' => $mobileInstanceID,
@@ -674,14 +681,14 @@ final class ParticipantService implements ParticipantContract
     /**
      * @api
      *
-     * Retrieves analytics for a single participant — all-time engagement counters, leaderboard ranks, and per-channel share counts (plus affiliate money metrics for affiliate programs). Useful for segmenting and re-engaging participants. Pass `include=series` to also get this participant's own activity over time.
+     * Retrieves analytics for a single participant — all-time engagement counters, leaderboard ranks, and per-channel share counts (plus affiliate revenue, commission, and payout metrics for affiliate programs). Pass `include=email` for `sent` (accepted for delivery), `delivered`, `opened`, `clicked`, `bounced`, and `spamComplaints` metrics attributed to this participant, including invitations they sent. Use `include=email,series` to include the same counts in each UTC series bucket.
      *
      * @param string $participantIDOrEmail growSurf participant ID or URL-encoded participant email address
      * @param string $id growSurf program ID
      * @param int $days Last number of days to retrieve analytics for. Defaults to 365. Maximum 1825.
      * @param int $endDate End date of the analytics timeframe as a Unix timestamp in milliseconds. Required if `days` is not set.
-     * @param string $include Set to `series` to also return this participant's own activity per period.
-     * @param Interval|value-of<Interval> $interval Bucket size for the `series` (only used with `include=series`). Defaults to `day`.
+     * @param string $include Comma-separated optional data. `series` returns this participant's own activity per period; `email` returns `sent`, `delivered`, `opened`, `clicked`, `bounced`, `spamComplaints`, and per-email-type metrics attributed to the participant for the requested analytics window (including invitations they sent). Request both in either order to add email counts to every series item for emails sent during that period. Only documented tokens are accepted; an unknown token returns `400`.
+     * @param Interval|value-of<Interval> $interval Bucket size for the `series` (only used when `include` contains `series`). Defaults to `day`.
      * @param int $startDate Start date of the analytics timeframe as a Unix timestamp in milliseconds. Required if `days` is not set.
      * @param RequestOpts|null $requestOptions
      *
@@ -740,6 +747,56 @@ final class ParticipantService implements ParticipantContract
 
         // @phpstan-ignore-next-line argument.type
         $response = $this->raw->listActivityLogs($participantIDOrEmail, params: $params, requestOptions: $requestOptions);
+
+        return $response->parse();
+    }
+
+    /**
+     * @api
+     *
+     * Returns a participant's payout-destination status across every payout provider enabled for the program (PayPal and/or Wise). For each provider it reports the current status, the confirmed claim email, the legal recipient type, and — when a delivery bounced or a recipient was invalidated — the repair reason. `activeProvider` is the provider that currently gets paid, or `null` until the participant confirms one.
+     *
+     * @param string $participantIDOrEmail growSurf participant ID or URL-encoded participant email address
+     * @param string $id growSurf program ID
+     * @param RequestOpts|null $requestOptions
+     *
+     * @throws APIException
+     */
+    public function getPayoutDestination(
+        string $participantIDOrEmail,
+        string $id,
+        RequestOptions|array|null $requestOptions = null,
+    ): ParticipantGetPayoutDestinationResponse {
+        $params = Util::removeNulls(['id' => $id]);
+
+        // @phpstan-ignore-next-line argument.type
+        $response = $this->raw->getPayoutDestination($participantIDOrEmail, params: $params, requestOptions: $requestOptions);
+
+        return $response->parse();
+    }
+
+    /**
+     * @api
+     *
+     * Sends the participant a one-time link to confirm their payout destination for the chosen provider. Only the participant can open the link and confirm — this endpoint just triggers the message. The provider must be enabled for the program.
+     *
+     * @param string $participantIDOrEmail path param: GrowSurf participant ID or URL-encoded participant email address
+     * @param string $id path param: GrowSurf program ID
+     * @param Provider|value-of<Provider> $provider body param: The payout provider the participant should confirm a destination for
+     * @param RequestOpts|null $requestOptions
+     *
+     * @throws APIException
+     */
+    public function requestPayoutDestinationConfirmation(
+        string $participantIDOrEmail,
+        string $id,
+        Provider|string $provider,
+        RequestOptions|array|null $requestOptions = null,
+    ): ParticipantRequestPayoutDestinationConfirmationResponse {
+        $params = Util::removeNulls(['id' => $id, 'provider' => $provider]);
+
+        // @phpstan-ignore-next-line argument.type
+        $response = $this->raw->requestPayoutDestinationConfirmation($participantIDOrEmail, params: $params, requestOptions: $requestOptions);
 
         return $response->parse();
     }

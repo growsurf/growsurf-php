@@ -4,10 +4,17 @@ declare(strict_types=1);
 
 namespace Growsurf\ServiceContracts;
 
+use Growsurf\Campaign\AffiliateApplication;
+use Growsurf\Campaign\AffiliateApplicationListResponse;
+use Growsurf\Campaign\AffiliateInvite;
+use Growsurf\Campaign\AffiliateInviteListResponse;
 use Growsurf\Campaign\Campaign;
+use Growsurf\Campaign\CampaignCreateAffiliateInviteParams;
 use Growsurf\Campaign\CampaignCreateMobileParticipantTokenParams;
 use Growsurf\Campaign\CampaignCreateParams;
 use Growsurf\Campaign\CampaignGetAnalyticsResponse;
+use Growsurf\Campaign\CampaignListAffiliateApplicationsParams;
+use Growsurf\Campaign\CampaignListAffiliateInvitesParams;
 use Growsurf\Campaign\CampaignListCommissionsParams;
 use Growsurf\Campaign\CampaignListLeaderboardParams;
 use Growsurf\Campaign\CampaignListParticipantsParams;
@@ -16,6 +23,7 @@ use Growsurf\Campaign\CampaignListReferralsParams;
 use Growsurf\Campaign\CampaignListResponse;
 use Growsurf\Campaign\CampaignNewMobileParticipantTokenResponse;
 use Growsurf\Campaign\CampaignRetrieveAnalyticsParams;
+use Growsurf\Campaign\CampaignReviewAffiliateApplicationParams;
 use Growsurf\Campaign\CampaignUpdateParams;
 use Growsurf\Campaign\ParticipantCommissionList;
 use Growsurf\Campaign\ParticipantList;
@@ -221,6 +229,127 @@ interface CampaignRawContract
     public function retrieveAnalytics(
         string $id,
         array|CampaignRetrieveAnalyticsParams $params,
+        RequestOptions|array|null $requestOptions = null,
+    ): BaseResponse;
+
+    /**
+     * @api
+     *
+     * @param string $id growSurf program ID
+     * @param array<string,mixed>|CampaignListAffiliateApplicationsParams $params
+     * @param RequestOpts|null $requestOptions
+     *
+     * @return BaseResponse<AffiliateApplicationListResponse>
+     *
+     * @throws APIException
+     */
+    public function listAffiliateApplications(
+        string $id,
+        array|CampaignListAffiliateApplicationsParams $params,
+        RequestOptions|array|null $requestOptions = null,
+    ): BaseResponse;
+
+    /**
+     * @api
+     *
+     * @param string $id growSurf program ID
+     * @param string $applicationID affiliate application ID
+     * @param RequestOpts|null $requestOptions
+     *
+     * @return BaseResponse<AffiliateApplication>
+     *
+     * @throws APIException
+     */
+    public function retrieveAffiliateApplication(
+        string $id,
+        string $applicationID,
+        RequestOptions|array|null $requestOptions = null,
+    ): BaseResponse;
+
+    /**
+     * @api
+     *
+     * @param string $id growSurf program ID
+     * @param string $applicationID affiliate application ID
+     * @param array<string,mixed>|CampaignReviewAffiliateApplicationParams $params
+     * @param RequestOpts|null $requestOptions
+     *
+     * @return BaseResponse<AffiliateApplication>
+     *
+     * @throws APIException
+     */
+    public function reviewAffiliateApplication(
+        string $id,
+        string $applicationID,
+        array|CampaignReviewAffiliateApplicationParams $params,
+        RequestOptions|array|null $requestOptions = null,
+    ): BaseResponse;
+
+    /**
+     * @api
+     *
+     * @param string $id growSurf program ID
+     * @param array<string,mixed>|CampaignListAffiliateInvitesParams $params
+     * @param RequestOpts|null $requestOptions
+     *
+     * @return BaseResponse<AffiliateInviteListResponse>
+     *
+     * @throws APIException
+     */
+    public function listAffiliateInvites(
+        string $id,
+        array|CampaignListAffiliateInvitesParams $params,
+        RequestOptions|array|null $requestOptions = null,
+    ): BaseResponse;
+
+    /**
+     * @api
+     *
+     * @param string $id growSurf program ID
+     * @param array<string,mixed>|CampaignCreateAffiliateInviteParams $params
+     * @param RequestOpts|null $requestOptions
+     *
+     * @return BaseResponse<AffiliateInvite>
+     *
+     * @throws APIException
+     */
+    public function createAffiliateInvite(
+        string $id,
+        array|CampaignCreateAffiliateInviteParams $params,
+        RequestOptions|array|null $requestOptions = null,
+    ): BaseResponse;
+
+    /**
+     * @api
+     *
+     * @param string $id growSurf program ID
+     * @param string $inviteID affiliate invite ID
+     * @param RequestOpts|null $requestOptions
+     *
+     * @return BaseResponse<AffiliateInvite>
+     *
+     * @throws APIException
+     */
+    public function revokeAffiliateInvite(
+        string $id,
+        string $inviteID,
+        RequestOptions|array|null $requestOptions = null,
+    ): BaseResponse;
+
+    /**
+     * @api
+     *
+     * @param string $id growSurf program ID
+     * @param string $inviteID affiliate invite ID
+     * @param RequestOpts|null $requestOptions
+     *
+     * @return BaseResponse<AffiliateInvite>
+     *
+     * @throws APIException
+     */
+    public function resendAffiliateInvite(
+        string $id,
+        string $inviteID,
         RequestOptions|array|null $requestOptions = null,
     ): BaseResponse;
 }

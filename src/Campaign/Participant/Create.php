@@ -16,6 +16,7 @@ use Growsurf\Core\Contracts\BaseModel;
  *   fingerprint?: string|null,
  *   firstName?: string|null,
  *   ipAddress?: string|null,
+ *   isAffiliate?: bool|null,
  *   lastName?: string|null,
  *   metadata?: array<string,mixed>|null,
  *   mobileInstanceID?: string|null,
@@ -39,6 +40,12 @@ final class Create implements BaseModel
 
     #[Optional]
     public ?string $ipAddress;
+
+    /**
+     * Affiliate programs only. Controls affiliate enrollment for a new participant. `true` enrolls the participant with `affiliateStatus: APPROVED`; `false` creates a non-affiliate without `affiliateStatus`. Existing participants are returned unchanged.
+     */
+    #[Optional]
+    public ?bool $isAffiliate;
 
     #[Optional]
     public ?string $lastName;
@@ -103,6 +110,7 @@ final class Create implements BaseModel
         ?string $fingerprint = null,
         ?string $firstName = null,
         ?string $ipAddress = null,
+        ?bool $isAffiliate = null,
         ?string $lastName = null,
         ?array $metadata = null,
         ?string $mobileInstanceID = null,
@@ -116,6 +124,7 @@ final class Create implements BaseModel
         null !== $fingerprint && $self['fingerprint'] = $fingerprint;
         null !== $firstName && $self['firstName'] = $firstName;
         null !== $ipAddress && $self['ipAddress'] = $ipAddress;
+        null !== $isAffiliate && $self['isAffiliate'] = $isAffiliate;
         null !== $lastName && $self['lastName'] = $lastName;
         null !== $metadata && $self['metadata'] = $metadata;
         null !== $mobileInstanceID && $self['mobileInstanceID'] = $mobileInstanceID;
@@ -153,6 +162,17 @@ final class Create implements BaseModel
     {
         $self = clone $this;
         $self['ipAddress'] = $ipAddress;
+
+        return $self;
+    }
+
+    /**
+     * Affiliate programs only. Controls affiliate enrollment for a new participant. `true` enrolls the participant with `affiliateStatus: APPROVED`; `false` creates a non-affiliate without `affiliateStatus`. Existing participants are returned unchanged.
+     */
+    public function withIsAffiliate(bool $isAffiliate): self
+    {
+        $self = clone $this;
+        $self['isAffiliate'] = $isAffiliate;
 
         return $self;
     }

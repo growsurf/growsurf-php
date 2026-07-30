@@ -9,4 +9,6 @@ enum LimitDuration: string
     case IN_TOTAL = 'IN_TOTAL';
 
     case PER_MONTH = 'PER_MONTH';
+
+    case PER_YEAR = 'PER_YEAR';
 }

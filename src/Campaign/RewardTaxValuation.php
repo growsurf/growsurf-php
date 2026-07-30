@@ -12,7 +12,7 @@ use Growsurf\Core\Contracts\BaseModel;
  * Tax valuation settings for a reward. Only relevant when the program collects tax documentation.
  *
  * @phpstan-type RewardTaxValuationShape = array{
- *   fairMarketValueUSD?: float|null, isTaxReportable?: bool|null
+ *   fairMarketValueUSD?: float|null, taxCharacter?: 'NONEMPLOYEE_SERVICES'|'PRIZE_OR_AWARD'|'PURCHASE_REBATE'|'OTHER_INCOME'|'REVIEW_REQUIRED'|null
  * }
  */
 final class RewardTaxValuation implements BaseModel
@@ -27,10 +27,10 @@ final class RewardTaxValuation implements BaseModel
     public ?float $fairMarketValueUSD;
 
     /**
-     * Whether the reward's value counts toward 1099 thresholds/totals. `null` = use the smart default for the reward's source.
+     * The reason the recipient earns this reward. `null` inherits the program's confirmed tax treatment for configurable non-commission rewards. Commission rewards always use `NONEMPLOYEE_SERVICES`.
      */
     #[Optional(nullable: true)]
-    public ?bool $isTaxReportable;
+    public ?string $taxCharacter;
 
     public function __construct()
     {
@@ -44,12 +44,12 @@ final class RewardTaxValuation implements BaseModel
      */
     public static function with(
         ?float $fairMarketValueUSD = null,
-        ?bool $isTaxReportable = null
+        ?string $taxCharacter = null
     ): self {
         $self = new self;
 
         null !== $fairMarketValueUSD && $self['fairMarketValueUSD'] = $fairMarketValueUSD;
-        null !== $isTaxReportable && $self['isTaxReportable'] = $isTaxReportable;
+        null !== $taxCharacter && $self['taxCharacter'] = $taxCharacter;
 
         return $self;
     }
@@ -66,12 +66,12 @@ final class RewardTaxValuation implements BaseModel
     }
 
     /**
-     * Whether the reward's value counts toward 1099 thresholds/totals. `null` = use the smart default for the reward's source.
+     * The reason the recipient earns this reward. `null` inherits the program's confirmed tax treatment for configurable non-commission rewards. Commission rewards always use `NONEMPLOYEE_SERVICES`.
      */
-    public function withIsTaxReportable(?bool $isTaxReportable): self
+    public function withTaxCharacter(?string $taxCharacter): self
     {
         $self = clone $this;
-        $self['isTaxReportable'] = $isTaxReportable;
+        $self['taxCharacter'] = $taxCharacter;
 
         return $self;
     }

@@ -62,7 +62,12 @@ final class DesignTest extends TestCase
 
         $result = $this->client->campaign->design->update(
             'id',
-            body: ['theme' => ['primaryColor' => '#000000']],
+            body: [
+                'theme' => ['primaryColor' => '#000000'],
+                'payoutDestinationConfirmation' => [
+                    'headline' => 'Confirm your {{payoutProvider}} payout email',
+                ],
+            ],
         );
 
         // @phpstan-ignore-next-line method.alreadyNarrowedType

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Growsurf\Campaign\Participant;
 
+use Growsurf\Campaign\Participant\ParticipantUpdateParams\AffiliateStatus;
 use Growsurf\Campaign\Participant\ParticipantUpdateParams\ReferralStatus;
 use Growsurf\Core\Attributes\Optional;
 use Growsurf\Core\Attributes\Required;
@@ -12,18 +13,18 @@ use Growsurf\Core\Concerns\SdkParams;
 use Growsurf\Core\Contracts\BaseModel;
 
 /**
- * Updates a participant by GrowSurf participant ID or email address.
+ * Updates a participant by GrowSurf participant ID or email address. For affiliate programs, set `affiliateStatus` to `APPROVED`, `SUSPENDED`, or `BANNED`. `APPROVED` enrolls the participant as an affiliate. `SUSPENDED` and `BANNED` require an existing affiliate. This endpoint does not accept `isAffiliate`, and affiliate enrollment cannot be removed through REST.
  *
  * @see Growsurf\Services\Campaign\ParticipantService::update()
  *
  * @phpstan-type ParticipantUpdateParamsShape = array{
  *   id: string,
+ *   affiliateStatus?: null|\Growsurf\Campaign\Participant\ParticipantUpdateParams\AffiliateStatus|value-of<\Growsurf\Campaign\Participant\ParticipantUpdateParams\AffiliateStatus>,
  *   email?: string|null,
  *   firstName?: string|null,
  *   lastName?: string|null,
  *   metadata?: array<string,mixed>|null,
  *   notes?: string|null,
- *   paypalEmail?: string|null,
  *   referralStatus?: null|\Growsurf\Campaign\Participant\ParticipantUpdateParams\ReferralStatus|value-of<\Growsurf\Campaign\Participant\ParticipantUpdateParams\ReferralStatus>,
  *   referredBy?: string|null,
  *   unsubscribed?: bool|null,
@@ -38,6 +39,16 @@ final class ParticipantUpdateParams implements BaseModel
 
     #[Required]
     public string $id;
+
+    /**
+     * Affiliate programs only. Sets the affiliate status. `APPROVED` also enrolls a participant who is not yet an affiliate. `SUSPENDED` and `BANNED` are rejected for non-affiliates.
+     *
+     * @var value-of<AffiliateStatus>|null $affiliateStatus
+     */
+    #[Optional(
+        enum: AffiliateStatus::class,
+    )]
+    public ?string $affiliateStatus;
 
     #[Optional]
     public ?string $email;
@@ -61,12 +72,6 @@ final class ParticipantUpdateParams implements BaseModel
      */
     #[Optional]
     public ?string $notes;
-
-    /**
-     * The participant's PayPal email address, used for affiliate payouts.
-     */
-    #[Optional]
-    public ?string $paypalEmail;
 
     /**
      * @var value-of<ReferralStatus>|null $referralStatus
@@ -110,18 +115,19 @@ final class ParticipantUpdateParams implements BaseModel
      *
      * You must use named parameters to construct any parameters with a default value.
      *
+     * @param AffiliateStatus|value-of<AffiliateStatus>|null $affiliateStatus
      * @param array<string,mixed>|null $metadata
      * @param ReferralStatus|value-of<ReferralStatus>|null $referralStatus
      * @param list<string>|null $vanityKeys
      */
     public static function with(
         string $id,
+        AffiliateStatus|string|null $affiliateStatus = null,
         ?string $email = null,
         ?string $firstName = null,
         ?string $lastName = null,
         ?array $metadata = null,
         ?string $notes = null,
-        ?string $paypalEmail = null,
         ReferralStatus|string|null $referralStatus = null,
         ?string $referredBy = null,
         ?bool $unsubscribed = null,
@@ -131,12 +137,12 @@ final class ParticipantUpdateParams implements BaseModel
 
         $self['id'] = $id;
 
+        null !== $affiliateStatus && $self['affiliateStatus'] = $affiliateStatus;
         null !== $email && $self['email'] = $email;
         null !== $firstName && $self['firstName'] = $firstName;
         null !== $lastName && $self['lastName'] = $lastName;
         null !== $metadata && $self['metadata'] = $metadata;
         null !== $notes && $self['notes'] = $notes;
-        null !== $paypalEmail && $self['paypalEmail'] = $paypalEmail;
         null !== $referralStatus && $self['referralStatus'] = $referralStatus;
         null !== $referredBy && $self['referredBy'] = $referredBy;
         null !== $unsubscribed && $self['unsubscribed'] = $unsubscribed;
@@ -149,6 +155,20 @@ final class ParticipantUpdateParams implements BaseModel
     {
         $self = clone $this;
         $self['id'] = $id;
+
+        return $self;
+    }
+
+    /**
+     * Affiliate programs only. Sets the affiliate status. `APPROVED` also enrolls a participant who is not yet an affiliate. `SUSPENDED` and `BANNED` are rejected for non-affiliates.
+     *
+     * @param AffiliateStatus|value-of<AffiliateStatus> $affiliateStatus
+     */
+    public function withAffiliateStatus(
+        AffiliateStatus|string $affiliateStatus,
+    ): self {
+        $self = clone $this;
+        $self['affiliateStatus'] = $affiliateStatus;
 
         return $self;
     }
@@ -197,17 +217,6 @@ final class ParticipantUpdateParams implements BaseModel
     {
         $self = clone $this;
         $self['notes'] = $notes;
-
-        return $self;
-    }
-
-    /**
-     * The participant's PayPal email address, used for affiliate payouts.
-     */
-    public function withPaypalEmail(string $paypalEmail): self
-    {
-        $self = clone $this;
-        $self['paypalEmail'] = $paypalEmail;
 
         return $self;
     }

@@ -25,7 +25,9 @@ use Growsurf\Core\Conversion\MapOf;
  *   rank: int,
  *   referralCount: int,
  *   rewards: list<ParticipantReward|ParticipantRewardShape>,
- *   shareURL: string,
+ *   shareURL?: string|null,
+ *   affiliateEnrollmentSource?: string|null,
+ *   affiliateStatus?: string|null,
  *   allMatchingFraudsters?: list<array<string,mixed>>|null,
  *   createdAt?: int|null,
  *   fingerprint?: string|null,
@@ -35,6 +37,7 @@ use Growsurf\Core\Conversion\MapOf;
  *   impressionCount?: int|null,
  *   inviteCount?: int|null,
  *   ipAddress?: string|null,
+ *   isAffiliate?: bool|null,
  *   isNew?: bool|null,
  *   isWinner?: bool|null,
  *   lastName?: string|null,
@@ -86,8 +89,23 @@ final class Participant implements BaseModel
     #[Required(list: ParticipantReward::class)]
     public array $rewards;
 
-    #[Required('shareUrl')]
-    public string $shareURL;
+    /**
+     * The unique share URL of the participant. Omitted for affiliate program participants who are not approved affiliates.
+     */
+    #[Optional('shareUrl')]
+    public ?string $shareURL;
+
+    /**
+     * Affiliate programs only. How the affiliate enrolled (`OPEN_ENROLLMENT`, `APPLICATION`, `PARTICIPANT_AUTH`, `INVITE`, `REST_API`, `CSV`, or `DASHBOARD`). `null` when not recorded.
+     */
+    #[Optional(nullable: true)]
+    public ?string $affiliateEnrollmentSource;
+
+    /**
+     * Affiliate programs only. The enrolled affiliate's status (`APPROVED`, `SUSPENDED`, or `BANNED`). `null` for participants who are not affiliates.
+     */
+    #[Optional(nullable: true)]
+    public ?string $affiliateStatus;
 
     /** @var list<array<string,mixed>>|null $allMatchingFraudsters */
     #[Optional(list: new MapOf('mixed'))]
@@ -117,6 +135,12 @@ final class Participant implements BaseModel
 
     #[Optional(nullable: true)]
     public ?string $ipAddress;
+
+    /**
+     * Affiliate programs only. Whether this participant is an enrolled affiliate. A referred customer who has not joined the program is `false`.
+     */
+    #[Optional]
+    public ?bool $isAffiliate;
 
     #[Optional]
     public ?bool $isNew;
@@ -149,7 +173,7 @@ final class Participant implements BaseModel
     public ?string $notes;
 
     /**
-     * Payout-related actions the participant must complete before a payout can be released (e.g. confirming a PayPal email or submitting a W-9/W-8 tax form). Always present; the requiredActions array is empty when no action is required.
+     * Payout-related actions the participant must complete before a payout can be released (e.g. configuring a payout destination or submitting a W-9/W-8 tax form). Always present; the requiredActions array is empty when no action is required.
      */
     #[Optional]
     public ?PayoutSettings $payoutSettings;
@@ -214,7 +238,6 @@ final class Participant implements BaseModel
      *   rank: ...,
      *   referralCount: ...,
      *   rewards: ...,
-     *   shareURL: ...,
      * )
      * ```
      *
@@ -229,7 +252,6 @@ final class Participant implements BaseModel
      *   ->withRank(...)
      *   ->withReferralCount(...)
      *   ->withRewards(...)
-     *   ->withShareURL(...)
      * ```
      */
     public function __construct()
@@ -263,7 +285,9 @@ final class Participant implements BaseModel
         int $rank,
         int $referralCount,
         array $rewards,
-        string $shareURL,
+        ?string $shareURL = null,
+        ?string $affiliateEnrollmentSource = null,
+        ?string $affiliateStatus = null,
         ?array $allMatchingFraudsters = null,
         ?int $createdAt = null,
         ?string $fingerprint = null,
@@ -273,6 +297,7 @@ final class Participant implements BaseModel
         ?int $impressionCount = null,
         ?int $inviteCount = null,
         ?string $ipAddress = null,
+        ?bool $isAffiliate = null,
         ?bool $isNew = null,
         ?bool $isWinner = null,
         ?string $lastName = null,
@@ -305,8 +330,10 @@ final class Participant implements BaseModel
         $self['rank'] = $rank;
         $self['referralCount'] = $referralCount;
         $self['rewards'] = $rewards;
-        $self['shareURL'] = $shareURL;
 
+        null !== $shareURL && $self['shareURL'] = $shareURL;
+        null !== $affiliateEnrollmentSource && $self['affiliateEnrollmentSource'] = $affiliateEnrollmentSource;
+        null !== $affiliateStatus && $self['affiliateStatus'] = $affiliateStatus;
         null !== $allMatchingFraudsters && $self['allMatchingFraudsters'] = $allMatchingFraudsters;
         null !== $createdAt && $self['createdAt'] = $createdAt;
         null !== $fingerprint && $self['fingerprint'] = $fingerprint;
@@ -316,6 +343,7 @@ final class Participant implements BaseModel
         null !== $impressionCount && $self['impressionCount'] = $impressionCount;
         null !== $inviteCount && $self['inviteCount'] = $inviteCount;
         null !== $ipAddress && $self['ipAddress'] = $ipAddress;
+        null !== $isAffiliate && $self['isAffiliate'] = $isAffiliate;
         null !== $isNew && $self['isNew'] = $isNew;
         null !== $isWinner && $self['isWinner'] = $isWinner;
         null !== $lastName && $self['lastName'] = $lastName;
@@ -401,10 +429,36 @@ final class Participant implements BaseModel
         return $self;
     }
 
+    /**
+     * The unique share URL of the participant. Omitted for affiliate program participants who are not approved affiliates.
+     */
     public function withShareURL(string $shareURL): self
     {
         $self = clone $this;
         $self['shareURL'] = $shareURL;
+
+        return $self;
+    }
+
+    /**
+     * Affiliate programs only. How the affiliate enrolled (`OPEN_ENROLLMENT`, `APPLICATION`, `PARTICIPANT_AUTH`, `INVITE`, `REST_API`, `CSV`, or `DASHBOARD`). `null` when not recorded.
+     */
+    public function withAffiliateEnrollmentSource(
+        ?string $affiliateEnrollmentSource
+    ): self {
+        $self = clone $this;
+        $self['affiliateEnrollmentSource'] = $affiliateEnrollmentSource;
+
+        return $self;
+    }
+
+    /**
+     * Affiliate programs only. The enrolled affiliate's status (`APPROVED`, `SUSPENDED`, or `BANNED`). `null` for participants who are not affiliates.
+     */
+    public function withAffiliateStatus(?string $affiliateStatus): self
+    {
+        $self = clone $this;
+        $self['affiliateStatus'] = $affiliateStatus;
 
         return $self;
     }
@@ -489,6 +543,17 @@ final class Participant implements BaseModel
         return $self;
     }
 
+    /**
+     * Affiliate programs only. Whether this participant is an enrolled affiliate. A referred customer who has not joined the program is `false`.
+     */
+    public function withIsAffiliate(bool $isAffiliate): self
+    {
+        $self = clone $this;
+        $self['isAffiliate'] = $isAffiliate;
+
+        return $self;
+    }
+
     public function withIsNew(bool $isNew): self
     {
         $self = clone $this;
@@ -557,7 +622,7 @@ final class Participant implements BaseModel
     }
 
     /**
-     * Payout-related actions the participant must complete before a payout can be released (e.g. confirming a PayPal email or submitting a W-9/W-8 tax form). Always present; the requiredActions array is empty when no action is required.
+     * Payout-related actions the participant must complete before a payout can be released (e.g. configuring a payout destination or submitting a W-9/W-8 tax form). Always present; the requiredActions array is empty when no action is required.
      *
      * @param PayoutSettings|PayoutSettingsShape $payoutSettings
      */

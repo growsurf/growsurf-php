@@ -56,7 +56,7 @@ interface RewardsContract
      * @param string|null $referralCouponCode body param: A legacy static coupon code shown to the referred friend in the reward-won email and webhook (double-sided rewards). Same caveats as `couponCode`.
      * @param string|null $referralDescription body param: The reward description shown to the referred friend (double-sided rewards)
      * @param bool $referredRewardUpfront body param: For double-sided rewards, deliver the referred friend's reward upfront as a discount
-     * @param RewardTaxValuation|RewardTaxValuationShape|null $referredValue body param: Tax valuation for the referred friend's side of a double-sided reward. Defaults to not tax-reportable (a purchase rebate)
+     * @param RewardTaxValuation|RewardTaxValuationShape|null $referredValue body param: Tax treatment override for the referred friend's side of a double-sided reward. Null inherits the program's confirmed default.
      * @param string $title body param: The reward title (internal label)
      * @param RewardTaxValuation|RewardTaxValuationShape|null $value body param: Tax valuation for the reward (the referrer's side of a double-sided reward). Used by tax documentation / 1099 reporting
      * @param RequestOpts|null $requestOptions
@@ -111,7 +111,7 @@ interface RewardsContract
      * @param string|null $referralCouponCode body param: A legacy static coupon code shown to the referred friend in the reward-won email and webhook (double-sided rewards). Same caveats as `couponCode`.
      * @param string|null $referralDescription body param: The reward description shown to the referred friend (double-sided rewards)
      * @param bool $referredRewardUpfront body param: For double-sided rewards, deliver the referred friend's reward upfront as a discount
-     * @param RewardTaxValuation|RewardTaxValuationShape|null $referredValue body param: Tax valuation for the referred friend's side of a double-sided reward. Defaults to not tax-reportable (a purchase rebate)
+     * @param RewardTaxValuation|RewardTaxValuationShape|null $referredValue body param: Tax treatment override for the referred friend's side of a double-sided reward. Null inherits the program's confirmed default.
      * @param string $title body param: The reward title (internal label)
      * @param RewardTaxValuation|RewardTaxValuationShape|null $value body param: Tax valuation for the reward (the referrer's side of a double-sided reward). Used by tax documentation / 1099 reporting
      * @param RequestOpts|null $requestOptions
