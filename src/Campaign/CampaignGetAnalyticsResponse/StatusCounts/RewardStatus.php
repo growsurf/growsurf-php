@@ -9,10 +9,10 @@ use Growsurf\Core\Concerns\SdkModel;
 use Growsurf\Core\Contracts\BaseModel;
 
 /**
- * Reward status counts. Present for every program.
+ * Reward counts grouped by review and fulfillment status.
  *
  * @phpstan-type RewardStatusShape = array{
- *   approved?: int|null, pending?: int|null
+ *   completed?: int|null, unapproved?: int|null, unfulfilled?: int|null
  * }
  */
 final class RewardStatus implements BaseModel
@@ -20,14 +20,23 @@ final class RewardStatus implements BaseModel
     /** @use SdkModel<RewardStatusShape> */
     use SdkModel;
 
-    #[Optional]
-    public ?int $approved;
-
     /**
-     * Unapproved rewards awaiting fulfillment.
+     * Approved rewards that are fulfilled.
      */
     #[Optional]
-    public ?int $pending;
+    public ?int $completed;
+
+    /**
+     * Unapproved rewards awaiting review.
+     */
+    #[Optional]
+    public ?int $unapproved;
+
+    /**
+     * Rewards that are approved but not fulfilled.
+     */
+    #[Optional]
+    public ?int $unfulfilled;
 
     public function __construct()
     {
@@ -39,31 +48,50 @@ final class RewardStatus implements BaseModel
      *
      * You must use named parameters to construct any parameters with a default value.
      */
-    public static function with(?int $approved = null, ?int $pending = null): self
+    public static function with(
+        ?int $completed = null,
+        ?int $unapproved = null,
+        ?int $unfulfilled = null,
+    ): self
     {
         $self = new self;
 
-        null !== $approved && $self['approved'] = $approved;
-        null !== $pending && $self['pending'] = $pending;
-
-        return $self;
-    }
-
-    public function withApproved(int $approved): self
-    {
-        $self = clone $this;
-        $self['approved'] = $approved;
+        null !== $completed && $self['completed'] = $completed;
+        null !== $unapproved && $self['unapproved'] = $unapproved;
+        null !== $unfulfilled && $self['unfulfilled'] = $unfulfilled;
 
         return $self;
     }
 
     /**
-     * Unapproved rewards awaiting fulfillment.
+     * Approved rewards that are fulfilled.
      */
-    public function withPending(int $pending): self
+    public function withCompleted(int $completed): self
     {
         $self = clone $this;
-        $self['pending'] = $pending;
+        $self['completed'] = $completed;
+
+        return $self;
+    }
+
+    /**
+     * Unapproved rewards awaiting review.
+     */
+    public function withUnapproved(int $unapproved): self
+    {
+        $self = clone $this;
+        $self['unapproved'] = $unapproved;
+
+        return $self;
+    }
+
+    /**
+     * Rewards that are approved but not fulfilled.
+     */
+    public function withUnfulfilled(int $unfulfilled): self
+    {
+        $self = clone $this;
+        $self['unfulfilled'] = $unfulfilled;
 
         return $self;
     }
