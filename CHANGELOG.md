@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.1](https://github.com/growsurf/growsurf-php/compare/v1.2.0...v1.2.1) (2026-07-14)
+
+
+### Bug Fixes
+
+* align method docs with the REST v2 contract ([38d9a11](https://github.com/growsurf/growsurf-php/commit/38d9a1112595842df35bfe72b5a3429064a29f77))
+
 ## [1.2.0](https://github.com/growsurf/growsurf-php/compare/v1.1.2...v1.2.0) (2026-07-13)
 
 
