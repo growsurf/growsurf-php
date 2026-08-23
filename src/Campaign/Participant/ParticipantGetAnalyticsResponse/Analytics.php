@@ -51,6 +51,9 @@ final class Analytics implements BaseModel
     #[Optional]
     public ?int $monthlyReferrals;
 
+    /**
+     * This participant's reward counts grouped by review and fulfillment status.
+     */
     #[Optional]
     public ?RewardStatus $rewardStatus;
 
@@ -198,6 +201,8 @@ final class Analytics implements BaseModel
     }
 
     /**
+     * This participant's reward counts grouped by review and fulfillment status.
+     *
      * @param RewardStatus|RewardStatusShape $rewardStatus
      */
     public function withRewardStatus(RewardStatus|array $rewardStatus): self

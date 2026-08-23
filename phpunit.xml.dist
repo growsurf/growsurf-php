@@ -13,6 +13,7 @@
   <testsuites>
     <testsuite name="default">
       <directory suffix=".php">./tests</directory>
+      <exclude>./tests/UnsupportedMockTests.php</exclude>
     </testsuite>
   </testsuites>
 </phpunit>

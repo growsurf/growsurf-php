@@ -49,7 +49,14 @@ final class Util
      */
     public static function get_object_vars(object $object): array
     {
-        return get_object_vars($object);
+        $properties = [];
+        foreach (get_object_vars($object) as $key => $value) {
+            if (is_string($key)) {
+                $properties[$key] = $value;
+            }
+        }
+
+        return $properties;
     }
 
     public static function machtype(): string
@@ -460,7 +467,7 @@ final class Util
         $contentLine = "Content-Type: %s\r\n\r\n";
 
         if ($val instanceof FileParam) {
-            $ct = $val->contentType ?? $contentType;
+            $ct = $val->contentType;
 
             yield sprintf($contentLine, $ct);
             $data = $val->data;

@@ -55,7 +55,7 @@ final class CampaignCreateParams implements BaseModel
     public ?string $currencyISO;
 
     /**
-     * The program name. Defaults to "Untitled Program".
+     * The program name. Defaults to a generated friendly label plus the creation date.
      */
     #[Optional]
     public ?string $name;
@@ -158,7 +158,7 @@ final class CampaignCreateParams implements BaseModel
     }
 
     /**
-     * The program name. Defaults to "Untitled Program".
+     * The program name. Defaults to a generated friendly label plus the creation date.
      */
     public function withName(string $name): self
     {

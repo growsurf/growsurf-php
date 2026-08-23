@@ -24,6 +24,7 @@ use Psr\Http\Message\UriInterface;
  * @phpstan-type NormalizedRequest = array{
  *   method: string,
  *   path: string,
+ *   operationPath: string,
  *   query: array<string,mixed>,
  *   headers: array<string,string|null|list<string>>,
  *   body: mixed,
@@ -82,7 +83,7 @@ abstract class BaseClient
             // @phpstan-ignore argument.type
             opts: $options,
         );
-        ['method' => $method, 'path' => $uri, 'headers' => $headers, 'body' => $data] = $req;
+        ['method' => $method, 'path' => $uri, 'operationPath' => $operationPath, 'headers' => $headers, 'body' => $data] = $req;
         assert(!is_null($opts->requestFactory));
 
         $request = $opts->requestFactory->createRequest($method, uri: $uri);
@@ -90,7 +91,7 @@ abstract class BaseClient
         $request = $this->transformRequest($request);
 
         // @phpstan-ignore-next-line argument.type
-        $rsp = $this->sendRequest($opts, req: $request, data: $data, redirectCount: 0, retryCount: 0);
+        $rsp = $this->sendRequest($opts, req: $request, data: $data, operationPath: $operationPath, redirectCount: 0, retryCount: 0);
 
         // @phpstan-ignore-next-line argument.type
         return new RawResponse(client: $this, request: $request, response: $rsp, options: $opts, requestInfo: $req, unwrap: $unwrap, stream: $stream, page: $page, convert: $convert ?? 'null');
@@ -154,11 +155,13 @@ abstract class BaseClient
                 }
             }
         }
-        if ($this->idempotencyHeader && !$hasIdempotencyHeader) {
+        $normalizedPath = '/'.ltrim(rtrim($parsedPath, '/'), '/');
+        $retrySafeRotation = 'POST' === strtoupper($method) && '/api-key/rotate' === $normalizedPath;
+        if ($this->idempotencyHeader && !$hasIdempotencyHeader && $retrySafeRotation) {
             $mergedHeaders[$this->idempotencyHeader] = $this->generateIdempotencyKey();
         }
 
-        $req = ['method' => strtoupper($method), 'path' => $uri, 'query' => $mergedQuery, 'headers' => $mergedHeaders, 'body' => $body];
+        $req = ['method' => strtoupper($method), 'path' => $uri, 'operationPath' => $normalizedPath, 'query' => $mergedQuery, 'headers' => $mergedHeaders, 'body' => $body];
 
         return [$req, $options];
     }
@@ -192,18 +195,36 @@ abstract class BaseClient
     protected function shouldRetry(
         RequestOptions $opts,
         int $retryCount,
+        RequestInterface $req,
+        string $operationPath,
         ?ResponseInterface $rsp
     ): bool {
-        if ($retryCount >= $opts->maxRetries) {
+        if ($retryCount >= $opts->maxRetries || !$this->isRetrySafe($req, operationPath: $operationPath)) {
             return false;
         }
 
         $code = $rsp?->getStatusCode();
+        if (is_null($rsp)) {
+            return true;
+        }
         if (408 == $code || 409 == $code || 429 == $code || $code >= 500) {
             return true;
         }
 
         return false;
+    }
+
+    /**
+     * Returns whether replaying the request cannot duplicate a customer-visible mutation.
+     *
+     * @internal
+     */
+    protected function isRetrySafe(RequestInterface $req, string $operationPath): bool
+    {
+        $method = strtoupper($req->getMethod());
+
+        return in_array($method, ['GET', 'HEAD'], true)
+            || ('POST' === $method && '/api-key/rotate' === $operationPath);
     }
 
     /**
@@ -221,14 +242,14 @@ abstract class BaseClient
 
             try {
                 $date = new \DateTimeImmutable($header);
-                $span = time() - $date->getTimestamp();
+                $span = $date->getTimestamp() - time();
 
                 return max(0.0, $span);
-            } catch (\DateMalformedStringException) {
+            } catch (\Exception) {
             }
         }
 
-        $scale = $retryCount ** 2;
+        $scale = 2 ** $retryCount;
         $jitter = 1 - (0.25 * mt_rand() / mt_getrandmax());
         $naive = $opts->initialRetryDelay * $scale * $jitter;
 
@@ -244,6 +265,7 @@ abstract class BaseClient
         RequestOptions $opts,
         RequestInterface $req,
         mixed $data,
+        string $operationPath,
         int $retryCount,
         int $redirectCount,
     ): ResponseInterface {
@@ -269,19 +291,17 @@ abstract class BaseClient
         $code = $rsp?->getStatusCode();
 
         if ($code >= 300 && $code < 400) {
-            assert(!is_null($rsp));
-
             if ($redirectCount >= 20) {
                 throw new APIConnectionException($req, message: 'Maximum redirects exceeded');
             }
 
             $req = $this->followRedirect($rsp, req: $req);
 
-            return $this->sendRequest($opts, req: $req, data: $data, retryCount: $retryCount, redirectCount: ++$redirectCount);
+            return $this->sendRequest($opts, req: $req, data: $data, operationPath: $operationPath, retryCount: $retryCount, redirectCount: ++$redirectCount);
         }
 
         if ($code >= 400 || is_null($rsp)) {
-            if (!$this->shouldRetry($opts, retryCount: $retryCount, rsp: $rsp)) {
+            if (!$this->shouldRetry($opts, retryCount: $retryCount, req: $req, operationPath: $operationPath, rsp: $rsp)) {
                 $exn = is_null($rsp) ? new APIConnectionException($req, previous: $err) : APIStatusException::from(request: $req, response: $rsp);
 
                 throw $exn;
@@ -289,9 +309,9 @@ abstract class BaseClient
 
             $seconds = $this->retryDelay($opts, retryCount: $retryCount, rsp: $rsp);
             $floor = floor($seconds);
-            time_nanosleep((int) $floor, nanoseconds: (int) ($seconds - $floor) * 10 ** 9);
+            time_nanosleep((int) $floor, nanoseconds: (int) (($seconds - $floor) * 10 ** 9));
 
-            return $this->sendRequest($opts, req: $req, data: $data, retryCount: ++$retryCount, redirectCount: $redirectCount);
+            return $this->sendRequest($opts, req: $req, data: $data, operationPath: $operationPath, retryCount: ++$retryCount, redirectCount: $redirectCount);
         }
 
         return $rsp;

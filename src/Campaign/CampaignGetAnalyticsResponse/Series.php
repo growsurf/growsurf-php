@@ -39,6 +39,7 @@ use Growsurf\EmailAnalytics\Counts;
  *   totalRevenue?: int|null,
  *   tumblrShares?: int|null,
  *   twitterShares?: int|null,
+ *   uniqueCommissionReferrals?: int|null,
  *   uniqueImpressions?: int|null,
  *   wechatShares?: int|null,
  *   whatsAppShares?: int|null,
@@ -143,6 +144,12 @@ final class Series implements BaseModel
     #[Optional]
     public ?int $twitterShares;
 
+    /**
+     * Affiliate programs only. Number of unique referred participants represented by commissions in the requested timeframe.
+     */
+    #[Optional]
+    public ?int $uniqueCommissionReferrals;
+
     #[Optional]
     public ?int $uniqueImpressions;
 
@@ -189,6 +196,7 @@ final class Series implements BaseModel
         ?int $totalRevenue = null,
         ?int $tumblrShares = null,
         ?int $twitterShares = null,
+        ?int $uniqueCommissionReferrals = null,
         ?int $uniqueImpressions = null,
         ?int $wechatShares = null,
         ?int $whatsAppShares = null,
@@ -221,6 +229,7 @@ final class Series implements BaseModel
         null !== $totalRevenue && $self['totalRevenue'] = $totalRevenue;
         null !== $tumblrShares && $self['tumblrShares'] = $tumblrShares;
         null !== $twitterShares && $self['twitterShares'] = $twitterShares;
+        null !== $uniqueCommissionReferrals && $self['uniqueCommissionReferrals'] = $uniqueCommissionReferrals;
         null !== $uniqueImpressions && $self['uniqueImpressions'] = $uniqueImpressions;
         null !== $wechatShares && $self['wechatShares'] = $wechatShares;
         null !== $whatsAppShares && $self['whatsAppShares'] = $whatsAppShares;
@@ -446,6 +455,17 @@ final class Series implements BaseModel
     {
         $self = clone $this;
         $self['twitterShares'] = $twitterShares;
+
+        return $self;
+    }
+
+    /**
+     * Affiliate programs only. Number of unique referred participants represented by commissions in the requested timeframe.
+     */
+    public function withUniqueCommissionReferrals(int $uniqueCommissionReferrals): self
+    {
+        $self = clone $this;
+        $self['uniqueCommissionReferrals'] = $uniqueCommissionReferrals;
 
         return $self;
     }
