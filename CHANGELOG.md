@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.3.0](https://github.com/growsurf/growsurf-php/compare/v1.2.1...v1.3.0) (2026-08-23)
+
+
+### Features
+
+* **api:** add affiliate and payout destination APIs ([53f3ffd](https://github.com/growsurf/growsurf-php/commit/53f3ffd0fd9072bff0df2927ef6973c9d77d02b5))
+* **api:** add affiliate and payout destination APIs ([c3c1ed5](https://github.com/growsurf/growsurf-php/commit/c3c1ed515ffd137f5632cf8680b8663cc5babd89))
+* PHP 8.1 support, safer retries, and new analytics/enum fields ([3a23460](https://github.com/growsurf/growsurf-php/commit/3a23460173af9e8bfcac7f07fc87f8ab82e30d9c))
+
+
+### Bug Fixes
+
+* **api:** align analytics reward status models ([7a08bf6](https://github.com/growsurf/growsurf-php/commit/7a08bf6f6f969a0e50893ad105961f7e08b61304))
+
 ## [1.2.1](https://github.com/growsurf/growsurf-php/compare/v1.2.0...v1.2.1) (2026-07-14)
 
 
