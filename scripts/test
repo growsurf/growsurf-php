@@ -6,4 +6,4 @@ cd "$(dirname "$0")/.."
 
 
 
-exec -- ./vendor/bin/pest --colors=always
+exec -- ./vendor/bin/phpunit --colors=always

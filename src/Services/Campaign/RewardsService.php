@@ -8,6 +8,7 @@ use Growsurf\Campaign\CampaignRewardListResponse;
 use Growsurf\Campaign\CommissionStructure;
 use Growsurf\Campaign\DeleteRewardResponse;
 use Growsurf\Campaign\Reward;
+use Growsurf\Campaign\RewardUpdateParams;
 use Growsurf\Campaign\RewardCreateParams\LimitDuration;
 use Growsurf\Campaign\RewardCreateParams\Type;
 use Growsurf\Campaign\RewardTaxValuation;
@@ -57,6 +58,27 @@ final class RewardsService implements RewardsContract
         $response = $this->raw->list($id, requestOptions: $requestOptions);
 
         return $response->parse();
+    }
+
+    /**
+     * Updates a reward from a parameter model. Use this form when the request must
+     * distinguish an omitted field from an explicit JSON null that clears a nullable value.
+     *
+     * Declared on this class only, not on RewardsContract: adding a method to a published
+     * interface breaks anyone who implements it. `CampaignService::$rewards` is typed as this
+     * class, so callers still reach it.
+     *
+     * @param RewardUpdateParams $params
+     * @param RequestOpts|null $requestOptions
+     *
+     * @throws APIException
+     */
+    public function updateWithParams(
+        string $campaignRewardID,
+        RewardUpdateParams $params,
+        RequestOptions|array|null $requestOptions = null,
+    ): Reward {
+        return $this->raw->update($campaignRewardID, $params, $requestOptions)->parse();
     }
 
     /**

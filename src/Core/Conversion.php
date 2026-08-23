@@ -182,7 +182,25 @@ final class Conversion
                 }
 
                 if ($value instanceof \Generator) {
-                    return implode('', iterator_to_array($value));
+                    // Buffer before deciding. A Generator cannot rewind, so returning the original
+                    // after reading from it would hand the caller a stream missing every chunk we
+                    // already consumed. `false` keeps the yielded order instead of letting
+                    // duplicate generator keys drop chunks.
+                    $chunks = iterator_to_array($value, false);
+
+                    foreach ($chunks as $chunk) {
+                        if (!is_string($chunk)) {
+                            ++$state->no;
+
+                            return (static function () use ($chunks): \Generator {
+                                foreach ($chunks as $buffered) {
+                                    yield $buffered;
+                                }
+                            })();
+                        }
+                    }
+
+                    return implode('', $chunks);
                 }
 
                 ++$state->no;

@@ -4,11 +4,14 @@ declare(strict_types=1);
 
 namespace Growsurf\Campaign\Participant\ParticipantGetAnalyticsResponse;
 
+use Growsurf\Campaign\CampaignGetAnalyticsResponse\StatusCounts\RewardStatus;
 use Growsurf\Core\Attributes\Optional;
 use Growsurf\Core\Concerns\SdkModel;
 use Growsurf\Core\Contracts\BaseModel;
 
 /**
+ * @phpstan-import-type RewardStatusShape from RewardStatus
+ *
  * @phpstan-type AnalyticsShape = array{
  *   currencyISO?: string|null,
  *   expiredReferrals?: int|null,
@@ -16,10 +19,9 @@ use Growsurf\Core\Contracts\BaseModel;
  *   invitesSent?: int|null,
  *   leads?: int|null,
  *   monthlyReferrals?: int|null,
- *   pendingRewards?: int|null,
  *   referralRevenue?: int|null,
  *   referrals?: int|null,
- *   rewardsEarned?: int|null,
+ *   rewardStatus?: RewardStatus|RewardStatusShape|null,
  *   totalCommissions?: int|null,
  *   totalPaidOut?: int|null,
  *   uniqueImpressions?: int|null,
@@ -49,8 +51,11 @@ final class Analytics implements BaseModel
     #[Optional]
     public ?int $monthlyReferrals;
 
+    /**
+     * This participant's reward counts grouped by review and fulfillment status.
+     */
     #[Optional]
-    public ?int $pendingRewards;
+    public ?RewardStatus $rewardStatus;
 
     /**
      * Affiliate only. Revenue attributed to this participant's referrals, in minor currency units.
@@ -60,9 +65,6 @@ final class Analytics implements BaseModel
 
     #[Optional]
     public ?int $referrals;
-
-    #[Optional]
-    public ?int $rewardsEarned;
 
     /**
      * Affiliate only. Total commissions earned, in minor currency units.
@@ -94,6 +96,8 @@ final class Analytics implements BaseModel
      * Construct an instance from the required parameters.
      *
      * You must use named parameters to construct any parameters with a default value.
+     *
+     * @param RewardStatus|RewardStatusShape|null $rewardStatus
      */
     public static function with(
         ?string $currencyISO = null,
@@ -102,10 +106,9 @@ final class Analytics implements BaseModel
         ?int $invitesSent = null,
         ?int $leads = null,
         ?int $monthlyReferrals = null,
-        ?int $pendingRewards = null,
         ?int $referralRevenue = null,
         ?int $referrals = null,
-        ?int $rewardsEarned = null,
+        RewardStatus|array|null $rewardStatus = null,
         ?int $totalCommissions = null,
         ?int $totalPaidOut = null,
         ?int $uniqueImpressions = null,
@@ -119,10 +122,9 @@ final class Analytics implements BaseModel
         null !== $invitesSent && $self['invitesSent'] = $invitesSent;
         null !== $leads && $self['leads'] = $leads;
         null !== $monthlyReferrals && $self['monthlyReferrals'] = $monthlyReferrals;
-        null !== $pendingRewards && $self['pendingRewards'] = $pendingRewards;
         null !== $referralRevenue && $self['referralRevenue'] = $referralRevenue;
         null !== $referrals && $self['referrals'] = $referrals;
-        null !== $rewardsEarned && $self['rewardsEarned'] = $rewardsEarned;
+        null !== $rewardStatus && $self['rewardStatus'] = $rewardStatus;
         null !== $totalCommissions && $self['totalCommissions'] = $totalCommissions;
         null !== $totalPaidOut && $self['totalPaidOut'] = $totalPaidOut;
         null !== $uniqueImpressions && $self['uniqueImpressions'] = $uniqueImpressions;
@@ -179,14 +181,6 @@ final class Analytics implements BaseModel
         return $self;
     }
 
-    public function withPendingRewards(int $pendingRewards): self
-    {
-        $self = clone $this;
-        $self['pendingRewards'] = $pendingRewards;
-
-        return $self;
-    }
-
     /**
      * Affiliate only. Revenue attributed to this participant's referrals, in minor currency units.
      */
@@ -206,10 +200,15 @@ final class Analytics implements BaseModel
         return $self;
     }
 
-    public function withRewardsEarned(int $rewardsEarned): self
+    /**
+     * This participant's reward counts grouped by review and fulfillment status.
+     *
+     * @param RewardStatus|RewardStatusShape $rewardStatus
+     */
+    public function withRewardStatus(RewardStatus|array $rewardStatus): self
     {
         $self = clone $this;
-        $self['rewardsEarned'] = $rewardsEarned;
+        $self['rewardStatus'] = $rewardStatus;
 
         return $self;
     }

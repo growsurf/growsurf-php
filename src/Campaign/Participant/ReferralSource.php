@@ -9,4 +9,10 @@ enum ReferralSource: string
     case DIRECT = 'DIRECT';
 
     case PARTICIPANT = 'PARTICIPANT';
+
+    case DELETED_PARTICIPANT = 'DELETED_PARTICIPANT';
+
+    case IMPORT = 'IMPORT';
+
+    case MANUAL = 'MANUAL';
 }

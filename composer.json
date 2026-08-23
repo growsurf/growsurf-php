@@ -16,12 +16,11 @@
   },
   "config": {
     "allow-plugins": {
-      "pestphp/pest-plugin": true,
       "php-http/discovery": false,
       "phpstan/extension-installer": true
     },
     "platform": {
-      "php": "8.3"
+      "php": "8.1"
     },
     "preferred-install": "dist",
     "sort-packages": true
@@ -40,13 +39,12 @@
     "friendsofphp/php-cs-fixer": "^3",
     "guzzlehttp/guzzle": "^7",
     "nyholm/psr7": "^1",
-    "pestphp/pest": "^3",
     "php-http/mock-client": "^1",
     "phpstan/extension-installer": "^1",
     "phpstan/phpstan": "^2",
     "phpstan/phpstan-phpunit": "^2",
-    "phpunit/phpunit": "^11",
-    "symfony/http-client": "^7"
+    "phpunit/phpunit": "^10.5.17",
+    "symfony/http-client": "^6.4"
   },
   "scripts": {
     "build:docs": "curl --etag-save ./vendor/ag.etags --etag-compare ./vendor/ag.etags --create-dirs --remote-name --output-dir ./vendor/bin --no-progress-meter -- https://github.com/ApiGen/ApiGen/releases/latest/download/apigen.phar && php ./vendor/bin/apigen.phar --output docs -- src",

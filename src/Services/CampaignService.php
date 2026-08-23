@@ -156,7 +156,7 @@ final class CampaignService implements CampaignContract
      *
      * @param Type|value-of<Type> $type The program type. Immutable after creation.
      * @param string $currencyISO ISO 4217 currency code. Defaults to USD. Chosen when the program is created and immutable afterward — it cannot be changed on update.
-     * @param string $name The program name. Defaults to "Untitled Program".
+     * @param string $name The program name. Defaults to a generated friendly label plus the creation date.
      * @param list<RewardCreateParams|RewardCreateParamsShape> $rewards optional inline rewards to create with the program
      * @param RequestOpts|null $requestOptions
      *

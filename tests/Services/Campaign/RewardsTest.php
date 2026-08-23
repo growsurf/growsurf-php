@@ -5,6 +5,7 @@ namespace Tests\Services\Campaign;
 use Growsurf\Campaign\CampaignRewardListResponse;
 use Growsurf\Campaign\DeleteRewardResponse;
 use Growsurf\Campaign\Reward;
+use Growsurf\Campaign\RewardUpdateParams;
 use Growsurf\Client;
 use Growsurf\Core\Util;
 use PHPUnit\Framework\Attributes\CoversNothing;
@@ -18,6 +19,14 @@ use Tests\UnsupportedMockTests;
 #[CoversNothing]
 final class RewardsTest extends TestCase
 {
+    #[Test]
+    public function testRewardUpdateParamsPreserveExplicitNull(): void
+    {
+        $params = (new RewardUpdateParams)->withID('id')->withCouponCode(null);
+
+        $this->assertSame(['id' => 'id', 'couponCode' => null], $params->jsonSerialize());
+    }
+
     protected Client $client;
 
     protected function setUp(): void
