@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Growsurf\Campaign\ParticipantCommissionList;
 
+use Growsurf\Campaign\CommissionEvent;
 use Growsurf\Campaign\ParticipantCommissionList\Commission\Status;
 use Growsurf\Core\Attributes\Optional;
 use Growsurf\Core\Attributes\Required;
@@ -16,6 +17,7 @@ use Growsurf\Core\Contracts\BaseModel;
  *   amount: int|null,
  *   createdAt: int,
  *   currencyISO: string,
+ *   event: CommissionEvent|value-of<CommissionEvent>,
  *   referredID: string,
  *   referrerID: string,
  *   saleAmount: int|null,
@@ -50,6 +52,14 @@ final class Commission implements BaseModel
 
     #[Required]
     public string $currencyISO;
+
+    /**
+     * The event that generated this commission. Legacy commissions return `SALE`.
+     *
+     * @var value-of<CommissionEvent> $event
+     */
+    #[Required(enum: CommissionEvent::class)]
+    public string $event;
 
     #[Required('referredId')]
     public string $referredID;
@@ -110,6 +120,7 @@ final class Commission implements BaseModel
      *   amount: ...,
      *   createdAt: ...,
      *   currencyISO: ...,
+     *   event: ...,
      *   referredID: ...,
      *   referrerID: ...,
      *   saleAmount: ...,
@@ -125,6 +136,7 @@ final class Commission implements BaseModel
      *   ->withAmount(...)
      *   ->withCreatedAt(...)
      *   ->withCurrencyISO(...)
+     *   ->withEvent(...)
      *   ->withReferredID(...)
      *   ->withReferrerID(...)
      *   ->withSaleAmount(...)
@@ -141,6 +153,7 @@ final class Commission implements BaseModel
      *
      * You must use named parameters to construct any parameters with a default value.
      *
+     * @param CommissionEvent|value-of<CommissionEvent> $event defaults to `SALE` for calls written against older SDK versions
      * @param Status|value-of<Status> $status
      */
     public static function with(
@@ -164,6 +177,7 @@ final class Commission implements BaseModel
         ?string $provider = null,
         ?int $reversedAt = null,
         ?int $saleAmountInCampaignCurrency = null,
+        CommissionEvent|string $event = 'SALE',
     ): self {
         $self = new self;
 
@@ -171,6 +185,7 @@ final class Commission implements BaseModel
         $self['amount'] = $amount;
         $self['createdAt'] = $createdAt;
         $self['currencyISO'] = $currencyISO;
+        $self['event'] = $event;
         $self['referredID'] = $referredID;
         $self['referrerID'] = $referrerID;
         $self['saleAmount'] = $saleAmount;
@@ -220,6 +235,15 @@ final class Commission implements BaseModel
     {
         $self = clone $this;
         $self['currencyISO'] = $currencyISO;
+
+        return $self;
+    }
+
+    /** @param CommissionEvent|value-of<CommissionEvent> $event */
+    public function withEvent(CommissionEvent|string $event): self
+    {
+        $self = clone $this;
+        $self['event'] = $event;
 
         return $self;
     }

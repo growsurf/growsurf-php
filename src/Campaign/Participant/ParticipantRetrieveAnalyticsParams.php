@@ -12,7 +12,7 @@ use Growsurf\Core\Concerns\SdkParams;
 use Growsurf\Core\Contracts\BaseModel;
 
 /**
- * Retrieves analytics for a single participant — all-time engagement counters, leaderboard ranks, and per-channel share counts (plus affiliate revenue, commission, and payout metrics for affiliate programs). Pass `include=email` for `sent` (accepted for delivery), `delivered`, `opened`, `clicked`, `bounced`, and `spamComplaints` metrics attributed to this participant, including invitations they sent. Use `include=email,series` to include the same counts in each UTC series bucket.
+ * Retrieves analytics for a single participant — all-time engagement counters, leaderboard ranks, and per-channel share counts (plus affiliate revenue, commission, and payout metrics for affiliate programs). Pass `include=email` for `sent` (accepted for delivery), `delivered`, `opened`, `clicked`, `bounced`, and `spamComplaints` metrics attributed to this participant, including invitations they sent. Use `include=email,series` to include the same counts in each UTC series bucket. `days`, `startDate`, and `endDate` filter only the optional `series` and `email` data. They do not filter the top-level `analytics`, `ranks`, or `shareCount` values.
  *
  * @see Growsurf\Services\Campaign\ParticipantService::retrieveAnalytics()
  *
@@ -35,13 +35,13 @@ final class ParticipantRetrieveAnalyticsParams implements BaseModel
     public string $id;
 
     /**
-     * Last number of days to retrieve analytics for. Defaults to 365. Maximum 1825.
+     * Last number of days for optional `series` and `email` analytics. Defaults to 365. Maximum 1825. Does not filter the top-level all-time totals.
      */
     #[Optional]
     public ?int $days;
 
     /**
-     * End date of the analytics timeframe as a Unix timestamp in milliseconds. Required if `days` is not set.
+     * End of a custom `series` and `email` analytics window as a Unix timestamp in milliseconds. Set it together with `startDate`. Does not filter the top-level all-time totals.
      */
     #[Optional]
     public ?int $endDate;
@@ -67,7 +67,7 @@ final class ParticipantRetrieveAnalyticsParams implements BaseModel
     public ?string $interval;
 
     /**
-     * Start date of the analytics timeframe as a Unix timestamp in milliseconds. Required if `days` is not set.
+     * Start of a custom `series` and `email` analytics window as a Unix timestamp in milliseconds. Set it together with `endDate`. Does not filter the top-level all-time totals.
      */
     #[Optional]
     public ?int $startDate;
@@ -128,7 +128,7 @@ final class ParticipantRetrieveAnalyticsParams implements BaseModel
     }
 
     /**
-     * Last number of days to retrieve analytics for. Defaults to 365. Maximum 1825.
+     * Last number of days for optional `series` and `email` analytics. Defaults to 365. Maximum 1825. Does not filter the top-level all-time totals.
      */
     public function withDays(int $days): self
     {
@@ -139,7 +139,7 @@ final class ParticipantRetrieveAnalyticsParams implements BaseModel
     }
 
     /**
-     * End date of the analytics timeframe as a Unix timestamp in milliseconds. Required if `days` is not set.
+     * End of a custom `series` and `email` analytics window as a Unix timestamp in milliseconds. Set it together with `startDate`. Does not filter the top-level all-time totals.
      */
     public function withEndDate(int $endDate): self
     {
@@ -180,7 +180,7 @@ final class ParticipantRetrieveAnalyticsParams implements BaseModel
     }
 
     /**
-     * Start date of the analytics timeframe as a Unix timestamp in milliseconds. Required if `days` is not set.
+     * Start of a custom `series` and `email` analytics window as a Unix timestamp in milliseconds. Set it together with `endDate`. Does not filter the top-level all-time totals.
      */
     public function withStartDate(int $startDate): self
     {

@@ -37,6 +37,9 @@ interface RewardsContract
     /**
      * @api
      *
+     * Creates a Campaign Reward. To set the Campaign Reward `event`, use
+     * `RewardsService::createWithParams()` with a `RewardCreateParams` model.
+     *
      * @param string $id path param: GrowSurf program ID
      * @param Type|value-of<Type> $type body param: The reward type. Immutable after creation.
      * @param CommissionStructure|CommissionStructureShape|null $commissionStructure body param: The affiliate commission structure (AFFILIATE rewards only)
@@ -92,7 +95,10 @@ interface RewardsContract
     /**
      * @api
      *
-     * @param string $campaignRewardID path param: Campaign reward (`CampaignReward`) ID
+     * Updates a Campaign Reward. To change the Campaign Reward `event`, use
+     * `RewardsService::updateWithParams()` with a `RewardUpdateParams` model.
+     *
+     * @param string $campaignRewardID path param: Campaign Reward (`CampaignReward`) ID
      * @param string $id path param: GrowSurf program ID
      * @param CommissionStructure|CommissionStructureShape|null $commissionStructure body param: The affiliate commission structure (AFFILIATE rewards only)
      * @param int $conversionsRequired body param: The number of referrals required to earn the reward
@@ -147,7 +153,7 @@ interface RewardsContract
     /**
      * @api
      *
-     * @param string $campaignRewardID path param: Campaign reward (`CampaignReward`) ID
+     * @param string $campaignRewardID path param: Campaign Reward (`CampaignReward`) ID
      * @param string $id path param: GrowSurf program ID
      * @param RequestOpts|null $requestOptions
      *

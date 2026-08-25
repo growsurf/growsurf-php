@@ -12,9 +12,9 @@ use Growsurf\Core\Concerns\SdkParams;
 use Growsurf\Core\Contracts\BaseModel;
 
 /**
- * Updates an existing campaign reward (`CampaignReward`). The reward `type` is immutable and cannot be changed. When the update replaces `metadata`, renamed keys automatically rewrite any `{{campaignReward[…]}}` references in campaign copy; removing a key that campaign copy still references returns a `409` listing the referencing fields.
+ * Updates an existing Campaign Reward (`CampaignReward`). The reward `type` is immutable and cannot be changed. When the update replaces `metadata`, renamed keys automatically rewrite any `{{campaignReward[…]}}` references in campaign copy; removing a key that campaign copy still references returns a `409` listing the referencing fields.
  *
- * @see Growsurf\Services\Campaign\RewardsService::update()
+ * @see Growsurf\Services\Campaign\RewardsService::updateWithParams()
  *
  * @phpstan-import-type CommissionStructureShape from \Growsurf\Campaign\CommissionStructure
  * @phpstan-import-type RewardTaxValuationShape from \Growsurf\Campaign\RewardTaxValuation
@@ -25,6 +25,7 @@ use Growsurf\Core\Contracts\BaseModel;
  *   conversionsRequired?: int|null,
  *   couponCode?: string|null,
  *   description?: string|null,
+ *   event?: RewardEvent|value-of<RewardEvent>|null,
  *   imageURL?: string|null,
  *   isUnlimited?: bool|null,
  *   isVisible?: bool|null,
@@ -75,6 +76,17 @@ final class RewardUpdateParams implements BaseModel
      */
     #[Optional]
     public ?string $description;
+
+    /**
+     * The event that earns a `SINGLE_SIDED`, `DOUBLE_SIDED`, or `MILESTONE`
+     * Campaign Reward. Use `LEAD` or `CONVERSION`. `LEAD` requires
+     * `installation.referralTrigger` to be `CUSTOM`. Omit this field to preserve
+     * the stored event.
+     *
+     * @var value-of<RewardEvent>|null $event
+     */
+    #[Optional(enum: RewardEvent::class)]
+    public ?string $event;
 
     /**
      * An image URL for the reward.
@@ -205,6 +217,7 @@ final class RewardUpdateParams implements BaseModel
      * @param array<string,mixed> $metadata
      * @param RewardTaxValuation|RewardTaxValuationShape|null $referredValue
      * @param RewardTaxValuation|RewardTaxValuationShape|null $value
+     * @param RewardEvent|value-of<RewardEvent>|null $event
      */
     public static function with(
         string $id,
@@ -228,6 +241,7 @@ final class RewardUpdateParams implements BaseModel
         RewardTaxValuation|array|null $referredValue = null,
         ?string $title = null,
         RewardTaxValuation|array|null $value = null,
+        RewardEvent|string|null $event = null,
     ): self {
         $self = new self;
 
@@ -237,6 +251,7 @@ final class RewardUpdateParams implements BaseModel
         null !== $conversionsRequired && $self['conversionsRequired'] = $conversionsRequired;
         null !== $couponCode && $self['couponCode'] = $couponCode;
         null !== $description && $self['description'] = $description;
+        null !== $event && $self['event'] = $event;
         null !== $imageURL && $self['imageURL'] = $imageURL;
         null !== $isUnlimited && $self['isUnlimited'] = $isUnlimited;
         null !== $isVisible && $self['isVisible'] = $isVisible;
@@ -308,6 +323,15 @@ final class RewardUpdateParams implements BaseModel
     {
         $self = clone $this;
         $self['description'] = $description;
+
+        return $self;
+    }
+
+    /** @param RewardEvent|value-of<RewardEvent> $event */
+    public function withEvent(RewardEvent|string $event): self
+    {
+        $self = clone $this;
+        $self['event'] = $event;
 
         return $self;
     }

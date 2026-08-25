@@ -5,6 +5,7 @@ namespace Tests\Services\Campaign;
 use Growsurf\Campaign\CampaignRewardListResponse;
 use Growsurf\Campaign\DeleteRewardResponse;
 use Growsurf\Campaign\Reward;
+use Growsurf\Campaign\RewardEvent;
 use Growsurf\Campaign\RewardUpdateParams;
 use Growsurf\Client;
 use Growsurf\Core\Util;
@@ -19,14 +20,6 @@ use Tests\UnsupportedMockTests;
 #[CoversNothing]
 final class RewardsTest extends TestCase
 {
-    #[Test]
-    public function testRewardUpdateParamsPreserveExplicitNull(): void
-    {
-        $params = (new RewardUpdateParams)->withID('id')->withCouponCode(null);
-
-        $this->assertSame(['id' => 'id', 'couponCode' => null], $params->jsonSerialize());
-    }
-
     protected Client $client;
 
     protected function setUp(): void
@@ -37,6 +30,14 @@ final class RewardsTest extends TestCase
         $client = new Client(apiKey: 'My API Key', baseUrl: $testUrl);
 
         $this->client = $client;
+    }
+
+    #[Test]
+    public function testRewardUpdateParamsPreserveExplicitNull(): void
+    {
+        $params = (new RewardUpdateParams)->withID('id')->withCouponCode(null);
+
+        $this->assertSame(['id' => 'id', 'couponCode' => null], $params->jsonSerialize());
     }
 
     #[Test]
@@ -97,6 +98,26 @@ final class RewardsTest extends TestCase
 
         // @phpstan-ignore-next-line method.alreadyNarrowedType
         $this->assertInstanceOf(Reward::class, $result);
+    }
+
+    #[Test]
+    public function testRawRequestShapesAcceptRewardEvent(): void
+    {
+        if (UnsupportedMockTests::$skip) {
+            $this->markTestSkipped('Mock server tests are disabled');
+        }
+
+        $created = $this->client->campaign->rewards->raw->create(
+            'id',
+            ['type' => 'SINGLE_SIDED', 'event' => RewardEvent::LEAD],
+        );
+        $updated = $this->client->campaign->rewards->raw->update(
+            'campaignRewardId',
+            ['id' => 'id', 'event' => RewardEvent::CONVERSION],
+        );
+
+        $this->assertInstanceOf(Reward::class, $created->parse());
+        $this->assertInstanceOf(Reward::class, $updated->parse());
     }
 
     #[Test]

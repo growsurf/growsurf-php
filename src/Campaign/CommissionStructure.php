@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Growsurf\Campaign;
 
+use Growsurf\Campaign\CommissionStructure\Event;
 use Growsurf\Campaign\CommissionStructure\Type;
 use Growsurf\Core\Attributes\Optional;
 use Growsurf\Core\Concerns\SdkModel;
@@ -16,7 +17,7 @@ use Growsurf\Core\Contracts\BaseModel;
  *   approvalRequired?: bool|null,
  *   duration?: string|null,
  *   durationInMonths?: int|null,
- *   event?: string|null,
+ *   event?: Event|value-of<Event>|null,
  *   hasIntro?: bool|null,
  *   hasMaxAmount?: bool|null,
  *   holdDuration?: int|null,
@@ -53,7 +54,13 @@ final class CommissionStructure implements BaseModel
     #[Optional(nullable: true)]
     public ?int $durationInMonths;
 
-    #[Optional(nullable: true)]
+    /**
+     * The event that generates a commission. Use `CLICK`, `LEAD`, or `SALE`.
+     * Missing legacy values read as `SALE`.
+     *
+     * @var value-of<Event>|null $event
+     */
+    #[Optional(enum: Event::class, nullable: true)]
     public ?string $event;
 
     #[Optional(nullable: true)]
@@ -109,7 +116,8 @@ final class CommissionStructure implements BaseModel
      *
      * You must use named parameters to construct any parameters with a default value.
      *
-     * @param Type|value-of<Type>|null $type
+     * @param Event|value-of<Event>|null $event
+     * @param Type|value-of<Type>|null  $type
      */
     public static function with(
         ?int $amount = null,
@@ -117,7 +125,7 @@ final class CommissionStructure implements BaseModel
         ?bool $approvalRequired = null,
         ?string $duration = null,
         ?int $durationInMonths = null,
-        ?string $event = null,
+        Event|string|null $event = null,
         ?bool $hasIntro = null,
         ?bool $hasMaxAmount = null,
         ?int $holdDuration = null,
@@ -199,7 +207,8 @@ final class CommissionStructure implements BaseModel
         return $self;
     }
 
-    public function withEvent(?string $event): self
+    /** @param Event|value-of<Event>|null $event */
+    public function withEvent(Event|string|null $event): self
     {
         $self = clone $this;
         $self['event'] = $event;
