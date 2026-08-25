@@ -8,10 +8,11 @@ use Growsurf\Campaign\CampaignRewardListResponse;
 use Growsurf\Campaign\CommissionStructure;
 use Growsurf\Campaign\DeleteRewardResponse;
 use Growsurf\Campaign\Reward;
-use Growsurf\Campaign\RewardUpdateParams;
+use Growsurf\Campaign\RewardCreateParams;
 use Growsurf\Campaign\RewardCreateParams\LimitDuration;
 use Growsurf\Campaign\RewardCreateParams\Type;
 use Growsurf\Campaign\RewardTaxValuation;
+use Growsurf\Campaign\RewardUpdateParams;
 use Growsurf\Client;
 use Growsurf\Core\Exceptions\APIException;
 use Growsurf\Core\Util;
@@ -19,7 +20,7 @@ use Growsurf\RequestOptions;
 use Growsurf\ServiceContracts\Campaign\RewardsContract;
 
 /**
- * Campaign reward (`CampaignReward`) configuration.
+ * Campaign Reward (`CampaignReward`) configuration.
  *
  * @phpstan-import-type RequestOpts from \Growsurf\RequestOptions
  * @phpstan-import-type CommissionStructureShape from \Growsurf\Campaign\CommissionStructure
@@ -61,14 +62,11 @@ final class RewardsService implements RewardsContract
     }
 
     /**
-     * Updates a reward from a parameter model. Use this form when the request must
-     * distinguish an omitted field from an explicit JSON null that clears a nullable value.
+     * Updates a Campaign Reward from a parameter model. Use this form to set `event`.
+     * `LEAD` requires `installation.referralTrigger` to be `CUSTOM`. Omitting `event`
+     * preserves the stored value. This form also distinguishes an omitted field from an
+     * explicit JSON null that clears a nullable value.
      *
-     * Declared on this class only, not on RewardsContract: adding a method to a published
-     * interface breaks anyone who implements it. `CampaignService::$rewards` is typed as this
-     * class, so callers still reach it.
-     *
-     * @param RewardUpdateParams $params
      * @param RequestOpts|null $requestOptions
      *
      * @throws APIException
@@ -82,9 +80,27 @@ final class RewardsService implements RewardsContract
     }
 
     /**
+     * Creates a Campaign Reward from a parameter model. Use this form to set `event` to
+     * `LEAD` or `CONVERSION` for a `SINGLE_SIDED`, `DOUBLE_SIDED`, or `MILESTONE`
+     * reward. `LEAD` requires `installation.referralTrigger` to be `CUSTOM`. Omitting
+     * `event` defaults it to `CONVERSION`.
+     *
+     * @param RequestOpts|null $requestOptions
+     *
+     * @throws APIException
+     */
+    public function createWithParams(
+        string $id,
+        RewardCreateParams $params,
+        RequestOptions|array|null $requestOptions = null,
+    ): Reward {
+        return $this->raw->create($id, $params, $requestOptions)->parse();
+    }
+
+    /**
      * @api
      *
-     * Creates a new campaign reward (`CampaignReward`) with a GrowSurf-assigned ID. The reward type must be compatible with the program type (affiliate programs support only `AFFILIATE` rewards; referral programs support all other types). Enabling an active reward of a type automatically enables that reward type on the program.
+     * Creates a new Campaign Reward (`CampaignReward`) with a GrowSurf-assigned ID. The reward type must be compatible with the program type (affiliate programs support only `AFFILIATE` rewards; referral programs support all other types). Enabling an active reward of a type automatically enables that reward type on the program. Use `createWithParams()` to set the Campaign Reward `event`.
      *
      * @param string $id path param: GrowSurf program ID
      * @param Type|value-of<Type> $type body param: The reward type. Immutable after creation.
@@ -172,9 +188,9 @@ final class RewardsService implements RewardsContract
     /**
      * @api
      *
-     * Updates an existing campaign reward (`CampaignReward`). The reward `type` is immutable and cannot be changed. When the update replaces `metadata`, renamed keys automatically rewrite any `{{campaignReward[…]}}` references in campaign copy; removing a key that campaign copy still references returns a `409` listing the referencing fields.
+     * Updates an existing Campaign Reward (`CampaignReward`). The reward `type` is immutable and cannot be changed. When the update replaces `metadata`, renamed keys automatically rewrite any `{{campaignReward[…]}}` references in campaign copy; removing a key that campaign copy still references returns a `409` listing the referencing fields. Use `updateWithParams()` to change the Campaign Reward `event`.
      *
-     * @param string $campaignRewardID path param: Campaign reward (`CampaignReward`) ID
+     * @param string $campaignRewardID path param: Campaign Reward (`CampaignReward`) ID
      * @param string $id path param: GrowSurf program ID
      * @param CommissionStructure|CommissionStructureShape|null $commissionStructure body param: The affiliate commission structure (AFFILIATE rewards only)
      * @param int $conversionsRequired body param: The number of referrals required to earn the reward
@@ -184,7 +200,7 @@ final class RewardsService implements RewardsContract
      * @param bool $isUnlimited body param: Whether the reward can be earned an unlimited number of times. Defaults to `true`, except `MILESTONE` rewards, which can only be earned once.
      * @param bool $isVisible body param: Whether the reward is enabled. When `false`, the reward is disabled: no longer awarded (including to participants who already earned it) and hidden from participants.
      * @param int $limit body param: The number of times a participant can earn the reward (overridden by `isUnlimited`)
-     * @param \Growsurf\Campaign\RewardUpdateParams\LimitDuration|value-of<\Growsurf\Campaign\RewardUpdateParams\LimitDuration> $limitDuration body param: The window over which `limit` applies
+     * @param RewardUpdateParams\LimitDuration|value-of<RewardUpdateParams\LimitDuration> $limitDuration body param: The window over which `limit` applies
      * @param array<string,mixed> $metadata body param: Custom key/value metadata (single-level; values are stored as strings)
      * @param string|null $nextMilestonePrefix body param: Text shown before a participant's referral count in milestone progress copy (e.g. "You are only"). Applies to `MILESTONE` rewards.
      * @param string|null $nextMilestoneSuffix body param: Text shown after a participant's referral count in milestone progress copy (e.g. "referrals away from your next reward!"). Applies to `MILESTONE` rewards.
@@ -211,7 +227,7 @@ final class RewardsService implements RewardsContract
         ?bool $isUnlimited = null,
         ?bool $isVisible = null,
         ?int $limit = null,
-        \Growsurf\Campaign\RewardUpdateParams\LimitDuration|string|null $limitDuration = null,
+        RewardUpdateParams\LimitDuration|string|null $limitDuration = null,
         ?array $metadata = null,
         ?string $nextMilestonePrefix = null,
         ?string $nextMilestoneSuffix = null,
@@ -260,9 +276,9 @@ final class RewardsService implements RewardsContract
     /**
      * @api
      *
-     * Deletes a campaign reward (`CampaignReward`). The reward is deactivated, removed from the program's reward set, and any connected upfront-discount coupons are cleaned up. If campaign copy still references any of the reward's metadata keys via `{{campaignReward[…]}}` tokens, the delete returns a `409` listing the referencing fields — update those fields first.
+     * Deletes a Campaign Reward (`CampaignReward`). The reward is deactivated, removed from the program's reward set, and any connected upfront-discount coupons are cleaned up. If campaign copy still references any of the reward's metadata keys via `{{campaignReward[…]}}` tokens, the delete returns a `409` listing the referencing fields — update those fields first.
      *
-     * @param string $campaignRewardID path param: Campaign reward (`CampaignReward`) ID
+     * @param string $campaignRewardID path param: Campaign Reward (`CampaignReward`) ID
      * @param string $id path param: GrowSurf program ID
      * @param RequestOpts|null $requestOptions
      *

@@ -699,7 +699,7 @@ final class ParticipantRawService implements ParticipantRawContract
     /**
      * @api
      *
-     * Retrieves analytics for a single participant — all-time engagement counters, leaderboard ranks, and per-channel share counts (plus affiliate revenue, commission, and payout metrics for affiliate programs). Pass `include=email` for `sent` (accepted for delivery), `delivered`, `opened`, `clicked`, `bounced`, and `spamComplaints` metrics attributed to this participant, including invitations they sent. Use `include=email,series` to include the same counts in each UTC series bucket.
+     * Retrieves analytics for a single participant — all-time engagement counters, leaderboard ranks, and per-channel share counts (plus affiliate revenue, commission, and payout metrics for affiliate programs). Pass `include=email` for `sent` (accepted for delivery), `delivered`, `opened`, `clicked`, `bounced`, and `spamComplaints` metrics attributed to this participant, including invitations they sent. Use `include=email,series` to include the same counts in each UTC series bucket. `days`, `startDate`, and `endDate` filter only the optional `series` and `email` data. They do not filter the top-level `analytics`, `ranks`, or `shareCount` values.
      *
      * @param string $participantIDOrEmail growSurf participant ID or URL-encoded participant email address
      * @param array{

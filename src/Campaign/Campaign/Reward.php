@@ -7,6 +7,7 @@ namespace Growsurf\Campaign\Campaign;
 use Growsurf\Campaign\Campaign\Reward\LimitDuration;
 use Growsurf\Campaign\Campaign\Reward\Type;
 use Growsurf\Campaign\CommissionStructure;
+use Growsurf\Campaign\RewardEvent;
 use Growsurf\Campaign\RewardTaxValuation;
 use Growsurf\Core\Attributes\Optional;
 use Growsurf\Core\Attributes\Required;
@@ -26,6 +27,7 @@ use Growsurf\Core\Contracts\BaseModel;
  *   conversionsRequired?: int|null,
  *   couponCode?: string|null,
  *   description?: string|null,
+ *   event?: RewardEvent|value-of<RewardEvent>|null,
  *   imageURL?: string|null,
  *   isVisible?: bool|null,
  *   limit?: int|null,
@@ -76,6 +78,15 @@ final class Reward implements BaseModel
 
     #[Optional(nullable: true)]
     public ?string $description;
+
+    /**
+     * The event that earns this Campaign Reward. Present for `SINGLE_SIDED`,
+     * `DOUBLE_SIDED`, and `MILESTONE` rewards. Legacy rewards return `CONVERSION`.
+     *
+     * @var value-of<RewardEvent>|null $event
+     */
+    #[Optional(enum: RewardEvent::class)]
+    public ?string $event;
 
     #[Optional('imageUrl', nullable: true)]
     public ?string $imageURL;
@@ -163,6 +174,7 @@ final class Reward implements BaseModel
      * @param LimitDuration|value-of<LimitDuration>|null $limitDuration
      * @param RewardTaxValuation|RewardTaxValuationShape|null $referredValue
      * @param RewardTaxValuation|RewardTaxValuationShape|null $value
+     * @param RewardEvent|value-of<RewardEvent>|null $event
      */
     public static function with(
         string $id,
@@ -187,6 +199,7 @@ final class Reward implements BaseModel
         RewardTaxValuation|array|null $referredValue = null,
         ?string $title = null,
         RewardTaxValuation|array|null $value = null,
+        RewardEvent|string|null $event = null,
     ): self {
         $self = new self;
 
@@ -199,6 +212,7 @@ final class Reward implements BaseModel
         null !== $conversionsRequired && $self['conversionsRequired'] = $conversionsRequired;
         null !== $couponCode && $self['couponCode'] = $couponCode;
         null !== $description && $self['description'] = $description;
+        null !== $event && $self['event'] = $event;
         null !== $imageURL && $self['imageURL'] = $imageURL;
         null !== $isVisible && $self['isVisible'] = $isVisible;
         null !== $limit && $self['limit'] = $limit;
@@ -290,6 +304,15 @@ final class Reward implements BaseModel
     {
         $self = clone $this;
         $self['description'] = $description;
+
+        return $self;
+    }
+
+    /** @param RewardEvent|value-of<RewardEvent>|null $event */
+    public function withEvent(RewardEvent|string|null $event): self
+    {
+        $self = clone $this;
+        $self['event'] = $event;
 
         return $self;
     }

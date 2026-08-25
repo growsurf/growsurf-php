@@ -9,4 +9,6 @@ enum Status: string
     case PENDING = 'PENDING';
 
     case FULFILLED = 'FULFILLED';
+
+    case CANCELLED = 'CANCELLED';
 }
