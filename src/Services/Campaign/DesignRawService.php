@@ -12,9 +12,10 @@ use Growsurf\RequestOptions;
 use Growsurf\ServiceContracts\Campaign\DesignRawContract;
 
 /**
- * Campaign design (`CampaignDesign`) configuration — the dashboard Program Editor's **Design** tab.
+ * Campaign design (`CampaignDesign`) configuration — the dashboard Program Editor's **Design** tab, including Resources presentation, `participantAvatarStyle` (`CHARACTERS`, `INITIALS`, `ANIMALS`, or `GRADIENT`) and the Claim Offer Popup.
  *
  * @phpstan-import-type RequestOpts from \Growsurf\RequestOptions
+ * @phpstan-import-type CampaignDesignShape from \Growsurf\Campaign\CampaignDesign
  */
 final class DesignRawService implements DesignRawContract
 {
@@ -27,12 +28,12 @@ final class DesignRawService implements DesignRawContract
     /**
      * @api
      *
-     * Retrieves a program's configured design fields: the dashboard Program Editor's **Design** tab plus the payout-destination confirmation page copy configured from payout integration cards. This includes the GrowSurf window layout, header, share channels and invites, signup form, portal and landing pages, theme styling, and referral or affiliate summary and status sections. The available fields depend on the program type. `payoutDestinationConfirmation` is omitted when no confirmation fields are stored. Stored `null` fields are returned as `null`; omitted and `null` fields use localized defaults.
+     * Retrieves a program's configured design fields: the dashboard Program Editor's **Design** tab plus the payout-destination confirmation page copy configured from payout integration cards. This includes the GrowSurf window layout, header, share channels and invites, signup form, portal and landing pages, theme styling, and referral or affiliate summary and status sections. The available fields depend on the program type. `participantAvatarStyle` is `CHARACTERS`, `INITIALS`, `ANIMALS`, or `GRADIENT`; missing or unknown values mean `INITIALS`. `payoutDestinationConfirmation` is omitted when no confirmation fields are stored. Stored `null` fields are returned as `null`; omitted and `null` fields use localized defaults.
      *
      * @param string $id growSurf program ID
      * @param RequestOpts|null $requestOptions
      *
-     * @return BaseResponse<array<string,mixed>>
+     * @return BaseResponse<CampaignDesignShape>
      *
      * @throws APIException
      */
@@ -59,10 +60,10 @@ final class DesignRawService implements DesignRawContract
      * `400`. Landing-page custom code and JavaScript are not editable via the API.
      *
      * @param string $id growSurf program ID
-     * @param array<string,mixed> $body partial `CampaignDesign` (see API reference)
+     * @param CampaignDesignShape $body partial `CampaignDesign`; see `CampaignDesign::resources`
      * @param RequestOpts|null $requestOptions
      *
-     * @return BaseResponse<array<string,mixed>>
+     * @return BaseResponse<CampaignDesignShape>
      *
      * @throws APIException
      */

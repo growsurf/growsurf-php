@@ -427,7 +427,7 @@ interface ParticipantContract
      * @param string $id growSurf program ID
      * @param int $days Last number of days for optional `series` and `email` analytics. Defaults to 365. Maximum 1825. Does not filter the top-level all-time totals.
      * @param int $endDate End of a custom `series` and `email` analytics window as a Unix timestamp in milliseconds. Set it together with `startDate`. Does not filter the top-level all-time totals.
-     * @param string $include Comma-separated optional data. `series` returns this participant's own activity per period; `email` returns `sent`, `delivered`, `opened`, `clicked`, `bounced`, `spamComplaints`, and per-email-type metrics attributed to the participant for the requested analytics window (including invitations they sent). Request both in either order to add email counts to every series item for emails sent during that period. Only documented tokens are accepted; an unknown token returns `400`.
+     * @param string $include Comma-separated optional data. `activation` returns covered first milestones; `series` returns this participant's own activity per period; `email` returns attributed email metrics. Only documented tokens are accepted; an unknown token returns `400`.
      * @param Interval|value-of<Interval> $interval Bucket size for the `series` (only used when `include` contains `series`). Defaults to `day`.
      * @param int $startDate Start of a custom `series` and `email` analytics window as a Unix timestamp in milliseconds. Set it together with `endDate`. Does not filter the top-level all-time totals.
      * @param RequestOpts|null $requestOptions

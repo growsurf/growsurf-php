@@ -26,11 +26,13 @@ use Growsurf\EmailAnalytics\Counts;
  *   participants?: int|null,
  *   periodStart?: int|null,
  *   pinterestShares?: int|null,
+ *   portalViews?: int|null,
  *   qrcodeShares?: int|null,
  *   redditShares?: int|null,
  *   referralCreditExpireds?: int|null,
  *   referralCreditPendings?: int|null,
  *   referrals?: int|null,
+ *   shareActions?: int|null,
  *   smsShares?: int|null,
  *   telegramShares?: int|null,
  *   threadsShares?: int|null,
@@ -96,6 +98,10 @@ final class Series implements BaseModel
     #[Optional]
     public ?int $pinterestShares;
 
+    /** Present with `series,activation`. Covered signed-in portal views, or `null` outside known coverage. */
+    #[Optional(nullable: true)]
+    public ?int $portalViews;
+
     #[Optional]
     public ?int $qrcodeShares;
 
@@ -110,6 +116,10 @@ final class Series implements BaseModel
 
     #[Optional]
     public ?int $referrals;
+
+    /** Present with `series,activation`. Covered accepted share actions, or `null` outside known coverage. */
+    #[Optional(nullable: true)]
+    public ?int $shareActions;
 
     #[Optional]
     public ?int $smsShares;
@@ -200,6 +210,8 @@ final class Series implements BaseModel
         ?int $uniqueImpressions = null,
         ?int $wechatShares = null,
         ?int $whatsAppShares = null,
+        ?int $portalViews = null,
+        ?int $shareActions = null,
     ): self {
         $self = new self;
 
@@ -216,11 +228,13 @@ final class Series implements BaseModel
         null !== $participants && $self['participants'] = $participants;
         null !== $periodStart && $self['periodStart'] = $periodStart;
         null !== $pinterestShares && $self['pinterestShares'] = $pinterestShares;
+        null !== $portalViews && $self['portalViews'] = $portalViews;
         null !== $qrcodeShares && $self['qrcodeShares'] = $qrcodeShares;
         null !== $redditShares && $self['redditShares'] = $redditShares;
         null !== $referralCreditExpireds && $self['referralCreditExpireds'] = $referralCreditExpireds;
         null !== $referralCreditPendings && $self['referralCreditPendings'] = $referralCreditPendings;
         null !== $referrals && $self['referrals'] = $referrals;
+        null !== $shareActions && $self['shareActions'] = $shareActions;
         null !== $smsShares && $self['smsShares'] = $smsShares;
         null !== $telegramShares && $self['telegramShares'] = $telegramShares;
         null !== $threadsShares && $self['threadsShares'] = $threadsShares;
@@ -344,6 +358,15 @@ final class Series implements BaseModel
         return $self;
     }
 
+    /** Present with `series,activation`. Covered signed-in portal views, or `null` outside known coverage. */
+    public function withPortalViews(?int $portalViews): self
+    {
+        $self = clone $this;
+        $self['portalViews'] = $portalViews;
+
+        return $self;
+    }
+
     public function withQrcodeShares(int $qrcodeShares): self
     {
         $self = clone $this;
@@ -382,6 +405,15 @@ final class Series implements BaseModel
     {
         $self = clone $this;
         $self['referrals'] = $referrals;
+
+        return $self;
+    }
+
+    /** Present with `series,activation`. Covered accepted share actions, or `null` outside known coverage. */
+    public function withShareActions(?int $shareActions): self
+    {
+        $self = clone $this;
+        $self['shareActions'] = $shareActions;
 
         return $self;
     }

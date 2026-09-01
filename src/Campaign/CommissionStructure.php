@@ -55,8 +55,10 @@ final class CommissionStructure implements BaseModel
     public ?int $durationInMonths;
 
     /**
-     * The event that generates a commission. Use `CLICK`, `LEAD`, or `SALE`.
-     * Missing legacy values read as `SALE`.
+     * The event that generates a commission. `CLICK` and `LEAD` require `FIXED`
+     * with a positive `amount`; `amountISO` defaults to the program currency when
+     * omitted. `SALE` supports `FIXED` or `PERCENT`. Missing legacy values read as
+     * `SALE`.
      *
      * @var value-of<Event>|null $event
      */

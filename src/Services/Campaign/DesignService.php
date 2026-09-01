@@ -10,9 +10,10 @@ use Growsurf\RequestOptions;
 use Growsurf\ServiceContracts\Campaign\DesignContract;
 
 /**
- * Campaign design (`CampaignDesign`) configuration — the Program Editor's **Design** tab plus payout-destination confirmation page copy.
+ * Campaign design (`CampaignDesign`) configuration — the Program Editor's **Design** tab, including Resources presentation, `participantAvatarStyle` (`CHARACTERS`, `INITIALS`, `ANIMALS`, or `GRADIENT`), the Claim Offer Popup, and payout-destination confirmation page copy.
  *
  * @phpstan-import-type RequestOpts from \Growsurf\RequestOptions
+ * @phpstan-import-type CampaignDesignShape from \Growsurf\Campaign\CampaignDesign
  */
 final class DesignService implements DesignContract
 {
@@ -32,12 +33,12 @@ final class DesignService implements DesignContract
     /**
      * @api
      *
-     * Retrieves a program's configured design fields: the dashboard Program Editor's **Design** tab plus the payout-destination confirmation page copy configured from payout integration cards. This includes the GrowSurf window layout, header, share channels and invites, signup form, portal and landing pages, theme styling, and referral or affiliate summary and status sections. The available fields depend on the program type. `payoutDestinationConfirmation` is omitted when no confirmation fields are stored. Stored `null` fields are returned as `null`; omitted and `null` fields use localized defaults.
+     * Retrieves a program's configured design fields: the dashboard Program Editor's **Design** tab plus the payout-destination confirmation page copy configured from payout integration cards. This includes the GrowSurf window layout, header, share channels and invites, signup form, portal and landing pages, theme styling, and referral or affiliate summary and status sections. The available fields depend on the program type. `participantAvatarStyle` is `CHARACTERS`, `INITIALS`, `ANIMALS`, or `GRADIENT`; missing or unknown values mean `INITIALS`. `payoutDestinationConfirmation` is omitted when no confirmation fields are stored. Stored `null` fields are returned as `null`; omitted and `null` fields use localized defaults.
      *
      * @param string $id growSurf program ID
      * @param RequestOpts|null $requestOptions
      *
-     * @return array<string,mixed>
+     * @return CampaignDesignShape
      *
      * @throws APIException
      */
@@ -61,10 +62,11 @@ final class DesignService implements DesignContract
      * `400`. Landing-page custom code and JavaScript are not editable via the API.
      *
      * @param string $id growSurf program ID
-     * @param array<string,mixed> $body partial `CampaignDesign` (for example, `['payoutDestinationConfirmation' => ['headline' => 'Confirm your {{payoutProvider}} payout email']]`)
+     * @param CampaignDesignShape $body partial `CampaignDesign`. `resources` accepts visibility,
+     *   title, list/back/copy labels, and an icon with type `DEFAULT`, `IMAGE`, or `NONE`.
      * @param RequestOpts|null $requestOptions
      *
-     * @return array<string,mixed>
+     * @return CampaignDesignShape
      *
      * @throws APIException
      */

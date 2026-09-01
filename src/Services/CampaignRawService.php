@@ -9,6 +9,7 @@ use Growsurf\Campaign\AffiliateApplicationListResponse;
 use Growsurf\Campaign\AffiliateInvite;
 use Growsurf\Campaign\AffiliateInviteListResponse;
 use Growsurf\Campaign\Campaign;
+use Growsurf\Campaign\CampaignActivationAnalyticsResponse;
 use Growsurf\Campaign\CampaignCreateAffiliateInviteParams;
 use Growsurf\Campaign\CampaignCreateMobileParticipantTokenParams;
 use Growsurf\Campaign\CampaignCreateMobileParticipantTokenParams\ReferralStatus;
@@ -27,8 +28,12 @@ use Growsurf\Campaign\CampaignListReferralsParams;
 use Growsurf\Campaign\CampaignListReferralsParams\SortBy;
 use Growsurf\Campaign\CampaignListResponse;
 use Growsurf\Campaign\CampaignNewMobileParticipantTokenResponse;
+use Growsurf\Campaign\CampaignRetrieveActivationAnalyticsParams;
+use Growsurf\Campaign\CampaignRetrieveActivationAnalyticsParams\CohortInterval;
+use Growsurf\Campaign\CampaignRetrieveActivationAnalyticsParams\ObservationWindowDays;
 use Growsurf\Campaign\CampaignRetrieveAnalyticsParams;
 use Growsurf\Campaign\CampaignRetrieveAnalyticsParams\Interval;
+use Growsurf\Campaign\CampaignRetrieveAnalyticsParams\Platform;
 use Growsurf\Campaign\CampaignReviewAffiliateApplicationParams;
 use Growsurf\Campaign\CampaignUpdateParams;
 use Growsurf\Campaign\ParticipantCommissionList;
@@ -440,7 +445,8 @@ final class CampaignRawService implements CampaignRawContract
      *
      * Retrieves analytics for a program. Pass `interval` to also get a time-series (`series`)
      * alongside the totals, and `include` to add previous-period totals, status breakdowns,
-     * derived rates, or email performance. Add `email` to `include` for `sent` (accepted for
+     * derived rates, email performance, or participant engagement. Add `engagement` to include
+     * covered participant engagement. Use `platform` and `timezone` to filter and bound it. Add `email` for `sent` (accepted for
      * delivery), `delivered`, `opened`, `clicked`, `bounced`, and `spamComplaints` metrics plus
      * per-email-type breakdowns. Email rates are ratios from `0` to `1`, and `isPartial`
      * identifies windows that begin before complete coverage.
@@ -451,7 +457,9 @@ final class CampaignRawService implements CampaignRawContract
      *   endDate?: int,
      *   include?: string,
      *   interval?: Interval|value-of<Interval>,
+     *   platform?: Platform|value-of<Platform>,
      *   startDate?: int,
+     *   timezone?: string,
      * }|CampaignRetrieveAnalyticsParams $params
      * @param RequestOpts|null $requestOptions
      *
@@ -476,6 +484,45 @@ final class CampaignRawService implements CampaignRawContract
             query: $parsed,
             options: $options,
             convert: CampaignGetAnalyticsResponse::class,
+        );
+    }
+
+    /**
+     * @api
+     *
+     * Retrieves activation cohorts for eligible participants.
+     *
+     * @param string $id growSurf program ID
+     * @param array{
+     *   cohortFrom?: int,
+     *   cohortTo?: int,
+     *   cohortInterval?: CohortInterval|value-of<CohortInterval>,
+     *   observationWindowDays?: ObservationWindowDays|value-of<ObservationWindowDays>,
+     *   timezone?: string,
+     * }|CampaignRetrieveActivationAnalyticsParams $params
+     * @param RequestOpts|null $requestOptions
+     *
+     * @return BaseResponse<CampaignActivationAnalyticsResponse>
+     *
+     * @throws APIException
+     */
+    public function retrieveActivationAnalytics(
+        string $id,
+        array|CampaignRetrieveActivationAnalyticsParams $params,
+        RequestOptions|array|null $requestOptions = null,
+    ): BaseResponse {
+        [$parsed, $options] = CampaignRetrieveActivationAnalyticsParams::parseRequest(
+            $params,
+            $requestOptions,
+        );
+
+        // @phpstan-ignore-next-line return.type
+        return $this->client->request(
+            method: 'get',
+            path: ['campaign/%1$s/analytics/activation', $id],
+            query: $parsed,
+            options: $options,
+            convert: CampaignActivationAnalyticsResponse::class,
         );
     }
 

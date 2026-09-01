@@ -63,6 +63,19 @@ final class DesignTest extends TestCase
         $result = $this->client->campaign->design->update(
             'id',
             body: [
+                'participantAvatarStyle' => 'CHARACTERS',
+                'resources' => [
+                    'isPublicDisplayed' => true,
+                    'title' => 'Resources',
+                    'viewResourcesLinkText' => 'View resources',
+                    'backLinkText' => 'Back',
+                    'copyButtonText' => 'Copy',
+                    'copiedText' => 'Copied',
+                    'icon' => [
+                        'type' => 'IMAGE',
+                        'imageUrl' => 'https://example.com/resources-icon.png',
+                    ],
+                ],
                 'theme' => ['primaryColor' => '#000000'],
                 'payoutDestinationConfirmation' => [
                     'headline' => 'Confirm your {{payoutProvider}} payout email',

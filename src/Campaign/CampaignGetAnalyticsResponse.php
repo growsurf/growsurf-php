@@ -27,6 +27,7 @@ use Growsurf\EmailAnalytics;
  *   analytics: Analytics|AnalyticsShape,
  *   endDate: int,
  *   startDate: int,
+ *   engagement?: null|CampaignEngagementAnalytics,
  *   email?: null|EmailAnalytics|EmailAnalyticsShape,
  *   previousPeriod?: null|PreviousPeriod|PreviousPeriodShape,
  *   rates?: null|Rates|RatesShape,
@@ -47,6 +48,10 @@ final class CampaignGetAnalyticsResponse implements BaseModel
 
     #[Required]
     public int $startDate;
+
+    /** Present only when `include` contains `engagement`. */
+    #[Optional]
+    public ?CampaignEngagementAnalytics $engagement;
 
     /** Present only when `include` contains `email`. */
     #[Optional]
@@ -121,6 +126,7 @@ final class CampaignGetAnalyticsResponse implements BaseModel
         ?array $series = null,
         StatusCounts|array|null $statusCounts = null,
         EmailAnalytics|array|null $email = null,
+        ?CampaignEngagementAnalytics $engagement = null,
     ): self {
         $self = new self;
 
@@ -129,6 +135,7 @@ final class CampaignGetAnalyticsResponse implements BaseModel
         $self['startDate'] = $startDate;
 
         null !== $email && $self['email'] = $email;
+        null !== $engagement && $self['engagement'] = $engagement;
         null !== $previousPeriod && $self['previousPeriod'] = $previousPeriod;
         null !== $rates && $self['rates'] = $rates;
         null !== $series && $self['series'] = $series;
@@ -160,6 +167,15 @@ final class CampaignGetAnalyticsResponse implements BaseModel
     {
         $self = clone $this;
         $self['startDate'] = $startDate;
+
+        return $self;
+    }
+
+    /** Present only when `include` contains `engagement`. */
+    public function withEngagement(CampaignEngagementAnalytics $engagement): self
+    {
+        $self = clone $this;
+        $self['engagement'] = $engagement;
 
         return $self;
     }

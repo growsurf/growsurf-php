@@ -5,13 +5,14 @@ declare(strict_types=1);
 namespace Growsurf\Campaign;
 
 use Growsurf\Campaign\CampaignRetrieveAnalyticsParams\Interval;
+use Growsurf\Campaign\CampaignRetrieveAnalyticsParams\Platform;
 use Growsurf\Core\Attributes\Optional;
 use Growsurf\Core\Concerns\SdkModel;
 use Growsurf\Core\Concerns\SdkParams;
 use Growsurf\Core\Contracts\BaseModel;
 
 /**
- * Retrieves analytics for a program. Pass `interval` for a time series and `include` for previous-period, status, rate, or email metrics.
+ * Retrieves analytics for a program. Add `engagement` to `include` for covered participant activity. Use `platform` and `timezone` to filter and bound engagement data.
  *
  * @see Growsurf\Services\CampaignService::retrieveAnalytics()
  *
@@ -20,7 +21,9 @@ use Growsurf\Core\Contracts\BaseModel;
  *   endDate?: int|null,
  *   include?: string|null,
  *   interval?: null|Interval|value-of<Interval>,
+ *   platform?: null|Platform|value-of<Platform>,
  *   startDate?: int|null,
+ *   timezone?: string|null,
  * }
  */
 final class CampaignRetrieveAnalyticsParams implements BaseModel
@@ -42,24 +45,32 @@ final class CampaignRetrieveAnalyticsParams implements BaseModel
     public ?int $endDate;
 
     /**
-     * Comma-separated list of optional data to include: `previousPeriod` adds totals for the equal-length window immediately before the requested one; `statusCounts` adds reward (and, for affiliate programs, affiliate/commission/payout) status breakdowns; `rates` adds derived referral rates; `email` adds `sent`, `delivered`, `opened`, `clicked`, `bounced`, `spamComplaints`, and per-email-type metrics. When `email` and an interval are both requested, each `series` item also contains counts for emails sent during that period. Combine `email` with `previousPeriod` to include the same email metrics in both windows.
+     * Comma-separated optional data. `engagement` adds covered participant engagement; `previousPeriod`, `statusCounts`, `rates`, and `email` preserve their existing analytics behavior.
      */
     #[Optional]
     public ?string $include;
 
     /**
-     * When set to `day`, `week`, or `month`, the response also includes a `series` array with per-period totals. Defaults to `total` (no series).
+     * When set to `day`, `week`, or `month`, the response also includes a `series` array with per-period totals and uses the same bucket size for `engagement.series`. Defaults to `total` (no legacy series); `engagement.series` uses daily buckets when `interval` is `total` or omitted.
      *
      * @var value-of<Interval>|null $interval
      */
     #[Optional(enum: Interval::class)]
     public ?string $interval;
 
+    /** Platform filter for `engagement`. Defaults to `ALL`. */
+    #[Optional(enum: Platform::class)]
+    public ?string $platform;
+
     /**
      * Start date of the analytics timeframe as a Unix timestamp in milliseconds. Required if `days` is not set.
      */
     #[Optional]
     public ?int $startDate;
+
+    /** IANA timezone for engagement period boundaries. Defaults to `UTC`. */
+    #[Optional]
+    public ?string $timezone;
 
     public function __construct()
     {
@@ -72,6 +83,7 @@ final class CampaignRetrieveAnalyticsParams implements BaseModel
      * You must use named parameters to construct any parameters with a default value.
      *
      * @param Interval|value-of<Interval>|null $interval
+     * @param Platform|value-of<Platform>|null $platform
      */
     public static function with(
         ?int $days = null,
@@ -79,6 +91,8 @@ final class CampaignRetrieveAnalyticsParams implements BaseModel
         ?string $include = null,
         Interval|string|null $interval = null,
         ?int $startDate = null,
+        Platform|string|null $platform = null,
+        ?string $timezone = null,
     ): self {
         $self = new self;
 
@@ -86,7 +100,9 @@ final class CampaignRetrieveAnalyticsParams implements BaseModel
         null !== $endDate && $self['endDate'] = $endDate;
         null !== $include && $self['include'] = $include;
         null !== $interval && $self['interval'] = $interval;
+        null !== $platform && $self['platform'] = $platform;
         null !== $startDate && $self['startDate'] = $startDate;
+        null !== $timezone && $self['timezone'] = $timezone;
 
         return $self;
     }
@@ -114,13 +130,9 @@ final class CampaignRetrieveAnalyticsParams implements BaseModel
     }
 
     /**
-     * Comma-separated list of optional data to include: `previousPeriod` adds totals for the
-     * equal-length window immediately before the requested one; `statusCounts` adds reward (and,
-     * for affiliate programs, affiliate/commission/payout) status breakdowns; `rates` adds
-     * derived referral rates; `email` adds `sent`, `delivered`, `opened`, `clicked`, `bounced`,
-     * `spamComplaints`, and per-email-type metrics. When `email` and an interval are both
-     * requested, each `series` item also contains counts for emails sent during that period.
-     * Combine `email` with `previousPeriod` to include the same email metrics in both windows.
+     * Comma-separated optional data. `engagement` adds covered participant engagement;
+     * `previousPeriod`, `statusCounts`, `rates`, and `email` preserve their existing analytics
+     * behavior.
      */
     public function withInclude(string $include): self
     {
@@ -131,7 +143,7 @@ final class CampaignRetrieveAnalyticsParams implements BaseModel
     }
 
     /**
-     * When set to `day`, `week`, or `month`, the response also includes a `series` array with per-period totals. Defaults to `total` (no series).
+     * When set to `day`, `week`, or `month`, the response also includes a `series` array with per-period totals and uses the same bucket size for `engagement.series`. Defaults to `total` (no legacy series); `engagement.series` uses daily buckets when `interval` is `total` or omitted.
      *
      * @param Interval|value-of<Interval> $interval
      */
@@ -144,12 +156,34 @@ final class CampaignRetrieveAnalyticsParams implements BaseModel
     }
 
     /**
+     * Platform filter for `engagement`. Defaults to `ALL`.
+     *
+     * @param Platform|value-of<Platform> $platform
+     */
+    public function withPlatform(Platform|string $platform): self
+    {
+        $self = clone $this;
+        $self['platform'] = $platform;
+
+        return $self;
+    }
+
+    /**
      * Start date of the analytics timeframe as a Unix timestamp in milliseconds. Required if `days` is not set.
      */
     public function withStartDate(int $startDate): self
     {
         $self = clone $this;
         $self['startDate'] = $startDate;
+
+        return $self;
+    }
+
+    /** IANA timezone for engagement period boundaries. Defaults to `UTC`. */
+    public function withTimezone(string $timezone): self
+    {
+        $self = clone $this;
+        $self['timezone'] = $timezone;
 
         return $self;
     }

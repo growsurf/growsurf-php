@@ -9,6 +9,7 @@ use Growsurf\Campaign\AffiliateApplicationListResponse;
 use Growsurf\Campaign\AffiliateInvite;
 use Growsurf\Campaign\AffiliateInviteListResponse;
 use Growsurf\Campaign\Campaign;
+use Growsurf\Campaign\CampaignActivationAnalyticsResponse;
 use Growsurf\Campaign\CampaignCreateMobileParticipantTokenParams\ReferralStatus;
 use Growsurf\Campaign\CampaignCreateParams\Type;
 use Growsurf\Campaign\CampaignGetAnalyticsResponse;
@@ -17,7 +18,10 @@ use Growsurf\Campaign\CampaignListLeaderboardParams\LeaderboardType;
 use Growsurf\Campaign\CampaignListReferralsParams\SortBy;
 use Growsurf\Campaign\CampaignListResponse;
 use Growsurf\Campaign\CampaignNewMobileParticipantTokenResponse;
+use Growsurf\Campaign\CampaignRetrieveActivationAnalyticsParams\CohortInterval;
+use Growsurf\Campaign\CampaignRetrieveActivationAnalyticsParams\ObservationWindowDays;
 use Growsurf\Campaign\CampaignRetrieveAnalyticsParams\Interval;
+use Growsurf\Campaign\CampaignRetrieveAnalyticsParams\Platform;
 use Growsurf\Campaign\ParticipantCommissionList;
 use Growsurf\Campaign\ParticipantList;
 use Growsurf\Campaign\ParticipantPayoutList;
@@ -34,6 +38,7 @@ use Growsurf\Services\Campaign\EmailsService;
 use Growsurf\Services\Campaign\InstallationService;
 use Growsurf\Services\Campaign\OptionsService;
 use Growsurf\Services\Campaign\ParticipantService;
+use Growsurf\Services\Campaign\ProgramResourcesService;
 use Growsurf\Services\Campaign\RewardService;
 use Growsurf\Services\Campaign\RewardsService;
 use Growsurf\Services\Campaign\WebhooksService;
@@ -68,6 +73,9 @@ final class CampaignService implements CampaignContract
      * @api
      */
     public RewardsService $rewards;
+
+    /** @api */
+    public ProgramResourcesService $resources;
 
     /**
      * @api
@@ -104,6 +112,7 @@ final class CampaignService implements CampaignContract
         $this->reward = new RewardService($client);
         $this->commission = new CommissionService($client);
         $this->rewards = new RewardsService($client);
+        $this->resources = new ProgramResourcesService($client);
         $this->design = new DesignService($client);
         $this->emails = new EmailsService($client);
         $this->options = new OptionsService($client);
@@ -469,7 +478,9 @@ final class CampaignService implements CampaignContract
      *
      * Retrieves analytics for a program. Pass `interval` to also get a time-series (`series`)
      * alongside the totals, and `include` to add previous-period totals, status breakdowns,
-     * derived rates, or email performance. Add `email` to `include` for `sent` (accepted for
+     * derived rates, email performance, or participant engagement. Add `engagement` to include
+     * covered active, sharing, repeat, retained, portal-view, and share-action metrics. Use
+     * `platform` and `timezone` to filter and bound that engagement data. Add `email` for `sent` (accepted for
      * delivery), `delivered`, `opened`, `clicked`, `bounced`, and `spamComplaints` metrics plus
      * per-email-type breakdowns. Email rates are ratios from `0` to `1`, and `isPartial`
      * identifies windows that begin before complete coverage.
@@ -477,10 +488,12 @@ final class CampaignService implements CampaignContract
      * @param string $id growSurf program ID
      * @param int $days Last number of days to retrieve analytics for. Defaults to 365. Maximum 1825.
      * @param int $endDate End date of the analytics timeframe as a Unix timestamp in milliseconds. Required if `days` is not set.
-     * @param string $include comma-separated list of optional data to include: `previousPeriod` adds totals for the equal-length window immediately before the requested one; `statusCounts` adds reward (and, for affiliate programs, affiliate/commission/payout) status breakdowns; `rates` adds derived referral rates; `email` adds `sent`, `delivered`, `opened`, `clicked`, `bounced`, `spamComplaints`, and per-email-type metrics. When `email` and an interval are both requested, each `series` item also contains counts for emails sent during that period. Combine `email` with `previousPeriod` to include the same email metrics in both windows
-     * @param Interval|value-of<Interval> $interval When set to `day`, `week`, or `month`, the response also includes a `series` array with per-period totals. Defaults to `total` (no series).
+     * @param string $include Comma-separated optional data. `engagement` adds covered participant activity; `previousPeriod`, `statusCounts`, `rates`, and `email` preserve their existing behavior.
+     * @param Interval|value-of<Interval> $interval When set to `day`, `week`, or `month`, the response also includes a `series` array with per-period totals and uses the same bucket size for `engagement.series`. Defaults to `total` (no legacy series); `engagement.series` uses daily buckets when `interval` is `total` or omitted.
      * @param int $startDate Start date of the analytics timeframe as a Unix timestamp in milliseconds. Required if `days` is not set.
      * @param RequestOpts|null $requestOptions
+     * @param Platform|value-of<Platform> $platform Platform filter for `engagement`. Defaults to `ALL`.
+     * @param string $timezone IANA timezone for engagement period boundaries. Defaults to `UTC`.
      *
      * @throws APIException
      */
@@ -492,6 +505,8 @@ final class CampaignService implements CampaignContract
         Interval|string|null $interval = null,
         ?int $startDate = null,
         RequestOptions|array|null $requestOptions = null,
+        Platform|string|null $platform = null,
+        ?string $timezone = null,
     ): CampaignGetAnalyticsResponse {
         $params = Util::removeNulls(
             [
@@ -499,12 +514,55 @@ final class CampaignService implements CampaignContract
                 'endDate' => $endDate,
                 'include' => $include,
                 'interval' => $interval,
+                'platform' => $platform,
                 'startDate' => $startDate,
+                'timezone' => $timezone,
             ],
         );
 
         // @phpstan-ignore-next-line argument.type
         $response = $this->raw->retrieveAnalytics($id, params: $params, requestOptions: $requestOptions);
+
+        return $response->parse();
+    }
+
+    /**
+     * @api
+     *
+     * Retrieves activation cohorts for eligible participants. Unknown pre-coverage values are
+     * returned as unavailable data, never as evidence that a milestone did not happen.
+     *
+     * @param string $id growSurf program ID
+     * @param int $cohortFrom inclusive cohort enrollment start as a Unix timestamp in milliseconds
+     * @param int $cohortTo exclusive cohort enrollment end as a Unix timestamp in milliseconds
+     * @param CohortInterval|value-of<CohortInterval> $cohortInterval Cohort bucket size. Defaults to `day`.
+     * @param ObservationWindowDays|value-of<ObservationWindowDays> $observationWindowDays Days after enrollment allowed for each participant to reach a stage. Defaults to `30`.
+     * @param string $timezone IANA timezone used for cohort bounds. Defaults to `UTC`.
+     * @param RequestOpts|null $requestOptions
+     *
+     * @throws APIException
+     */
+    public function retrieveActivationAnalytics(
+        string $id,
+        ?int $cohortFrom = null,
+        ?int $cohortTo = null,
+        CohortInterval|string|null $cohortInterval = null,
+        ObservationWindowDays|int|null $observationWindowDays = null,
+        ?string $timezone = null,
+        RequestOptions|array|null $requestOptions = null,
+    ): CampaignActivationAnalyticsResponse {
+        $params = Util::removeNulls(
+            [
+                'cohortFrom' => $cohortFrom,
+                'cohortTo' => $cohortTo,
+                'cohortInterval' => $cohortInterval,
+                'observationWindowDays' => $observationWindowDays,
+                'timezone' => $timezone,
+            ],
+        );
+
+        // @phpstan-ignore-next-line argument.type
+        $response = $this->raw->retrieveActivationAnalytics($id, params: $params, requestOptions: $requestOptions);
 
         return $response->parse();
     }

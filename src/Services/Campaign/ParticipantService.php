@@ -481,7 +481,7 @@ final class ParticipantService implements ParticipantContract
     /**
      * @api
      *
-     * **Affiliate programs only.** Records an amendment (refund, partial refund, refund cancellation, or chargeback) against a previously recorded transaction and reverses or adjusts the referrer's commission. The inverse of Record Affiliate Transaction. Identify the original transaction with the same identifier(s) you sent when recording it. Commissions already paid out to the affiliate are not clawed back; the amendment is recorded for tax reporting only.
+     * **Affiliate programs only.** Records an amendment (refund, partial refund, refund cancellation, or chargeback) against a previously recorded transaction and reverses or adjusts the referrer's commission. The inverse of Record Affiliate Transaction. Identify the original transaction with the same identifier(s) you sent when recording it. Commissions already paid out to the affiliate are not clawed back. The amendment still updates the sale revenue used in program reporting; full refunds and chargebacks also update tax reporting.
      *
      * @param string $participantIDOrEmail path param: GrowSurf participant ID or URL-encoded participant email address
      * @param string $id path param: GrowSurf program ID
@@ -681,13 +681,13 @@ final class ParticipantService implements ParticipantContract
     /**
      * @api
      *
-     * Retrieves analytics for a single participant — all-time engagement counters, leaderboard ranks, and per-channel share counts (plus affiliate revenue, commission, and payout metrics for affiliate programs). Pass `include=email` for `sent` (accepted for delivery), `delivered`, `opened`, `clicked`, `bounced`, and `spamComplaints` metrics attributed to this participant, including invitations they sent. Use `include=email,series` to include the same counts in each UTC series bucket. `days`, `startDate`, and `endDate` filter only the optional `series` and `email` data. They do not filter the top-level `analytics`, `ranks`, or `shareCount` values.
+     * Retrieves analytics for one participant. Add `activation` to `include` for covered enrollment and first-milestone values. Unknown pre-coverage history stays `null` with an explicit state and reason. Use `activation,series` for covered `portalViews` and `shareActions` alongside existing activity counters. Existing `email` and series-window behavior is unchanged.
      *
      * @param string $participantIDOrEmail growSurf participant ID or URL-encoded participant email address
      * @param string $id growSurf program ID
      * @param int $days Last number of days for optional `series` and `email` analytics. Defaults to 365. Maximum 1825. Does not filter the top-level all-time totals.
      * @param int $endDate End of a custom `series` and `email` analytics window as a Unix timestamp in milliseconds. Set it together with `startDate`. Does not filter the top-level all-time totals.
-     * @param string $include Comma-separated optional data. `series` returns this participant's own activity per period; `email` returns `sent`, `delivered`, `opened`, `clicked`, `bounced`, `spamComplaints`, and per-email-type metrics attributed to the participant for the requested analytics window (including invitations they sent). Request both in either order to add email counts to every series item for emails sent during that period. Only documented tokens are accepted; an unknown token returns `400`.
+     * @param string $include Comma-separated optional data. `activation` returns covered first milestones; `series` returns this participant's own activity per period; `email` returns attributed email metrics. Only documented tokens are accepted; an unknown token returns `400`.
      * @param Interval|value-of<Interval> $interval Bucket size for the `series` (only used when `include` contains `series`). Defaults to `day`.
      * @param int $startDate Start of a custom `series` and `email` analytics window as a Unix timestamp in milliseconds. Set it together with `endDate`. Does not filter the top-level all-time totals.
      * @param RequestOpts|null $requestOptions

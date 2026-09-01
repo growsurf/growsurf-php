@@ -9,6 +9,7 @@ use Growsurf\Campaign\AffiliateApplicationListResponse;
 use Growsurf\Campaign\AffiliateInvite;
 use Growsurf\Campaign\AffiliateInviteListResponse;
 use Growsurf\Campaign\Campaign;
+use Growsurf\Campaign\CampaignActivationAnalyticsResponse;
 use Growsurf\Campaign\CampaignCreateMobileParticipantTokenParams\ReferralStatus;
 use Growsurf\Campaign\CampaignCreateParams\Type;
 use Growsurf\Campaign\CampaignGetAnalyticsResponse;
@@ -17,7 +18,10 @@ use Growsurf\Campaign\CampaignListLeaderboardParams\LeaderboardType;
 use Growsurf\Campaign\CampaignListReferralsParams\SortBy;
 use Growsurf\Campaign\CampaignListResponse;
 use Growsurf\Campaign\CampaignNewMobileParticipantTokenResponse;
+use Growsurf\Campaign\CampaignRetrieveActivationAnalyticsParams\CohortInterval;
+use Growsurf\Campaign\CampaignRetrieveActivationAnalyticsParams\ObservationWindowDays;
 use Growsurf\Campaign\CampaignRetrieveAnalyticsParams\Interval;
+use Growsurf\Campaign\CampaignRetrieveAnalyticsParams\Platform;
 use Growsurf\Campaign\ParticipantCommissionList;
 use Growsurf\Campaign\ParticipantList;
 use Growsurf\Campaign\ParticipantPayoutList;
@@ -247,10 +251,12 @@ interface CampaignContract
      * @param string $id growSurf program ID
      * @param int $days Last number of days to retrieve analytics for. Defaults to 365. Maximum 1825.
      * @param int $endDate End date of the analytics timeframe as a Unix timestamp in milliseconds. Required if `days` is not set.
-     * @param string $include comma-separated list of optional data to include: `previousPeriod` adds totals for the equal-length window immediately before the requested one; `statusCounts` adds reward (and, for affiliate programs, affiliate/commission/payout) status breakdowns; `rates` adds derived referral rates; `email` adds `sent`, `delivered`, `opened`, `clicked`, `bounced`, `spamComplaints`, and per-email-type metrics. When `email` and an interval are both requested, each `series` item also contains counts for emails sent during that period. Combine `email` with `previousPeriod` to include the same email metrics in both windows
-     * @param Interval|value-of<Interval> $interval When set to `day`, `week`, or `month`, the response also includes a `series` array with per-period totals. Defaults to `total` (no series).
+     * @param string $include Comma-separated optional data. `engagement` adds covered participant activity; `previousPeriod`, `statusCounts`, `rates`, and `email` preserve their existing behavior.
+     * @param Interval|value-of<Interval> $interval When set to `day`, `week`, or `month`, the response also includes a `series` array with per-period totals and uses the same bucket size for `engagement.series`. Defaults to `total` (no legacy series); `engagement.series` uses daily buckets when `interval` is `total` or omitted.
      * @param int $startDate Start date of the analytics timeframe as a Unix timestamp in milliseconds. Required if `days` is not set.
      * @param RequestOpts|null $requestOptions
+     * @param Platform|value-of<Platform> $platform Platform filter for `engagement`. Defaults to `ALL`.
+     * @param string $timezone IANA timezone for engagement period boundaries. Defaults to `UTC`.
      *
      * @throws APIException
      */
@@ -262,7 +268,32 @@ interface CampaignContract
         Interval|string|null $interval = null,
         ?int $startDate = null,
         RequestOptions|array|null $requestOptions = null,
+        Platform|string|null $platform = null,
+        ?string $timezone = null,
     ): CampaignGetAnalyticsResponse;
+
+    /**
+     * @api
+     *
+     * @param string $id growSurf program ID
+     * @param int $cohortFrom inclusive cohort enrollment start as a Unix timestamp in milliseconds
+     * @param int $cohortTo exclusive cohort enrollment end as a Unix timestamp in milliseconds
+     * @param CohortInterval|value-of<CohortInterval> $cohortInterval Cohort bucket size. Defaults to `day`.
+     * @param ObservationWindowDays|value-of<ObservationWindowDays> $observationWindowDays Days after enrollment allowed for each participant to reach a stage. Defaults to `30`.
+     * @param string $timezone IANA timezone used for cohort bounds. Defaults to `UTC`.
+     * @param RequestOpts|null $requestOptions
+     *
+     * @throws APIException
+     */
+    public function retrieveActivationAnalytics(
+        string $id,
+        ?int $cohortFrom = null,
+        ?int $cohortTo = null,
+        CohortInterval|string|null $cohortInterval = null,
+        ObservationWindowDays|int|null $observationWindowDays = null,
+        ?string $timezone = null,
+        RequestOptions|array|null $requestOptions = null,
+    ): CampaignActivationAnalyticsResponse;
 
     /**
      * @api

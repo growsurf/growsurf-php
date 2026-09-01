@@ -52,7 +52,7 @@ interface ParticipantRawContract
     /**
      * @api
      *
-     * @param string $participantIDOrEmail growSurf participant ID or URL-encoded participant email address
+     * @param string $participantIDOrEmail growSurf participant ID or URL-encoded participant email address. The lookup remains scoped to the selected program ID.
      * @param array<string,mixed>|ParticipantRetrieveParams $params
      * @param RequestOpts|null $requestOptions
      *

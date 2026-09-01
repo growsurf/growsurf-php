@@ -12,7 +12,7 @@ use Growsurf\Core\Concerns\SdkParams;
 use Growsurf\Core\Contracts\BaseModel;
 
 /**
- * Retrieves analytics for a single participant — all-time engagement counters, leaderboard ranks, and per-channel share counts (plus affiliate revenue, commission, and payout metrics for affiliate programs). Pass `include=email` for `sent` (accepted for delivery), `delivered`, `opened`, `clicked`, `bounced`, and `spamComplaints` metrics attributed to this participant, including invitations they sent. Use `include=email,series` to include the same counts in each UTC series bucket. `days`, `startDate`, and `endDate` filter only the optional `series` and `email` data. They do not filter the top-level `analytics`, `ranks`, or `shareCount` values.
+ * Retrieves analytics for one participant. Add `activation` to `include` for covered enrollment and first-milestone values. Unknown history stays `null` with an explicit state and reason. Existing `email` and `series` options keep their current window behavior.
  *
  * @see Growsurf\Services\Campaign\ParticipantService::retrieveAnalytics()
  *
@@ -47,7 +47,7 @@ final class ParticipantRetrieveAnalyticsParams implements BaseModel
     public ?int $endDate;
 
     /**
-     * Comma-separated optional data. `series` returns this participant's own activity per period;
+     * Comma-separated optional data. `activation` returns covered first milestones; `series` returns this participant's own activity per period;
      * `email` returns `sent`, `delivered`, `opened`, `clicked`, `bounced`, `spamComplaints`, and
      * per-email-type metrics attributed to the participant for the requested analytics window
      * (including invitations they sent). Request both in either order to add email counts to
@@ -150,7 +150,7 @@ final class ParticipantRetrieveAnalyticsParams implements BaseModel
     }
 
     /**
-     * Comma-separated optional data. `series` returns this participant's own activity per period;
+     * Comma-separated optional data. `activation` returns covered first milestones; `series` returns this participant's own activity per period;
      * `email` returns `sent`, `delivered`, `opened`, `clicked`, `bounced`, `spamComplaints`, and
      * per-email-type metrics attributed to the participant for the requested analytics window
      * (including invitations they sent). Request both in either order to add email counts to

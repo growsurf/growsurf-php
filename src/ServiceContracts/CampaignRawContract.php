@@ -9,6 +9,7 @@ use Growsurf\Campaign\AffiliateApplicationListResponse;
 use Growsurf\Campaign\AffiliateInvite;
 use Growsurf\Campaign\AffiliateInviteListResponse;
 use Growsurf\Campaign\Campaign;
+use Growsurf\Campaign\CampaignActivationAnalyticsResponse;
 use Growsurf\Campaign\CampaignCreateAffiliateInviteParams;
 use Growsurf\Campaign\CampaignCreateMobileParticipantTokenParams;
 use Growsurf\Campaign\CampaignCreateParams;
@@ -22,6 +23,7 @@ use Growsurf\Campaign\CampaignListPayoutsParams;
 use Growsurf\Campaign\CampaignListReferralsParams;
 use Growsurf\Campaign\CampaignListResponse;
 use Growsurf\Campaign\CampaignNewMobileParticipantTokenResponse;
+use Growsurf\Campaign\CampaignRetrieveActivationAnalyticsParams;
 use Growsurf\Campaign\CampaignRetrieveAnalyticsParams;
 use Growsurf\Campaign\CampaignReviewAffiliateApplicationParams;
 use Growsurf\Campaign\CampaignUpdateParams;
@@ -229,6 +231,23 @@ interface CampaignRawContract
     public function retrieveAnalytics(
         string $id,
         array|CampaignRetrieveAnalyticsParams $params,
+        RequestOptions|array|null $requestOptions = null,
+    ): BaseResponse;
+
+    /**
+     * @api
+     *
+     * @param string $id growSurf program ID
+     * @param array<string,mixed>|CampaignRetrieveActivationAnalyticsParams $params
+     * @param RequestOpts|null $requestOptions
+     *
+     * @return BaseResponse<CampaignActivationAnalyticsResponse>
+     *
+     * @throws APIException
+     */
+    public function retrieveActivationAnalytics(
+        string $id,
+        array|CampaignRetrieveActivationAnalyticsParams $params,
         RequestOptions|array|null $requestOptions = null,
     ): BaseResponse;
 

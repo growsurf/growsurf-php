@@ -489,7 +489,7 @@ final class ParticipantRawService implements ParticipantRawContract
     /**
      * @api
      *
-     * **Affiliate programs only.** Records an amendment (refund, partial refund, refund cancellation, or chargeback) against a previously recorded transaction and reverses or adjusts the referrer's commission. The inverse of Record Affiliate Transaction. Identify the original transaction with the same identifier(s) you sent when recording it. Commissions already paid out to the affiliate are not clawed back; the amendment is recorded for tax reporting only.
+     * **Affiliate programs only.** Records an amendment (refund, partial refund, refund cancellation, or chargeback) against a previously recorded transaction and reverses or adjusts the referrer's commission. The inverse of Record Affiliate Transaction. Identify the original transaction with the same identifier(s) you sent when recording it. Commissions already paid out to the affiliate are not clawed back. The amendment still updates the sale revenue used in program reporting; full refunds and chargebacks also update tax reporting.
      *
      * @param string $participantIDOrEmail path param: GrowSurf participant ID or URL-encoded participant email address
      * @param array{
@@ -699,7 +699,7 @@ final class ParticipantRawService implements ParticipantRawContract
     /**
      * @api
      *
-     * Retrieves analytics for a single participant — all-time engagement counters, leaderboard ranks, and per-channel share counts (plus affiliate revenue, commission, and payout metrics for affiliate programs). Pass `include=email` for `sent` (accepted for delivery), `delivered`, `opened`, `clicked`, `bounced`, and `spamComplaints` metrics attributed to this participant, including invitations they sent. Use `include=email,series` to include the same counts in each UTC series bucket. `days`, `startDate`, and `endDate` filter only the optional `series` and `email` data. They do not filter the top-level `analytics`, `ranks`, or `shareCount` values.
+     * Retrieves analytics for one participant. Add `activation` to `include` for covered enrollment and first-milestone values. Unknown pre-coverage history stays `null` with an explicit state and reason. Use `activation,series` for covered `portalViews` and `shareActions` alongside existing activity counters. Existing `email` and series-window behavior is unchanged.
      *
      * @param string $participantIDOrEmail growSurf participant ID or URL-encoded participant email address
      * @param array{

@@ -23,6 +23,7 @@ use Growsurf\EmailAnalytics;
  *   analytics: Analytics|AnalyticsShape,
  *   ranks: Ranks|RanksShape,
  *   shareCount: array<string,int>,
+ *   activation?: null|ParticipantActivationAnalytics,
  *   email?: null|EmailAnalytics|EmailAnalyticsShape,
  *   endDate?: int|null,
  *   series?: list<Series|SeriesShape>|null,
@@ -47,6 +48,10 @@ final class ParticipantGetAnalyticsResponse implements BaseModel
      */
     #[Required(map: 'int')]
     public array $shareCount;
+
+    /** Present only when `include` contains `activation`. */
+    #[Optional]
+    public ?ParticipantActivationAnalytics $activation;
 
     /** Present only when `include` contains `email`. */
     #[Optional]
@@ -118,6 +123,7 @@ final class ParticipantGetAnalyticsResponse implements BaseModel
         ?array $series = null,
         ?int $startDate = null,
         EmailAnalytics|array|null $email = null,
+        ?ParticipantActivationAnalytics $activation = null,
     ): self {
         $self = new self;
 
@@ -126,6 +132,7 @@ final class ParticipantGetAnalyticsResponse implements BaseModel
         $self['shareCount'] = $shareCount;
 
         null !== $email && $self['email'] = $email;
+        null !== $activation && $self['activation'] = $activation;
         null !== $endDate && $self['endDate'] = $endDate;
         null !== $series && $self['series'] = $series;
         null !== $startDate && $self['startDate'] = $startDate;
@@ -164,6 +171,15 @@ final class ParticipantGetAnalyticsResponse implements BaseModel
     {
         $self = clone $this;
         $self['shareCount'] = $shareCount;
+
+        return $self;
+    }
+
+    /** Present only when `include` contains `activation`. */
+    public function withActivation(ParticipantActivationAnalytics $activation): self
+    {
+        $self = clone $this;
+        $self['activation'] = $activation;
 
         return $self;
     }

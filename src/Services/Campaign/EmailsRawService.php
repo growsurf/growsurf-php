@@ -12,7 +12,7 @@ use Growsurf\RequestOptions;
 use Growsurf\ServiceContracts\Campaign\EmailsRawContract;
 
 /**
- * Campaign emails (`CampaignEmails`) configuration — the dashboard Program Editor's **Emails** tab.
+ * Campaign emails (`CampaignEmails`) configuration — the dashboard Program Editor's **Emails** tab. `offerClaimed` is available to both program types while the Claim Offer Popup is enabled.
  *
  * @phpstan-import-type RequestOpts from \Growsurf\RequestOptions
  */
