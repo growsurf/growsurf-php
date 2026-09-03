@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Growsurf\Campaign;
 
+use Growsurf\Campaign\CampaignCreateParams\Goal;
 use Growsurf\Campaign\CampaignCreateParams\Type;
 use Growsurf\Core\Attributes\Optional;
 use Growsurf\Core\Attributes\Required;
@@ -23,6 +24,7 @@ use Growsurf\Core\Contracts\BaseModel;
  *   companyLogoImageURL?: string|null,
  *   companyName?: string|null,
  *   currencyISO?: string|null,
+ *   goal?: Goal|value-of<Goal>|null,
  *   name?: string|null,
  *   rewards?: list<RewardCreateParams|RewardCreateParamsShape>|null,
  * }
@@ -53,6 +55,21 @@ final class CampaignCreateParams implements BaseModel
      */
     #[Optional]
     public ?string $currencyISO;
+
+    /**
+     * What the program is for, which seeds share settings that suit that audience.
+     * Programs selling to businesses (`CUSTOMERS`, `USERS`, `B2B_SAAS_SELF_SERVICE`,
+     * `B2B_SAAS_ENTERPRISE`) start with the LinkedIn share button visible; consumer,
+     * financial, education, insurance, newsletter, and waitlist programs
+     * (`B2C_SUBSCRIPTIONS`, `FINANCIAL_SERVICES`, `ONLINE_EDUCATION`,
+     * `ONLINE_INSURANCE`, `SUBSCRIBERS`, `WAITLIST`) start with it hidden. Omit it and
+     * every share button keeps its standard default. Set only when the program is
+     * created; it is not accepted on update.
+     *
+     * @var value-of<Goal>|null $goal
+     */
+    #[Optional(enum: Goal::class)]
+    public ?string $goal;
 
     /**
      * The program name. Defaults to a generated friendly label plus the creation date.
@@ -93,6 +110,7 @@ final class CampaignCreateParams implements BaseModel
      * You must use named parameters to construct any parameters with a default value.
      *
      * @param Type|value-of<Type> $type
+     * @param Goal|value-of<Goal> $goal
      * @param list<RewardCreateParams|RewardCreateParamsShape> $rewards
      */
     public static function with(
@@ -100,6 +118,7 @@ final class CampaignCreateParams implements BaseModel
         ?string $companyLogoImageURL = null,
         ?string $companyName = null,
         ?string $currencyISO = null,
+        Goal|string|null $goal = null,
         ?string $name = null,
         ?array $rewards = null,
     ): self {
@@ -110,6 +129,7 @@ final class CampaignCreateParams implements BaseModel
         null !== $companyLogoImageURL && $self['companyLogoImageURL'] = $companyLogoImageURL;
         null !== $companyName && $self['companyName'] = $companyName;
         null !== $currencyISO && $self['currencyISO'] = $currencyISO;
+        null !== $goal && $self['goal'] = $goal;
         null !== $name && $self['name'] = $name;
         null !== $rewards && $self['rewards'] = $rewards;
 
@@ -153,6 +173,26 @@ final class CampaignCreateParams implements BaseModel
     {
         $self = clone $this;
         $self['currencyISO'] = $currencyISO;
+
+        return $self;
+    }
+
+    /**
+     * What the program is for, which seeds share settings that suit that audience.
+     * Programs selling to businesses (`CUSTOMERS`, `USERS`, `B2B_SAAS_SELF_SERVICE`,
+     * `B2B_SAAS_ENTERPRISE`) start with the LinkedIn share button visible; consumer,
+     * financial, education, insurance, newsletter, and waitlist programs
+     * (`B2C_SUBSCRIPTIONS`, `FINANCIAL_SERVICES`, `ONLINE_EDUCATION`,
+     * `ONLINE_INSURANCE`, `SUBSCRIBERS`, `WAITLIST`) start with it hidden. Omit it and
+     * every share button keeps its standard default. Set only when the program is
+     * created; it is not accepted on update.
+     *
+     * @param Goal|value-of<Goal> $goal
+     */
+    public function withGoal(Goal|string $goal): self
+    {
+        $self = clone $this;
+        $self['goal'] = $goal;
 
         return $self;
     }

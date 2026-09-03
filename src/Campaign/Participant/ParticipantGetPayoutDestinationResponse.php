@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Growsurf\Campaign\Participant;
 
 use Growsurf\Campaign\Participant\ParticipantGetPayoutDestinationResponse\Destination;
-use Growsurf\Core\Attributes\Optional;
+use Growsurf\Core\Attributes\Required;
 use Growsurf\Core\Concerns\SdkModel;
 use Growsurf\Core\Contracts\BaseModel;
 
@@ -13,9 +13,9 @@ use Growsurf\Core\Contracts\BaseModel;
  * @phpstan-import-type DestinationShape from \Growsurf\Campaign\Participant\ParticipantGetPayoutDestinationResponse\Destination
  *
  * @phpstan-type ParticipantGetPayoutDestinationResponseShape = array{
- *   activeProvider?: string|null,
- *   destinations?: list<Destination|DestinationShape>|null,
- *   enabledProviders?: list<string>|null,
+ *   activeProvider: string|null,
+ *   destinations: list<Destination|DestinationShape>,
+ *   enabledProviders: list<string>,
  * }
  */
 final class ParticipantGetPayoutDestinationResponse implements BaseModel
@@ -25,28 +25,38 @@ final class ParticipantGetPayoutDestinationResponse implements BaseModel
 
     /**
      * The provider that currently gets paid, or null until the participant confirms one.
-     *
-     * @var string|null $activeProvider
      */
-    #[Optional(nullable: true)]
+    #[Required(nullable: true)]
     public ?string $activeProvider;
 
     /**
      * One entry per enabled payout provider describing the participant's destination for it.
      *
-     * @var list<Destination>|null $destinations
+     * @var list<Destination> $destinations
      */
-    #[Optional(list: Destination::class)]
-    public ?array $destinations;
+    #[Required(list: Destination::class)]
+    public array $destinations;
 
     /**
      * The payout providers enabled for this program.
      *
-     * @var list<string>|null $enabledProviders
+     * @var list<string> $enabledProviders
      */
-    #[Optional(list: 'string')]
-    public ?array $enabledProviders;
+    #[Required(list: 'string')]
+    public array $enabledProviders;
 
+    /**
+     * `new ParticipantGetPayoutDestinationResponse()` is missing required properties by the API.
+     *
+     * To enforce required parameters use
+     * ```
+     * ParticipantGetPayoutDestinationResponse::with(
+     *   activeProvider: ...,
+     *   destinations: ...,
+     *   enabledProviders: ...,
+     * )
+     * ```
+     */
     public function __construct()
     {
         $this->initialize();
@@ -57,28 +67,25 @@ final class ParticipantGetPayoutDestinationResponse implements BaseModel
      *
      * You must use named parameters to construct any parameters with a default value.
      *
-     * @param string|null $activeProvider
-     * @param list<Destination|DestinationShape>|null $destinations
-     * @param list<string>|null $enabledProviders
+     * @param list<Destination|DestinationShape> $destinations
+     * @param list<string> $enabledProviders
      */
     public static function with(
-        ?string $activeProvider = null,
-        ?array $destinations = null,
-        ?array $enabledProviders = null,
+        ?string $activeProvider,
+        array $destinations,
+        array $enabledProviders,
     ): self {
         $self = new self;
 
-        null !== $activeProvider && $self['activeProvider'] = $activeProvider;
-        null !== $destinations && $self['destinations'] = $destinations;
-        null !== $enabledProviders && $self['enabledProviders'] = $enabledProviders;
+        $self['activeProvider'] = $activeProvider;
+        $self['destinations'] = $destinations;
+        $self['enabledProviders'] = $enabledProviders;
 
         return $self;
     }
 
     /**
      * The provider that currently gets paid, or null until the participant confirms one.
-     *
-     * @param string|null $activeProvider
      */
     public function withActiveProvider(
         ?string $activeProvider
@@ -114,5 +121,4 @@ final class ParticipantGetPayoutDestinationResponse implements BaseModel
 
         return $self;
     }
-
 }

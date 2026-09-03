@@ -5,16 +5,16 @@ declare(strict_types=1);
 namespace Growsurf\Campaign\Participant;
 
 use Growsurf\Campaign\Participant\ParticipantRequestPayoutDestinationConfirmationResponse\Status;
-use Growsurf\Core\Attributes\Optional;
+use Growsurf\Core\Attributes\Required;
 use Growsurf\Core\Concerns\SdkModel;
 use Growsurf\Core\Contracts\BaseModel;
 
 /**
  * @phpstan-type ParticipantRequestPayoutDestinationConfirmationResponseShape = array{
- *   expiresAt?: int|null,
- *   provider?: string|null,
- *   providerDisplayName?: string|null,
- *   status?: null|Status|value-of<Status>,
+ *   expiresAt: int|null,
+ *   provider: string,
+ *   providerDisplayName: string,
+ *   status: Status|value-of<Status>,
  * }
  */
 final class ParticipantRequestPayoutDestinationConfirmationResponse implements BaseModel
@@ -25,31 +25,42 @@ final class ParticipantRequestPayoutDestinationConfirmationResponse implements B
     /**
      * When the confirmation link expires, as a Unix timestamp in milliseconds.
      */
-    #[Optional(nullable: true)]
+    #[Required(nullable: true)]
     public ?int $expiresAt;
 
     /**
      * The provider the participant was asked to confirm.
-     *
-     * @var string|null $provider
      */
-    #[Optional]
-    public ?string $provider;
+    #[Required]
+    public string $provider;
 
     /**
      * The customer-facing provider name (e.g. "PayPal", "Wise").
      */
-    #[Optional]
-    public ?string $providerDisplayName;
+    #[Required]
+    public string $providerDisplayName;
 
     /**
      * Confirms the message was requested.
      *
-     * @var value-of<Status>|null $status
+     * @var value-of<Status> $status
      */
-    #[Optional(enum: Status::class)]
-    public ?string $status;
+    #[Required(enum: Status::class)]
+    public string $status;
 
+    /**
+     * `new ParticipantRequestPayoutDestinationConfirmationResponse()` is missing required properties by the API.
+     *
+     * To enforce required parameters use
+     * ```
+     * ParticipantRequestPayoutDestinationConfirmationResponse::with(
+     *   expiresAt: ...,
+     *   provider: ...,
+     *   providerDisplayName: ...,
+     *   status: ...,
+     * )
+     * ```
+     */
     public function __construct()
     {
         $this->initialize();
@@ -60,21 +71,20 @@ final class ParticipantRequestPayoutDestinationConfirmationResponse implements B
      *
      * You must use named parameters to construct any parameters with a default value.
      *
-     * @param string|null $provider
      * @param Status|value-of<Status> $status
      */
     public static function with(
-        ?int $expiresAt = null,
-        ?string $provider = null,
-        ?string $providerDisplayName = null,
-        Status|string|null $status = null,
+        ?int $expiresAt,
+        string $provider,
+        string $providerDisplayName,
+        Status|string $status,
     ): self {
         $self = new self;
 
-        null !== $expiresAt && $self['expiresAt'] = $expiresAt;
-        null !== $provider && $self['provider'] = $provider;
-        null !== $providerDisplayName && $self['providerDisplayName'] = $providerDisplayName;
-        null !== $status && $self['status'] = $status;
+        $self['expiresAt'] = $expiresAt;
+        $self['provider'] = $provider;
+        $self['providerDisplayName'] = $providerDisplayName;
+        $self['status'] = $status;
 
         return $self;
     }
@@ -92,8 +102,6 @@ final class ParticipantRequestPayoutDestinationConfirmationResponse implements B
 
     /**
      * The provider the participant was asked to confirm.
-     *
-     * @param string $provider
      */
     public function withProvider(string $provider): self
     {

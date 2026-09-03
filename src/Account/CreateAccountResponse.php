@@ -24,7 +24,7 @@ final class CreateAccountResponse implements BaseModel
     public string $email;
 
     /**
-     * An API key for the new account. Use it as the `Bearer` token on subsequent requests. Locked (`403` `EMAIL_NOT_VERIFIED_ERROR`) until the account's email is verified, and rotated when the account owner first signs in to the GrowSurf dashboard.
+     * An API key for the new account. Use it as the `Bearer` token on subsequent requests. Locked (`403` `EMAIL_NOT_VERIFIED_ERROR`) until the account's email is verified; verification unlocks this same key, so keep it and retry. It is replaced only when the account owner first signs in to the GrowSurf dashboard.
      */
     #[Required]
     public string $apiKey;
@@ -91,7 +91,7 @@ final class CreateAccountResponse implements BaseModel
     }
 
     /**
-     * An API key for the new account. Use it as the `Bearer` token on subsequent requests. Locked (`403` `EMAIL_NOT_VERIFIED_ERROR`) until the account's email is verified, and rotated when the account owner first signs in to the GrowSurf dashboard.
+     * An API key for the new account. Use it as the `Bearer` token on subsequent requests. Locked (`403` `EMAIL_NOT_VERIFIED_ERROR`) until the account's email is verified; verification unlocks this same key, so keep it and retry. It is replaced only when the account owner first signs in to the GrowSurf dashboard.
      */
     public function withAPIKey(string $apiKey): self
     {

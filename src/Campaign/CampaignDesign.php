@@ -21,6 +21,7 @@ namespace Growsurf\Campaign;
  *   backLinkText?: string,
  *   copyButtonText?: string,
  *   copiedText?: string,
+ *   emptyState?: string,
  *   icon?: CampaignDesignResourcesIconShape
  * }
  * @phpstan-type CampaignDesignShape = array{

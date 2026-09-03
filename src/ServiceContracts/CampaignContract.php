@@ -11,6 +11,7 @@ use Growsurf\Campaign\AffiliateInviteListResponse;
 use Growsurf\Campaign\Campaign;
 use Growsurf\Campaign\CampaignActivationAnalyticsResponse;
 use Growsurf\Campaign\CampaignCreateMobileParticipantTokenParams\ReferralStatus;
+use Growsurf\Campaign\CampaignCreateParams\Goal;
 use Growsurf\Campaign\CampaignCreateParams\Type;
 use Growsurf\Campaign\CampaignGetAnalyticsResponse;
 use Growsurf\Campaign\CampaignListCommissionsParams\Status;
@@ -65,6 +66,7 @@ interface CampaignContract
      *
      * @param Type|value-of<Type> $type The program type. Immutable after creation.
      * @param string $currencyISO ISO 4217 currency code. Defaults to USD. Chosen when the program is created and immutable afterward — it cannot be changed on update.
+     * @param Goal|value-of<Goal> $goal What the program is for, which seeds share settings that suit that audience. Programs selling to businesses start with the LinkedIn share button visible; consumer, financial, education, insurance, newsletter, and waitlist programs start with it hidden. Set only when the program is created; it is not accepted on update.
      * @param string $name The program name. Defaults to a generated friendly label plus the creation date.
      * @param list<RewardCreateParams|RewardCreateParamsShape> $rewards optional inline rewards to create with the program
      * @param RequestOpts|null $requestOptions
@@ -76,6 +78,7 @@ interface CampaignContract
         ?string $companyLogoImageURL = null,
         ?string $companyName = null,
         ?string $currencyISO = null,
+        Goal|string|null $goal = null,
         ?string $name = null,
         ?array $rewards = null,
         RequestOptions|array|null $requestOptions = null,

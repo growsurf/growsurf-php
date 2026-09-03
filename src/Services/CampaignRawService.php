@@ -14,6 +14,7 @@ use Growsurf\Campaign\CampaignCreateAffiliateInviteParams;
 use Growsurf\Campaign\CampaignCreateMobileParticipantTokenParams;
 use Growsurf\Campaign\CampaignCreateMobileParticipantTokenParams\ReferralStatus;
 use Growsurf\Campaign\CampaignCreateParams;
+use Growsurf\Campaign\CampaignCreateParams\Goal;
 use Growsurf\Campaign\CampaignCreateParams\Type;
 use Growsurf\Campaign\CampaignGetAnalyticsResponse;
 use Growsurf\Campaign\CampaignListAffiliateApplicationsParams;
@@ -118,6 +119,7 @@ final class CampaignRawService implements CampaignRawContract
      *   companyLogoImageURL?: string,
      *   companyName?: string,
      *   currencyISO?: string,
+     *   goal?: Goal|value-of<Goal>,
      *   name?: string,
      *   rewards?: list<RewardCreateParams|RewardCreateParamsShape>,
      * }|CampaignCreateParams $params
