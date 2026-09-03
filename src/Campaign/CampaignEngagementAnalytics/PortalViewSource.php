@@ -12,6 +12,8 @@ enum PortalViewSource: string
 
     case CSS_CLASS = 'CSS_CLASS';
 
+    case EMBEDDABLE_ELEMENT = 'EMBEDDABLE_ELEMENT';
+
     case HOSTED_PORTAL = 'HOSTED_PORTAL';
 
     case NATIVE_WINDOW = 'NATIVE_WINDOW';
