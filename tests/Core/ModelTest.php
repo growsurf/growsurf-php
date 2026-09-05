@@ -28,6 +28,9 @@ class Dog implements BaseModel
     #[Required]
     public ?string $owner;
 
+    #[Optional(nullable: true)]
+    public ?string $nickname;
+
     /**
      * @param list<string>|null $friends
      */
@@ -132,12 +135,25 @@ class ModelTest extends TestCase
     }
 
     #[Test]
-    public function testSerializeModelWithExplicitNull(): void
+    public function testRejectsExplicitNullForOptionalNonNullableProperty(): void
     {
         $model = new Dog(name: 'Bob', ageYears: 12, owner: null);
         $model->friends = null;
+
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('friends does not accept null');
+
+        json_encode($model);
+    }
+
+    #[Test]
+    public function testSerializesExplicitNullForOptionalNullableProperty(): void
+    {
+        $model = new Dog(name: 'Bob', ageYears: 12, owner: null);
+        $model->nickname = null;
+
         $this->assertEquals(
-            '{"name":"Bob","age_years":12,"friends":null,"owner":null}',
+            '{"name":"Bob","age_years":12,"owner":null,"nickname":null}',
             json_encode($model)
         );
     }

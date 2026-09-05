@@ -2,6 +2,8 @@
 
 namespace Tests;
 
+use Growsurf\Core\Exceptions\APIStatusException;
+use Growsurf\Core\Exceptions\BadRequestException;
 use Growsurf\Core\Util;
 use Http\Discovery\Psr17FactoryDiscovery;
 use Http\Mock\Client;
@@ -166,11 +168,75 @@ class ClientTest extends TestCase
         try {
             $client->request('POST', '/campaign/p36rol/participant/p_1/email');
             $this->fail('Expected the failed mutation to raise an API status exception.');
-        } catch (\Growsurf\Core\Exceptions\APIStatusException) {
+        } catch (APIStatusException) {
         }
 
         $this->assertCount(1, $transporter->getRequests());
         $this->assertFalse($transporter->getRequests()[0]->hasHeader('Idempotency-Key'));
+    }
+
+    public function testStatusExceptionRetainsStructuredErrorBody(): void
+    {
+        $transporter = new Client;
+        $error = [
+            'name' => 'BadRequestError',
+            'code' => 'PARTICIPANT_BLOCKED_ERROR',
+            'message' => 'Participant blocked.',
+            'errors' => [['field' => 'email', 'message' => 'Blocked.']],
+            'status' => 400,
+            'supportUrl' => 'https://app.growsurf.com/settings#contact_support',
+            'policyName' => 'minute',
+            'level' => 'error',
+            'timestamp' => '2026-09-04T00:00:00.000Z',
+            'fraudRiskLevel' => 'HIGH',
+            'fraudReasonCode' => 'DUPLICATE_IDENTITY',
+            'matchedParticipantIds' => ['participant-1'],
+            'email' => 'blocked@example.com',
+            'referrerId' => null,
+            'ipAddress' => '203.0.113.10',
+            'fingerprint' => 'fingerprint-1',
+            'blockedAt' => '2026-09-04T00:00:00.000Z',
+        ];
+        $response = Psr17FactoryDiscovery::findResponseFactory()
+            ->createResponse(400)
+            ->withHeader('Content-Type', 'application/json')
+            ->withHeader('X-Request-ID', 'request-1')
+            ->withBody(Psr17FactoryDiscovery::findStreamFactory()->createStream(
+                json_encode($error, flags: Util::JSON_ENCODE_FLAGS) ?: ''
+            ))
+        ;
+        $transporter->setDefaultResponse($response);
+        $client = new \Growsurf\Client(
+            baseUrl: 'http://localhost',
+            apiKey: 'My API Key',
+            requestOptions: ['transporter' => $transporter],
+        );
+
+        try {
+            $client->campaign->list();
+            $this->fail('Expected the failed request to raise a bad request exception.');
+        } catch (BadRequestException $exception) {
+            self::assertSame($error, $exception->body);
+            self::assertSame(400, $exception->status);
+            self::assertSame('BadRequestError', $exception->errorName);
+            self::assertSame('PARTICIPANT_BLOCKED_ERROR', $exception->errorCode);
+            self::assertSame('Participant blocked.', $exception->errorMessage);
+            self::assertSame([['field' => 'email', 'message' => 'Blocked.']], $exception->errors);
+            self::assertSame('https://app.growsurf.com/settings#contact_support', $exception->supportURL);
+            self::assertSame('minute', $exception->policyName);
+            self::assertSame('error', $exception->level);
+            self::assertSame('2026-09-04T00:00:00.000Z', $exception->timestamp);
+            self::assertSame('HIGH', $exception->fraudRiskLevel);
+            self::assertSame('DUPLICATE_IDENTITY', $exception->fraudReasonCode);
+            self::assertSame(['participant-1'], $exception->matchedParticipantIDs);
+            self::assertSame('blocked@example.com', $exception->email);
+            self::assertNull($exception->referrerID);
+            self::assertSame('203.0.113.10', $exception->ipAddress);
+            self::assertSame('fingerprint-1', $exception->fingerprint);
+            self::assertSame('2026-09-04T00:00:00.000Z', $exception->blockedAt);
+            self::assertSame('request-1', $exception->response?->getHeaderLine('X-Request-ID'));
+            self::assertStringContainsString('Participant blocked.', $exception->getMessage());
+        }
     }
 
     public function testPackageVersionHeaderUsesTheSdkVersion(): void

@@ -165,6 +165,9 @@ final class ProgramResourcesRawService
         if ([] !== $suppliedTypes && null !== $type && $suppliedTypes[0] !== $type) {
             throw new \InvalidArgumentException('Content fields must match the selected Program Resource type');
         }
+        if (!$creating && null !== $type && [$type] !== $suppliedTypes) {
+            throw new \InvalidArgumentException('Changing a Program Resource type requires its replacement content');
+        }
         if ($creating && ([] === $suppliedTypes || $suppliedTypes[0] !== $type)) {
             throw new \InvalidArgumentException('Create requires content fields for the selected Program Resource type');
         }

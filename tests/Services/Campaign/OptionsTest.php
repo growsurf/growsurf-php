@@ -11,6 +11,8 @@ use Tests\UnsupportedMockTests;
 
 /**
  * @internal
+ *
+ * @phpstan-import-type CampaignOptionsUpdateShape from \Growsurf\Campaign\CampaignOptions
  */
 #[CoversNothing]
 final class OptionsTest extends TestCase
@@ -60,10 +62,9 @@ final class OptionsTest extends TestCase
             $this->markTestSkipped('Mock server tests are disabled');
         }
 
-        $result = $this->client->campaign->options->update(
-            'id',
-            body: ['referralCreditWindowDays' => 30],
-        );
+        /** @var CampaignOptionsUpdateShape $body */
+        $body = ['referralCreditWindowDays' => 30];
+        $result = $this->client->campaign->options->update('id', body: $body);
 
         // @phpstan-ignore-next-line method.alreadyNarrowedType
         $this->assertIsArray($result);

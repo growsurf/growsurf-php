@@ -15,7 +15,7 @@ use Growsurf\Core\Contracts\BaseModel;
  *
  * @see Growsurf\Services\Campaign\RewardService::approve()
  *
- * @phpstan-type RewardApproveParamsShape = array{id: string, fulfill?: bool|null}
+ * @phpstan-type RewardApproveParamsShape = array{id: string, fulfill?: bool}
  */
 final class RewardApproveParams implements BaseModel
 {

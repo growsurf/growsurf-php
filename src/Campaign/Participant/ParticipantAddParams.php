@@ -18,15 +18,15 @@ use Growsurf\Core\Contracts\BaseModel;
  *
  * @phpstan-type ParticipantAddParamsShape = array{
  *   email: string,
- *   fingerprint?: string|null,
- *   firstName?: string|null,
- *   ipAddress?: string|null,
- *   isAffiliate?: bool|null,
- *   lastName?: string|null,
- *   metadata?: array<string,mixed>|null,
- *   mobileInstanceID?: string|null,
- *   referralStatus?: null|\Growsurf\Campaign\Participant\ParticipantAddParams\ReferralStatus|value-of<\Growsurf\Campaign\Participant\ParticipantAddParams\ReferralStatus>,
- *   referredBy?: string|null,
+ *   fingerprint?: string,
+ *   firstName?: string,
+ *   ipAddress?: string,
+ *   isAffiliate?: bool,
+ *   lastName?: string,
+ *   metadata?: array<string,mixed>,
+ *   mobileInstanceID?: string,
+ *   referralStatus?: \Growsurf\Campaign\Participant\ParticipantAddParams\ReferralStatus|value-of<\Growsurf\Campaign\Participant\ParticipantAddParams\ReferralStatus>,
+ *   referredBy?: string,
  * }
  */
 final class ParticipantAddParams implements BaseModel

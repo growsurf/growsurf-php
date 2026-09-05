@@ -29,6 +29,7 @@ final class PropertyInfo
         $apiName = $property->getName();
         $type = $property->getType();
         $optional = false;
+        $attributeNullable = false;
         $attributes = [...$property->getAttributes(Required::class), ...$property->getAttributes(Optional::class)];
 
         foreach ($attributes as $attr) {
@@ -37,13 +38,15 @@ final class PropertyInfo
 
             $apiName = $attribute->apiName ?? $apiName;
             $optional = $attribute->optional;
-            $nullable |= $attribute->nullable;
+            $attributeNullable = $attributeNullable || $attribute->nullable;
             $type = $attribute->type ?? $type;
         }
 
         $this->apiName = $apiName;
         $this->type = self::parse($type);
-        $this->nullable = (bool) $nullable;
+        // Optional PHP properties use a nullable native type so an omitted value can be
+        // accessed as null. Only explicit attribute metadata makes JSON null valid.
+        $this->nullable = $optional ? $attributeNullable : ($nullable || $attributeNullable);
         $this->optional = $optional;
     }
 

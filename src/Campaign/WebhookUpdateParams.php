@@ -17,10 +17,10 @@ use Growsurf\Core\Contracts\BaseModel;
  *
  * @phpstan-type WebhookUpdateParamsShape = array{
  *   id: string,
- *   events?: list<WebhookEvent|value-of<WebhookEvent>>|null,
- *   isEnabled?: bool|null,
- *   payloadURL?: string|null,
- *   secret?: string|null,
+ *   events?: list<WebhookEvent|value-of<WebhookEvent>>,
+ *   isEnabled?: bool,
+ *   payloadURL?: string,
+ *   secret?: string,
  * }
  */
 final class WebhookUpdateParams implements BaseModel

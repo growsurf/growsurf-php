@@ -11,6 +11,8 @@ use Tests\UnsupportedMockTests;
 
 /**
  * @internal
+ *
+ * @phpstan-import-type CampaignEmailsUpdateShape from \Growsurf\Campaign\CampaignEmails
  */
 #[CoversNothing]
 final class EmailsTest extends TestCase
@@ -60,10 +62,9 @@ final class EmailsTest extends TestCase
             $this->markTestSkipped('Mock server tests are disabled');
         }
 
-        $result = $this->client->campaign->emails->update(
-            'id',
-            body: ['welcome' => ['subject' => 'Welcome!']],
-        );
+        /** @var CampaignEmailsUpdateShape $body */
+        $body = ['welcomeNonReferred' => ['subject' => 'Welcome!']];
+        $result = $this->client->campaign->emails->update('id', body: $body);
 
         // @phpstan-ignore-next-line method.alreadyNarrowedType
         $this->assertIsArray($result);

@@ -11,6 +11,7 @@ use Growsurf\RequestOptions;
 /**
  * @phpstan-import-type RequestOpts from \Growsurf\RequestOptions
  * @phpstan-import-type CampaignDesignShape from \Growsurf\Campaign\CampaignDesign
+ * @phpstan-import-type CampaignDesignUpdateShape from \Growsurf\Campaign\CampaignDesign
  */
 interface DesignRawContract
 {
@@ -33,7 +34,7 @@ interface DesignRawContract
      * @api
      *
      * @param string $id growSurf program ID
-     * @param CampaignDesignShape $body partial `CampaignDesign` (see API reference)
+     * @param CampaignDesignUpdateShape $body partial `CampaignDesign` (see API reference)
      * @param RequestOpts|null $requestOptions
      *
      * @return BaseResponse<CampaignDesignShape>

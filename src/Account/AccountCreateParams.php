@@ -17,9 +17,9 @@ use Growsurf\Core\Contracts\BaseModel;
  *
  * @phpstan-type AccountCreateParamsShape = array{
  *   email: string,
- *   company?: string|null,
- *   firstName?: string|null,
- *   lastName?: string|null,
+ *   company?: string,
+ *   firstName?: string,
+ *   lastName?: string,
  * }
  */
 final class AccountCreateParams implements BaseModel

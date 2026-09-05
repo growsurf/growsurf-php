@@ -19,16 +19,16 @@ use Growsurf\Core\Contracts\BaseModel;
  *
  * @phpstan-type ParticipantUpdateParamsShape = array{
  *   id: string,
- *   affiliateStatus?: null|\Growsurf\Campaign\Participant\ParticipantUpdateParams\AffiliateStatus|value-of<\Growsurf\Campaign\Participant\ParticipantUpdateParams\AffiliateStatus>,
- *   email?: string|null,
- *   firstName?: string|null,
- *   lastName?: string|null,
- *   metadata?: array<string,mixed>|null,
- *   notes?: string|null,
- *   referralStatus?: null|\Growsurf\Campaign\Participant\ParticipantUpdateParams\ReferralStatus|value-of<\Growsurf\Campaign\Participant\ParticipantUpdateParams\ReferralStatus>,
- *   referredBy?: string|null,
- *   unsubscribed?: bool|null,
- *   vanityKeys?: list<string>|null,
+ *   affiliateStatus?: \Growsurf\Campaign\Participant\ParticipantUpdateParams\AffiliateStatus|value-of<\Growsurf\Campaign\Participant\ParticipantUpdateParams\AffiliateStatus>,
+ *   email?: string,
+ *   firstName?: string,
+ *   lastName?: string,
+ *   metadata?: array<string,mixed>,
+ *   notes?: string,
+ *   referralStatus?: \Growsurf\Campaign\Participant\ParticipantUpdateParams\ReferralStatus|value-of<\Growsurf\Campaign\Participant\ParticipantUpdateParams\ReferralStatus>,
+ *   referredBy?: string,
+ *   unsubscribed?: bool,
+ *   vanityKeys?: list<string>,
  * }
  */
 final class ParticipantUpdateParams implements BaseModel

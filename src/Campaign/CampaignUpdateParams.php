@@ -16,10 +16,10 @@ use Growsurf\Core\Contracts\BaseModel;
  * @see Growsurf\Services\CampaignService::update()
  *
  * @phpstan-type CampaignUpdateParamsShape = array{
- *   companyLogoImageURL?: string|null,
- *   companyName?: string|null,
- *   name?: string|null,
- *   status?: null|Status|value-of<Status>,
+ *   companyLogoImageURL?: string,
+ *   companyName?: string,
+ *   name?: string,
+ *   status?: Status|value-of<Status>,
  * }
  */
 final class CampaignUpdateParams implements BaseModel

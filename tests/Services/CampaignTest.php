@@ -7,6 +7,7 @@ use Growsurf\Campaign\AffiliateApplicationListResponse;
 use Growsurf\Campaign\AffiliateInvite;
 use Growsurf\Campaign\AffiliateInviteListResponse;
 use Growsurf\Campaign\Campaign;
+use Growsurf\Campaign\Campaign\Status;
 use Growsurf\Campaign\CampaignGetAnalyticsResponse;
 use Growsurf\Campaign\CampaignListResponse;
 use Growsurf\Campaign\CampaignNewMobileParticipantTokenResponse;
@@ -37,6 +38,13 @@ final class CampaignTest extends TestCase
         $client = new Client(apiKey: 'My API Key', baseUrl: $testUrl);
 
         $this->client = $client;
+    }
+
+    #[Test]
+    public function testStatusIncludesEveryRuntimeValue(): void
+    {
+        self::assertSame('PENDING', Status::PENDING->value);
+        self::assertSame('CANCELLED', Status::CANCELLED->value);
     }
 
     #[Test]

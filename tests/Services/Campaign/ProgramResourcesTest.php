@@ -94,6 +94,27 @@ final class ProgramResourcesTest extends TestCase
     }
 
     #[Test]
+    public function testUpdateTypeRequiresReplacementContentBeforeRequest(): void
+    {
+        $client = new Client(apiKey: 'My API Key', baseUrl: 'http://127.0.0.1:4010');
+
+        foreach (['FILE', 'LINK', 'TEXT'] as $type) {
+            $call = static fn () => $client->campaign->resources->raw->update(
+                'resource-id',
+                'program-id',
+                ['type' => $type],
+            );
+
+            try {
+                $call();
+                self::fail('Expected the Program Resource type change to be rejected before HTTP');
+            } catch (\InvalidArgumentException $exception) {
+                self::assertStringContainsString('requires its replacement content', $exception->getMessage());
+            }
+        }
+    }
+
+    #[Test]
     public function testUpdateAndUploadTicketEnforcePublicBoundsBeforeRequest(): void
     {
         $client = new Client(apiKey: 'My API Key', baseUrl: 'http://127.0.0.1:4010');

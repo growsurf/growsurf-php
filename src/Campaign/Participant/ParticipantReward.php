@@ -18,9 +18,11 @@ use Growsurf\Core\Contracts\BaseModel;
  *   id: string,
  *   rewardID: string,
  *   status: Status|value-of<Status>,
+ *   amount?: float|int|null,
  *   approved?: bool|null,
  *   approvedAt?: int|null,
  *   commissionStructure?: null|CommissionStructure|CommissionStructureShape,
+ *   currencyISO?: string|null,
  *   fulfilledAt?: int|null,
  *   isAvailable?: bool|null,
  *   isFulfilled?: bool|null,
@@ -45,6 +47,12 @@ final class ParticipantReward implements BaseModel
     #[Required(enum: Status::class)]
     public string $status;
 
+    /**
+     * What this reward delivered, in major units, when the reward records a delivered amount.
+     */
+    #[Optional(nullable: true)]
+    public float|int|null $amount;
+
     #[Optional]
     public ?bool $approved;
 
@@ -53,6 +61,12 @@ final class ParticipantReward implements BaseModel
 
     #[Optional(nullable: true)]
     public ?CommissionStructure $commissionStructure;
+
+    /**
+     * The ISO 4217 currency code for `amount`. `null` whenever `amount` is `null`.
+     */
+    #[Optional(nullable: true)]
+    public ?string $currencyISO;
 
     #[Optional]
     public ?int $fulfilledAt;
@@ -116,6 +130,8 @@ final class ParticipantReward implements BaseModel
         ?string $referredID = null,
         ?string $referrerID = null,
         ?bool $unread = null,
+        float|int|null $amount = null,
+        ?string $currencyISO = null,
     ): self {
         $self = new self;
 
@@ -133,6 +149,8 @@ final class ParticipantReward implements BaseModel
         null !== $referredID && $self['referredID'] = $referredID;
         null !== $referrerID && $self['referrerID'] = $referrerID;
         null !== $unread && $self['unread'] = $unread;
+        null !== $amount && $self['amount'] = $amount;
+        null !== $currencyISO && $self['currencyISO'] = $currencyISO;
 
         return $self;
     }
@@ -164,6 +182,17 @@ final class ParticipantReward implements BaseModel
         return $self;
     }
 
+    /**
+     * What this reward delivered, in major units, when the reward records a delivered amount.
+     */
+    public function withAmount(float|int|null $amount): self
+    {
+        $self = clone $this;
+        $self['amount'] = $amount;
+
+        return $self;
+    }
+
     public function withApproved(bool $approved): self
     {
         $self = clone $this;
@@ -188,6 +217,17 @@ final class ParticipantReward implements BaseModel
     ): self {
         $self = clone $this;
         $self['commissionStructure'] = $commissionStructure;
+
+        return $self;
+    }
+
+    /**
+     * The ISO 4217 currency code for `amount`. `null` whenever `amount` is `null`.
+     */
+    public function withCurrencyISO(?string $currencyISO): self
+    {
+        $self = clone $this;
+        $self['currencyISO'] = $currencyISO;
 
         return $self;
     }

@@ -14,6 +14,7 @@ use Growsurf\ServiceContracts\Campaign\DesignContract;
  *
  * @phpstan-import-type RequestOpts from \Growsurf\RequestOptions
  * @phpstan-import-type CampaignDesignShape from \Growsurf\Campaign\CampaignDesign
+ * @phpstan-import-type CampaignDesignUpdateShape from \Growsurf\Campaign\CampaignDesign
  */
 final class DesignService implements DesignContract
 {
@@ -62,7 +63,7 @@ final class DesignService implements DesignContract
      * `400`. Landing-page custom code and JavaScript are not editable via the API.
      *
      * @param string $id growSurf program ID
-     * @param CampaignDesignShape $body partial `CampaignDesign`. `resources` accepts visibility,
+     * @param CampaignDesignUpdateShape $body partial `CampaignDesign`. `resources` accepts visibility,
      *   title, list/back/copy labels, and an icon with type `DEFAULT`, `IMAGE`, or `NONE`.
      * @param RequestOpts|null $requestOptions
      *

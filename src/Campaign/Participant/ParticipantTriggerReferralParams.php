@@ -16,7 +16,7 @@ use Growsurf\Core\Contracts\BaseModel;
  * @see Growsurf\Services\Campaign\ParticipantService::triggerReferral()
  *
  * @phpstan-type ParticipantTriggerReferralParamsShape = array{
- *   id: string, delayInDays?: int|null
+ *   id: string, delayInDays?: int
  * }
  */
 final class ParticipantTriggerReferralParams implements BaseModel

@@ -13,6 +13,8 @@ use Growsurf\ServiceContracts\Campaign\OptionsContract;
  * Campaign options (`CampaignOptions`) configuration — the dashboard Program Editor's **Options** tab.
  *
  * @phpstan-import-type RequestOpts from \Growsurf\RequestOptions
+ * @phpstan-import-type CampaignOptionsShape from \Growsurf\Campaign\CampaignOptions
+ * @phpstan-import-type CampaignOptionsUpdateShape from \Growsurf\Campaign\CampaignOptions
  */
 final class OptionsService implements OptionsContract
 {
@@ -37,7 +39,7 @@ final class OptionsService implements OptionsContract
      * @param string $id growSurf program ID
      * @param RequestOpts|null $requestOptions
      *
-     * @return array<string,mixed>
+     * @return CampaignOptionsShape
      *
      * @throws APIException
      */
@@ -57,10 +59,10 @@ final class OptionsService implements OptionsContract
      * Updates a program's options. Only the fields you send are changed. Some fields are program-type specific (`requireManualRewardApproval`/`autoFulfillRewards` are referral-only; `affiliateApplicationMode`/`affiliateReapplicationPolicy` and `payoutThreshold`/`taxDocumentation` are affiliate-only, and affiliate programs require `requireParticipantAuth: true`). `fraud.recaptcha.secretKey` is write-only. `referralCreditWindowDays: null` means "never expires".
      *
      * @param string $id growSurf program ID
-     * @param array<string,mixed> $body partial `CampaignOptions` (see API reference)
+     * @param CampaignOptionsUpdateShape $body partial `CampaignOptions` (see API reference)
      * @param RequestOpts|null $requestOptions
      *
-     * @return array<string,mixed>
+     * @return CampaignOptionsShape
      *
      * @throws APIException
      */

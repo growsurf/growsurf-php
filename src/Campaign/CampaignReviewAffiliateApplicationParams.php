@@ -16,11 +16,11 @@ use Growsurf\Core\Contracts\BaseModel;
  * @see Growsurf\Services\CampaignService::reviewAffiliateApplication()
  *
  * @phpstan-type CampaignReviewAffiliateApplicationParamsShape = array{
- *   allowImmediateReapply?: bool|null,
- *   reapplyAllowedAt?: int|null,
- *   rejectionReason?: string|null,
- *   reviewNote?: string|null,
- *   status?: null|Status|value-of<Status>,
+ *   allowImmediateReapply?: bool,
+ *   reapplyAllowedAt?: int,
+ *   rejectionReason?: string,
+ *   reviewNote?: string,
+ *   status?: Status|value-of<Status>,
  * }
  */
 final class CampaignReviewAffiliateApplicationParams implements BaseModel

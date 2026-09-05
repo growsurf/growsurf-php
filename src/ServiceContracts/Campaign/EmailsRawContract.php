@@ -10,6 +10,8 @@ use Growsurf\RequestOptions;
 
 /**
  * @phpstan-import-type RequestOpts from \Growsurf\RequestOptions
+ * @phpstan-import-type CampaignEmailsShape from \Growsurf\Campaign\CampaignEmails
+ * @phpstan-import-type CampaignEmailsUpdateShape from \Growsurf\Campaign\CampaignEmails
  */
 interface EmailsRawContract
 {
@@ -19,7 +21,7 @@ interface EmailsRawContract
      * @param string $id growSurf program ID
      * @param RequestOpts|null $requestOptions
      *
-     * @return BaseResponse<array<string,mixed>>
+     * @return BaseResponse<CampaignEmailsShape>
      *
      * @throws APIException
      */
@@ -32,10 +34,10 @@ interface EmailsRawContract
      * @api
      *
      * @param string $id growSurf program ID
-     * @param array<string,mixed> $body partial `CampaignEmails` (see API reference)
+     * @param CampaignEmailsUpdateShape $body partial `CampaignEmails` (see API reference)
      * @param RequestOpts|null $requestOptions
      *
-     * @return BaseResponse<array<string,mixed>>
+     * @return BaseResponse<CampaignEmailsShape>
      *
      * @throws APIException
      */

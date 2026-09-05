@@ -15,6 +15,8 @@ use Growsurf\ServiceContracts\Campaign\EmailsRawContract;
  * Campaign emails (`CampaignEmails`) configuration — the dashboard Program Editor's **Emails** tab. `offerClaimed` is available to both program types while the Claim Offer Popup is enabled.
  *
  * @phpstan-import-type RequestOpts from \Growsurf\RequestOptions
+ * @phpstan-import-type CampaignEmailsShape from \Growsurf\Campaign\CampaignEmails
+ * @phpstan-import-type CampaignEmailsUpdateShape from \Growsurf\Campaign\CampaignEmails
  */
 final class EmailsRawService implements EmailsRawContract
 {
@@ -32,7 +34,7 @@ final class EmailsRawService implements EmailsRawContract
      * @param string $id growSurf program ID
      * @param RequestOpts|null $requestOptions
      *
-     * @return BaseResponse<array<string,mixed>>
+     * @return BaseResponse<CampaignEmailsShape>
      *
      * @throws APIException
      */
@@ -55,10 +57,10 @@ final class EmailsRawService implements EmailsRawContract
      * Updates a program's email configuration. Only the fields you send are changed; omitted fields are left untouched. You may only write the email templates the dashboard exposes for the program type — writing a template that is not available for the program type returns a `400`. Some fields are read-only (`settings.sender.fromEmail`, whose custom value requires dashboard domain verification).
      *
      * @param string $id growSurf program ID
-     * @param array<string,mixed> $body partial `CampaignEmails` (see API reference)
+     * @param CampaignEmailsUpdateShape $body partial `CampaignEmails` (see API reference)
      * @param RequestOpts|null $requestOptions
      *
-     * @return BaseResponse<array<string,mixed>>
+     * @return BaseResponse<CampaignEmailsShape>
      *
      * @throws APIException
      */

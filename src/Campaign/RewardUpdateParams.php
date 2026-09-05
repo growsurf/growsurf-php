@@ -21,26 +21,26 @@ use Growsurf\Core\Contracts\BaseModel;
  *
  * @phpstan-type RewardUpdateParamsShape = array{
  *   id: string,
- *   commissionStructure?: null|CommissionStructure|CommissionStructureShape,
- *   conversionsRequired?: int|null,
+ *   commissionStructure?: CommissionStructure|CommissionStructureShape,
+ *   conversionsRequired?: int,
  *   couponCode?: string|null,
- *   description?: string|null,
- *   event?: RewardEvent|value-of<RewardEvent>|null,
+ *   description?: string,
+ *   event?: RewardEvent|value-of<RewardEvent>,
  *   imageURL?: string|null,
- *   isUnlimited?: bool|null,
- *   isVisible?: bool|null,
- *   limit?: int|null,
- *   limitDuration?: null|LimitDuration|value-of<LimitDuration>,
- *   metadata?: array<string,mixed>|null,
+ *   isUnlimited?: bool,
+ *   isVisible?: bool,
+ *   limit?: int,
+ *   limitDuration?: LimitDuration|value-of<LimitDuration>,
+ *   metadata?: array<string,mixed>,
  *   nextMilestonePrefix?: string|null,
  *   nextMilestoneSuffix?: string|null,
- *   numberOfWinners?: int|null,
- *   order?: int|null,
+ *   numberOfWinners?: int,
+ *   order?: int,
  *   referralCouponCode?: string|null,
  *   referralDescription?: string|null,
- *   referredRewardUpfront?: bool|null,
+ *   referredRewardUpfront?: bool,
  *   referredValue?: null|RewardTaxValuation|RewardTaxValuationShape,
- *   title?: string|null,
+ *   title?: string,
  *   value?: null|RewardTaxValuation|RewardTaxValuationShape,
  * }
  */
@@ -68,7 +68,7 @@ final class RewardUpdateParams implements BaseModel
     /**
      * A legacy static coupon code shown to the referrer in the reward-won email and webhook. Display text only (GrowSurf does not create or validate it); superseded by a connected billing integration's issued coupon when one exists.
      */
-    #[Optional]
+    #[Optional(nullable: true)]
     public ?string $couponCode;
 
     /**
@@ -91,7 +91,7 @@ final class RewardUpdateParams implements BaseModel
     /**
      * An image URL for the reward.
      */
-    #[Optional('imageUrl')]
+    #[Optional('imageUrl', nullable: true)]
     public ?string $imageURL;
 
     /**
@@ -131,13 +131,13 @@ final class RewardUpdateParams implements BaseModel
     /**
      * Text shown before a participant's referral count in milestone progress copy (e.g. "You are only"). Applies to `MILESTONE` rewards.
      */
-    #[Optional]
+    #[Optional(nullable: true)]
     public ?string $nextMilestonePrefix;
 
     /**
      * Text shown after a participant's referral count in milestone progress copy (e.g. "referrals away from your next reward!"). Applies to `MILESTONE` rewards.
      */
-    #[Optional]
+    #[Optional(nullable: true)]
     public ?string $nextMilestoneSuffix;
 
     /**
@@ -155,13 +155,13 @@ final class RewardUpdateParams implements BaseModel
     /**
      * A legacy static coupon code shown to the referred friend in the reward-won email and webhook (double-sided rewards). Same caveats as `couponCode`.
      */
-    #[Optional]
+    #[Optional(nullable: true)]
     public ?string $referralCouponCode;
 
     /**
      * The reward description shown to the referred friend (double-sided rewards).
      */
-    #[Optional]
+    #[Optional(nullable: true)]
     public ?string $referralDescription;
 
     /**
@@ -173,7 +173,7 @@ final class RewardUpdateParams implements BaseModel
     /**
      * Tax treatment override for the referred friend's side of a double-sided reward. Null inherits the program's confirmed default.
      */
-    #[Optional]
+    #[Optional(nullable: true)]
     public ?RewardTaxValuation $referredValue;
 
     /**
@@ -185,7 +185,7 @@ final class RewardUpdateParams implements BaseModel
     /**
      * Tax valuation for the reward (the referrer's side of a double-sided reward). Used by tax documentation / 1099 reporting.
      */
-    #[Optional]
+    #[Optional(nullable: true)]
     public ?RewardTaxValuation $value;
 
     /**

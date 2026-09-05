@@ -11,6 +11,8 @@ use Tests\UnsupportedMockTests;
 
 /**
  * @internal
+ *
+ * @phpstan-import-type CampaignDesignUpdateShape from \Growsurf\Campaign\CampaignDesign
  */
 #[CoversNothing]
 final class DesignTest extends TestCase
@@ -60,28 +62,27 @@ final class DesignTest extends TestCase
             $this->markTestSkipped('Mock server tests are disabled');
         }
 
-        $result = $this->client->campaign->design->update(
-            'id',
-            body: [
-                'participantAvatarStyle' => 'CHARACTERS',
-                'resources' => [
-                    'isPublicDisplayed' => true,
-                    'title' => 'Resources',
-                    'viewResourcesLinkText' => 'View resources',
-                    'backLinkText' => 'Back',
-                    'copyButtonText' => 'Copy',
-                    'copiedText' => 'Copied',
-                    'icon' => [
-                        'type' => 'IMAGE',
-                        'imageUrl' => 'https://example.com/resources-icon.png',
-                    ],
-                ],
-                'theme' => ['primaryColor' => '#000000'],
-                'payoutDestinationConfirmation' => [
-                    'headline' => 'Confirm your {{payoutProvider}} payout email',
+        /** @var CampaignDesignUpdateShape $body */
+        $body = [
+            'participantAvatarStyle' => 'CHARACTERS',
+            'resources' => [
+                'isPublicDisplayed' => true,
+                'title' => 'Resources',
+                'viewResourcesLinkText' => 'View resources',
+                'backLinkText' => 'Back',
+                'copyButtonText' => 'Copy',
+                'copiedText' => 'Copied',
+                'icon' => [
+                    'type' => 'IMAGE',
+                    'imageUrl' => 'https://example.com/resources-icon.png',
                 ],
             ],
-        );
+            'theme' => ['primaryColor' => '#000000'],
+            'payoutDestinationConfirmation' => [
+                'headline' => 'Confirm your {{payoutProvider}} payout email',
+            ],
+        ];
+        $result = $this->client->campaign->design->update('id', body: $body);
 
         // @phpstan-ignore-next-line method.alreadyNarrowedType
         $this->assertIsArray($result);

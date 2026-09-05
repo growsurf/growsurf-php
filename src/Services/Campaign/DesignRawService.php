@@ -16,6 +16,7 @@ use Growsurf\ServiceContracts\Campaign\DesignRawContract;
  *
  * @phpstan-import-type RequestOpts from \Growsurf\RequestOptions
  * @phpstan-import-type CampaignDesignShape from \Growsurf\Campaign\CampaignDesign
+ * @phpstan-import-type CampaignDesignUpdateShape from \Growsurf\Campaign\CampaignDesign
  */
 final class DesignRawService implements DesignRawContract
 {
@@ -60,7 +61,7 @@ final class DesignRawService implements DesignRawContract
      * `400`. Landing-page custom code and JavaScript are not editable via the API.
      *
      * @param string $id growSurf program ID
-     * @param CampaignDesignShape $body partial `CampaignDesign`; see `CampaignDesign::resources`
+     * @param CampaignDesignUpdateShape $body partial `CampaignDesign`; see `CampaignDesign::resources`
      * @param RequestOpts|null $requestOptions
      *
      * @return BaseResponse<CampaignDesignShape>

@@ -9,6 +9,8 @@ use Growsurf\RequestOptions;
 
 /**
  * @phpstan-import-type RequestOpts from \Growsurf\RequestOptions
+ * @phpstan-import-type CampaignOptionsShape from \Growsurf\Campaign\CampaignOptions
+ * @phpstan-import-type CampaignOptionsUpdateShape from \Growsurf\Campaign\CampaignOptions
  */
 interface OptionsContract
 {
@@ -18,7 +20,7 @@ interface OptionsContract
      * @param string $id growSurf program ID
      * @param RequestOpts|null $requestOptions
      *
-     * @return array<string,mixed>
+     * @return CampaignOptionsShape
      *
      * @throws APIException
      */
@@ -31,10 +33,10 @@ interface OptionsContract
      * @api
      *
      * @param string $id growSurf program ID
-     * @param array<string,mixed> $body partial `CampaignOptions` (see API reference)
+     * @param CampaignOptionsUpdateShape $body partial `CampaignOptions` (see API reference)
      * @param RequestOpts|null $requestOptions
      *
-     * @return array<string,mixed>
+     * @return CampaignOptionsShape
      *
      * @throws APIException
      */

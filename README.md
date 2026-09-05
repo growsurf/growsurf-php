@@ -2,30 +2,20 @@
 
 The Growsurf PHP library provides convenient access to the Growsurf REST API from any PHP 8.1.0+ application.
 
-It is generated with [Stainless](https://www.stainless.com/).
+It was originally generated with [Stainless](https://www.stainless.com/) and is now maintained by hand.
 
 ## Documentation
 
-The REST API documentation can be found on [growsurf.com](https://growsurf.com/settings#contact_support).
+Read the [GrowSurf REST API reference](https://docs.growsurf.com/developer-tools/rest-api/api-reference).
 
 ## Installation
 
-To use this package, install via Composer by adding the following to your application's `composer.json`:
+Install the package with Composer:
 
 <!-- x-release-please-start-version -->
 
-```json
-{
-  "repositories": [
-    {
-      "type": "vcs",
-      "url": "git@github.com:growsurf/growsurf-php.git"
-    }
-  ],
-  "require": {
-    "growsurf/growsurf-php": "dev-main"
-  }
-}
+```sh
+composer require growsurf/growsurf-php
 ```
 
 <!-- x-release-please-end -->
@@ -49,10 +39,30 @@ var_dump($campaigns->campaigns);
 
 ### Value Objects
 
-It is recommended to use the static `with` constructor `Dog::with(name: "Joey")`
-and named parameters to initialize value objects.
+Use a static `with` constructor and named parameters to initialize value objects:
 
-However, builders are also provided `(new Dog)->withName("Joey")`.
+```php
+<?php
+
+use Growsurf\Campaign\CampaignCreateParams;
+
+$params = CampaignCreateParams::with(
+  type: 'REFERRAL',
+  name: 'Middle Out Compression Campaign',
+);
+```
+
+Builders are also available:
+
+```php
+<?php
+
+use Growsurf\Campaign\CampaignCreateParams;
+
+$params = (new CampaignCreateParams)
+  ->withType('REFERRAL')
+  ->withName('Middle Out Compression Campaign');
+```
 
 ### Handling errors
 
@@ -96,9 +106,9 @@ Error codes are as follows:
 
 ### Retries
 
-Certain errors will be automatically retried 2 times by default, with a short exponential backoff.
+`GET` and `HEAD` requests are retried up to two times by default, with a short exponential backoff. API-key rotation is also retried because the SDK generates and reuses an `Idempotency-Key` for that request. Other `POST`, `PATCH`, and `DELETE` requests are not retried automatically.
 
-Connection errors (for example, due to a network connectivity problem), 408 Request Timeout, 409 Conflict, 429 Rate Limit, >=500 Internal errors, and timeouts will all be retried by default.
+For requests that are safe to retry, the SDK retries connection errors, timeouts, `408 Request Timeout`, `409 Conflict`, `429 Rate Limit`, and `5xx` responses.
 
 You can use the `maxRetries` option to configure or disable this:
 
@@ -122,7 +132,7 @@ $result = $client->campaign->list(requestOptions: ['maxRetries' => 5]);
 
 You can send undocumented parameters to any endpoint, and read undocumented response properties, like so:
 
-Note: the `extra*` parameters of the same name overrides the documented parameters.
+Extra parameters override documented parameters with the same name.
 
 ```php
 <?php
@@ -138,7 +148,7 @@ $campaigns = $client->campaign->list(
 
 #### Undocumented request params
 
-If you want to explicitly send an extra param, you can do so with the `extra_query`, `extra_body`, and `extra_headers` under the `request_options:` parameter when making a request, as seen in the examples above.
+To send an extra parameter explicitly, use `extraQueryParams`, `extraBodyParams`, or `extraHeaders` in the `requestOptions` argument, as shown above.
 
 #### Undocumented endpoints
 

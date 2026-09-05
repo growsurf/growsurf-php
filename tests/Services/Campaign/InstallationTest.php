@@ -11,6 +11,8 @@ use Tests\UnsupportedMockTests;
 
 /**
  * @internal
+ *
+ * @phpstan-import-type CampaignInstallationUpdateShape from \Growsurf\Campaign\CampaignInstallation
  */
 #[CoversNothing]
 final class InstallationTest extends TestCase
@@ -60,10 +62,9 @@ final class InstallationTest extends TestCase
             $this->markTestSkipped('Mock server tests are disabled');
         }
 
-        $result = $this->client->campaign->installation->update(
-            'id',
-            body: ['signupMethod' => 'CUSTOM'],
-        );
+        /** @var CampaignInstallationUpdateShape $body */
+        $body = ['signupEvent' => 'PROGRAMMATIC'];
+        $result = $this->client->campaign->installation->update('id', body: $body);
 
         // @phpstan-ignore-next-line method.alreadyNarrowedType
         $this->assertIsArray($result);

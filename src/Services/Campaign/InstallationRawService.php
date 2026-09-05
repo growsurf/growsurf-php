@@ -15,6 +15,8 @@ use Growsurf\ServiceContracts\Campaign\InstallationRawContract;
  * Campaign installation (`CampaignInstallation`) configuration — the dashboard Program Editor's **Installation** tab.
  *
  * @phpstan-import-type RequestOpts from \Growsurf\RequestOptions
+ * @phpstan-import-type CampaignInstallationShape from \Growsurf\Campaign\CampaignInstallation
+ * @phpstan-import-type CampaignInstallationUpdateShape from \Growsurf\Campaign\CampaignInstallation
  */
 final class InstallationRawService implements InstallationRawContract
 {
@@ -32,7 +34,7 @@ final class InstallationRawService implements InstallationRawContract
      * @param string $id growSurf program ID
      * @param RequestOpts|null $requestOptions
      *
-     * @return BaseResponse<array<string,mixed>>
+     * @return BaseResponse<CampaignInstallationShape>
      *
      * @throws APIException
      */
@@ -55,10 +57,10 @@ final class InstallationRawService implements InstallationRawContract
      * Updates a program's installation configuration. Only the fields you send are changed; omitted fields are left untouched. `referralTrigger` is only available for referral programs. `mobile.publicKey` is read-only; if no key exists yet, enabling `mobile.isEnabled` creates one. Changing `shareUrl` re-resolves its redirect destinations, which may take a moment to complete. URLs must include an explicit `http://` or `https://` scheme.
      *
      * @param string $id growSurf program ID
-     * @param array<string,mixed> $body partial `CampaignInstallation` (see API reference)
+     * @param CampaignInstallationUpdateShape $body partial `CampaignInstallation` (see API reference)
      * @param RequestOpts|null $requestOptions
      *
-     * @return BaseResponse<array<string,mixed>>
+     * @return BaseResponse<CampaignInstallationShape>
      *
      * @throws APIException
      */

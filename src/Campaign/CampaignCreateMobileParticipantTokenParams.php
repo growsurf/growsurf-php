@@ -18,15 +18,15 @@ use Growsurf\Core\Contracts\BaseModel;
  *
  * @phpstan-type CampaignCreateMobileParticipantTokenParamsShape = array{
  *   email: string,
- *   fingerprint?: string|null,
- *   firstName?: string|null,
- *   ipAddress?: string|null,
- *   isAffiliate?: bool|null,
- *   lastName?: string|null,
- *   metadata?: array<string,mixed>|null,
- *   mobileInstanceID?: string|null,
- *   referralStatus?: null|ReferralStatus|value-of<ReferralStatus>,
- *   referredBy?: string|null,
+ *   fingerprint?: string,
+ *   firstName?: string,
+ *   ipAddress?: string,
+ *   isAffiliate?: bool,
+ *   lastName?: string,
+ *   metadata?: array<string,mixed>,
+ *   mobileInstanceID?: string,
+ *   referralStatus?: ReferralStatus|value-of<ReferralStatus>,
+ *   referredBy?: string,
  * }
  */
 final class CampaignCreateMobileParticipantTokenParams implements BaseModel

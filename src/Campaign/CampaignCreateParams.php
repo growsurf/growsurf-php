@@ -21,12 +21,12 @@ use Growsurf\Core\Contracts\BaseModel;
  *
  * @phpstan-type CampaignCreateParamsShape = array{
  *   type: Type|value-of<Type>,
- *   companyLogoImageURL?: string|null,
- *   companyName?: string|null,
- *   currencyISO?: string|null,
- *   goal?: Goal|value-of<Goal>|null,
- *   name?: string|null,
- *   rewards?: list<RewardCreateParams|RewardCreateParamsShape>|null,
+ *   companyLogoImageURL?: string,
+ *   companyName?: string,
+ *   currencyISO?: string,
+ *   goal?: Goal|value-of<Goal>,
+ *   name?: string,
+ *   rewards?: list<RewardCreateParams|RewardCreateParamsShape>,
  * }
  */
 final class CampaignCreateParams implements BaseModel

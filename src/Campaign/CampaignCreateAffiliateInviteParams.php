@@ -16,7 +16,7 @@ use Growsurf\Core\Contracts\BaseModel;
  * @see Growsurf\Services\CampaignService::createAffiliateInvite()
  *
  * @phpstan-type CampaignCreateAffiliateInviteParamsShape = array{
- *   email: string, firstName?: string|null, lastName?: string|null
+ *   email: string, firstName?: string, lastName?: string
  * }
  */
 final class CampaignCreateAffiliateInviteParams implements BaseModel

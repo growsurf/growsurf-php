@@ -89,6 +89,39 @@ final class LeadRewardEventsTest extends TestCase
         self::assertSame('CANCELLED', $reward->jsonSerialize()['status']);
     }
 
+    public function testParticipantRewardHydratesDeliveredAmount(): void
+    {
+        $reward = Conversion::coerce(
+            ParticipantReward::class,
+            value: [
+                'id' => 'participant-reward-1',
+                'rewardId' => 'campaign-reward-1',
+                'status' => 'FULFILLED',
+                'amount' => 2.5,
+                'currencyISO' => 'USD',
+            ],
+        );
+
+        self::assertInstanceOf(ParticipantReward::class, $reward);
+        self::assertSame(2.5, $reward->amount);
+        self::assertSame('USD', $reward->currencyISO);
+
+        $rewardWithoutAmount = Conversion::coerce(
+            ParticipantReward::class,
+            value: [
+                'id' => 'participant-reward-2',
+                'rewardId' => 'campaign-reward-1',
+                'status' => 'FULFILLED',
+                'amount' => null,
+                'currencyISO' => null,
+            ],
+        );
+
+        self::assertInstanceOf(ParticipantReward::class, $rewardWithoutAmount);
+        self::assertNull($rewardWithoutAmount->amount);
+        self::assertNull($rewardWithoutAmount->currencyISO);
+    }
+
     public function testCommissionStructureUsesPublishedEventEnum(): void
     {
         $commissionStructure = Conversion::coerce(

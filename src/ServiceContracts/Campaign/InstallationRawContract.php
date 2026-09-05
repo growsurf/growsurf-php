@@ -10,6 +10,8 @@ use Growsurf\RequestOptions;
 
 /**
  * @phpstan-import-type RequestOpts from \Growsurf\RequestOptions
+ * @phpstan-import-type CampaignInstallationShape from \Growsurf\Campaign\CampaignInstallation
+ * @phpstan-import-type CampaignInstallationUpdateShape from \Growsurf\Campaign\CampaignInstallation
  */
 interface InstallationRawContract
 {
@@ -19,7 +21,7 @@ interface InstallationRawContract
      * @param string $id growSurf program ID
      * @param RequestOpts|null $requestOptions
      *
-     * @return BaseResponse<array<string,mixed>>
+     * @return BaseResponse<CampaignInstallationShape>
      *
      * @throws APIException
      */
@@ -32,10 +34,10 @@ interface InstallationRawContract
      * @api
      *
      * @param string $id growSurf program ID
-     * @param array<string,mixed> $body partial `CampaignInstallation` (see API reference)
+     * @param CampaignInstallationUpdateShape $body partial `CampaignInstallation` (see API reference)
      * @param RequestOpts|null $requestOptions
      *
-     * @return BaseResponse<array<string,mixed>>
+     * @return BaseResponse<CampaignInstallationShape>
      *
      * @throws APIException
      */

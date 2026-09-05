@@ -17,9 +17,9 @@ use Growsurf\Core\Contracts\BaseModel;
  *
  * @phpstan-type WebhookCreateParamsShape = array{
  *   payloadURL: string,
- *   events?: list<WebhookEvent|value-of<WebhookEvent>>|null,
- *   isEnabled?: bool|null,
- *   secret?: string|null,
+ *   events?: list<WebhookEvent|value-of<WebhookEvent>>,
+ *   isEnabled?: bool,
+ *   secret?: string,
  * }
  */
 final class WebhookCreateParams implements BaseModel

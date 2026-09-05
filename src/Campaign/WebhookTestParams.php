@@ -16,7 +16,7 @@ use Growsurf\Core\Contracts\BaseModel;
  * @see Growsurf\Services\Campaign\WebhooksService::test()
  *
  * @phpstan-type WebhookTestParamsShape = array{
- *   id: string, event?: null|WebhookEvent|value-of<WebhookEvent>
+ *   id: string, event?: WebhookEvent|value-of<WebhookEvent>
  * }
  */
 final class WebhookTestParams implements BaseModel

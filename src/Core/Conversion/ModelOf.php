@@ -109,6 +109,9 @@ final class ModelOf implements Converter
                 if (array_key_exists($name, array: $this->properties)) {
                     ++$state->yes;
                     $info = $this->properties[$name];
+                    if (is_null($item) && !$info->nullable) {
+                        throw new \InvalidArgumentException("{$name} does not accept null; omit the property instead");
+                    }
                     $acc[$info->apiName] = Conversion::dump($info->type, value: $item, state: $state);
                 } else {
                     $acc[$name] = Conversion::dump_unknown($item, state: $state);

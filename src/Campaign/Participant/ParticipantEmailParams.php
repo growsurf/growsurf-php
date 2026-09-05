@@ -17,10 +17,10 @@ use Growsurf\Core\Contracts\BaseModel;
  *
  * @phpstan-type ParticipantEmailParamsShape = array{
  *   id: string,
- *   body?: string|null,
- *   emailType?: string|null,
- *   preheader?: string|null,
- *   subject?: string|null,
+ *   body?: string,
+ *   emailType?: string,
+ *   preheader?: string,
+ *   subject?: string,
  * }
  */
 final class ParticipantEmailParams implements BaseModel
