@@ -39,7 +39,7 @@ interface ParticipantContract
     /**
      * @api
      *
-     * @param string $participantIDOrEmail growSurf participant ID or URL-encoded participant email address
+     * @param string $participantIDOrEmail growSurf participant ID or unencoded participant email address (the SDK encodes it automatically)
      * @param string $id growSurf program ID
      * @param RequestOpts|null $requestOptions
      *
@@ -54,7 +54,7 @@ interface ParticipantContract
     /**
      * @api
      *
-     * @param string $participantIDOrEmail path param: GrowSurf participant ID or URL-encoded participant email address
+     * @param string $participantIDOrEmail path param: GrowSurf participant ID or unencoded participant email address (the SDK encodes it automatically)
      * @param string $id path param: GrowSurf program ID
      * @param AffiliateStatus|value-of<AffiliateStatus> $affiliateStatus Body param: Affiliate programs only. Sets the affiliate status. `APPROVED` also enrolls a participant who is not yet an affiliate. `SUSPENDED` and `BANNED` are rejected for non-affiliates.
      * @param string $email Body param
@@ -89,7 +89,7 @@ interface ParticipantContract
     /**
      * @api
      *
-     * @param string $participantIDOrEmail growSurf participant ID or URL-encoded participant email address
+     * @param string $participantIDOrEmail growSurf participant ID or unencoded participant email address (the SDK encodes it automatically)
      * @param string $id growSurf program ID
      * @param RequestOpts|null $requestOptions
      *
@@ -147,7 +147,7 @@ interface ParticipantContract
     /**
      * @api
      *
-     * @param string $participantIDOrEmail path param: GrowSurf participant ID or URL-encoded participant email address
+     * @param string $participantIDOrEmail path param: GrowSurf participant ID or unencoded participant email address (the SDK encodes it automatically)
      * @param string $id path param: GrowSurf program ID
      * @param int $limit Query param: Number of results to return. Maximum 100.
      * @param string $nextID query param: ID to start the next paged result set with
@@ -168,7 +168,7 @@ interface ParticipantContract
     /**
      * @api
      *
-     * @param string $participantIDOrEmail path param: GrowSurf participant ID or URL-encoded participant email address
+     * @param string $participantIDOrEmail path param: GrowSurf participant ID or unencoded participant email address (the SDK encodes it automatically)
      * @param string $id path param: GrowSurf program ID
      * @param int $limit Query param: Number of results to return. Maximum 100.
      * @param string $nextID query param: ID to start the next paged result set with
@@ -189,7 +189,7 @@ interface ParticipantContract
     /**
      * @api
      *
-     * @param string $participantIDOrEmail path param: GrowSurf participant ID or URL-encoded participant email address
+     * @param string $participantIDOrEmail path param: GrowSurf participant ID or unencoded participant email address (the SDK encodes it automatically)
      * @param string $id path param: GrowSurf program ID
      * @param bool $desc query param: Return results in descending order when true
      * @param string $email query param: URL-encoded email value to filter referral results
@@ -222,7 +222,7 @@ interface ParticipantContract
     /**
      * @api
      *
-     * @param string $participantIDOrEmail path param: GrowSurf participant ID or URL-encoded participant email address
+     * @param string $participantIDOrEmail path param: GrowSurf participant ID or unencoded participant email address (the SDK encodes it automatically)
      * @param string $id path param: GrowSurf program ID
      * @param int $limit Query param: Number of results to return. Maximum 100.
      * @param string $nextID query param: ID to start the next paged result set with
@@ -241,7 +241,7 @@ interface ParticipantContract
     /**
      * @api
      *
-     * @param string $participantIDOrEmail path param: GrowSurf participant ID or URL-encoded participant email address
+     * @param string $participantIDOrEmail path param: GrowSurf participant ID or unencoded participant email address (the SDK encodes it automatically)
      * @param string $id path param: GrowSurf program ID
      * @param string $currency Body param
      * @param int $grossAmount Body param
@@ -302,7 +302,7 @@ interface ParticipantContract
     /**
      * @api
      *
-     * @param string $participantIDOrEmail path param: GrowSurf participant ID or URL-encoded participant email address
+     * @param string $participantIDOrEmail path param: GrowSurf participant ID or unencoded participant email address (the SDK encodes it automatically)
      * @param string $id path param: GrowSurf program ID
      * @param AmendmentType|value-of<AmendmentType> $amendmentType body param: REFUND covers full refunds, partial refunds, and refund cancellations; CHARGEBACK is always a full reversal
      * @param int $amount body param: Original sale gross (minor units). Optional — the value stored when the transaction was recorded is used when available; only needed for partial refunds of older records.
@@ -347,7 +347,7 @@ interface ParticipantContract
     /**
      * @api
      *
-     * @param string $participantIDOrEmail path param: GrowSurf participant ID or URL-encoded participant email address
+     * @param string $participantIDOrEmail path param: GrowSurf participant ID or unencoded participant email address (the SDK encodes it automatically)
      * @param string $id path param: GrowSurf program ID
      * @param list<string> $emailAddresses Body param
      * @param string $messageText Body param
@@ -368,7 +368,7 @@ interface ParticipantContract
     /**
      * @api
      *
-     * @param string $participantIDOrEmail path param: GrowSurf participant ID or URL-encoded participant email address
+     * @param string $participantIDOrEmail path param: GrowSurf participant ID or unencoded participant email address (the SDK encodes it automatically)
      * @param string $id path param: GrowSurf program ID
      * @param int $delayInDays Body param: Number of whole days to hold referral credit before it is awarded. Useful for honoring a refund window before crediting a referrer. Omit this field to award credit immediately. The credit is awarded automatically once the delay elapses, and can be cancelled before then with the Cancel delayed referral trigger request.
      * @param RequestOpts|null $requestOptions
@@ -385,7 +385,7 @@ interface ParticipantContract
     /**
      * @api
      *
-     * @param string $participantIDOrEmail growSurf participant ID or URL-encoded participant email address
+     * @param string $participantIDOrEmail growSurf participant ID or unencoded participant email address (the SDK encodes it automatically)
      * @param string $id growSurf program ID
      * @param RequestOpts|null $requestOptions
      *
@@ -400,7 +400,7 @@ interface ParticipantContract
     /**
      * @api
      *
-     * @param string $participantIDOrEmail path param: GrowSurf participant ID or URL-encoded participant email address
+     * @param string $participantIDOrEmail path param: GrowSurf participant ID or unencoded participant email address (the SDK encodes it automatically)
      * @param string $id path param: GrowSurf program ID
      * @param string $body body param: HTML body for a free-form email. You can personalize it with dynamic text, inserting `{{...}}` tokens like `{{firstName}}` or `{{shareUrl}}`. See [Guide to using dynamic text in GrowSurf emails](https://support.growsurf.com/article/213-guide-to-using-dynamic-text-in-growsurf-emails).
      * @param string $emailType body param: The program email template to trigger (template mode). Send the camelCase email-type key; the available types depend on the program type, and `isEnabled` only controls automatic sends. System/transactional types (login link, PayPal confirmation, tax) and the invite email cannot be sent. Referral programs: welcomeNonReferred, referralLinkViewedFirstTime, referralLinkUsed, referredSignup, welcomeReferred, goalAchieved, campaignEndedWinners, campaignEndedNonWinners, progressUpdateMonthly. Affiliate programs: welcomeNonReferred, referralLinkViewedFirstTime, referredSignup, commissionGenerated, commissionAdjusted, payoutPending, payoutSentSuccess, progressUpdateMonthly.
@@ -423,7 +423,7 @@ interface ParticipantContract
     /**
      * @api
      *
-     * @param string $participantIDOrEmail growSurf participant ID or URL-encoded participant email address
+     * @param string $participantIDOrEmail growSurf participant ID or unencoded participant email address (the SDK encodes it automatically)
      * @param string $id growSurf program ID
      * @param int $days Last number of days for optional `series` and `email` analytics. Defaults to 365. Maximum 1825. Does not filter the top-level all-time totals.
      * @param int $endDate End of a custom `series` and `email` analytics window as a Unix timestamp in milliseconds. Set it together with `startDate`. Does not filter the top-level all-time totals.
@@ -448,7 +448,7 @@ interface ParticipantContract
     /**
      * @api
      *
-     * @param string $participantIDOrEmail path param: GrowSurf participant ID or URL-encoded participant email address
+     * @param string $participantIDOrEmail path param: GrowSurf participant ID or unencoded participant email address (the SDK encodes it automatically)
      * @param string $id path param: GrowSurf program ID
      * @param int $limit query param: Number of logs to return (1–100, default 20)
      * @param int $offset query param: Number of logs to skip
@@ -467,7 +467,7 @@ interface ParticipantContract
     /**
      * @api
      *
-     * @param string $participantIDOrEmail growSurf participant ID or URL-encoded participant email address
+     * @param string $participantIDOrEmail growSurf participant ID or unencoded participant email address (the SDK encodes it automatically)
      * @param string $id growSurf program ID
      * @param RequestOpts|null $requestOptions
      *
@@ -482,7 +482,7 @@ interface ParticipantContract
     /**
      * @api
      *
-     * @param string $participantIDOrEmail path param: GrowSurf participant ID or URL-encoded participant email address
+     * @param string $participantIDOrEmail path param: GrowSurf participant ID or unencoded participant email address (the SDK encodes it automatically)
      * @param string $id path param: GrowSurf program ID
      * @param Provider|value-of<Provider> $provider body param: The payout provider the participant should confirm a destination for
      * @param RequestOpts|null $requestOptions

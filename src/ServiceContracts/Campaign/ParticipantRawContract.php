@@ -52,7 +52,7 @@ interface ParticipantRawContract
     /**
      * @api
      *
-     * @param string $participantIDOrEmail growSurf participant ID or URL-encoded participant email address. The lookup remains scoped to the selected program ID.
+     * @param string $participantIDOrEmail growSurf participant ID or unencoded participant email address (the SDK encodes it automatically). The lookup remains scoped to the selected program ID.
      * @param array<string,mixed>|ParticipantRetrieveParams $params
      * @param RequestOpts|null $requestOptions
      *
@@ -69,7 +69,7 @@ interface ParticipantRawContract
     /**
      * @api
      *
-     * @param string $participantIDOrEmail path param: GrowSurf participant ID or URL-encoded participant email address
+     * @param string $participantIDOrEmail path param: GrowSurf participant ID or unencoded participant email address (the SDK encodes it automatically)
      * @param array<string,mixed>|ParticipantUpdateParams $params
      * @param RequestOpts|null $requestOptions
      *
@@ -86,7 +86,7 @@ interface ParticipantRawContract
     /**
      * @api
      *
-     * @param string $participantIDOrEmail growSurf participant ID or URL-encoded participant email address
+     * @param string $participantIDOrEmail growSurf participant ID or unencoded participant email address (the SDK encodes it automatically)
      * @param array<string,mixed>|ParticipantDeleteParams $params
      * @param RequestOpts|null $requestOptions
      *
@@ -137,7 +137,7 @@ interface ParticipantRawContract
     /**
      * @api
      *
-     * @param string $participantIDOrEmail path param: GrowSurf participant ID or URL-encoded participant email address
+     * @param string $participantIDOrEmail path param: GrowSurf participant ID or unencoded participant email address (the SDK encodes it automatically)
      * @param array<string,mixed>|ParticipantListCommissionsParams $params
      * @param RequestOpts|null $requestOptions
      *
@@ -154,7 +154,7 @@ interface ParticipantRawContract
     /**
      * @api
      *
-     * @param string $participantIDOrEmail path param: GrowSurf participant ID or URL-encoded participant email address
+     * @param string $participantIDOrEmail path param: GrowSurf participant ID or unencoded participant email address (the SDK encodes it automatically)
      * @param array<string,mixed>|ParticipantListPayoutsParams $params
      * @param RequestOpts|null $requestOptions
      *
@@ -171,7 +171,7 @@ interface ParticipantRawContract
     /**
      * @api
      *
-     * @param string $participantIDOrEmail path param: GrowSurf participant ID or URL-encoded participant email address
+     * @param string $participantIDOrEmail path param: GrowSurf participant ID or unencoded participant email address (the SDK encodes it automatically)
      * @param array<string,mixed>|ParticipantListReferralsParams $params
      * @param RequestOpts|null $requestOptions
      *
@@ -188,7 +188,7 @@ interface ParticipantRawContract
     /**
      * @api
      *
-     * @param string $participantIDOrEmail path param: GrowSurf participant ID or URL-encoded participant email address
+     * @param string $participantIDOrEmail path param: GrowSurf participant ID or unencoded participant email address (the SDK encodes it automatically)
      * @param array<string,mixed>|ParticipantListRewardsParams $params
      * @param RequestOpts|null $requestOptions
      *
@@ -205,7 +205,7 @@ interface ParticipantRawContract
     /**
      * @api
      *
-     * @param string $participantIDOrEmail path param: GrowSurf participant ID or URL-encoded participant email address
+     * @param string $participantIDOrEmail path param: GrowSurf participant ID or unencoded participant email address (the SDK encodes it automatically)
      * @param array<string,mixed>|ParticipantRecordTransactionParams $params
      * @param RequestOpts|null $requestOptions
      *
@@ -222,7 +222,7 @@ interface ParticipantRawContract
     /**
      * @api
      *
-     * @param string $participantIDOrEmail path param: GrowSurf participant ID or URL-encoded participant email address
+     * @param string $participantIDOrEmail path param: GrowSurf participant ID or unencoded participant email address (the SDK encodes it automatically)
      * @param array<string,mixed>|ParticipantRefundTransactionParams $params
      * @param RequestOpts|null $requestOptions
      *
@@ -239,7 +239,7 @@ interface ParticipantRawContract
     /**
      * @api
      *
-     * @param string $participantIDOrEmail path param: GrowSurf participant ID or URL-encoded participant email address
+     * @param string $participantIDOrEmail path param: GrowSurf participant ID or unencoded participant email address (the SDK encodes it automatically)
      * @param array<string,mixed>|ParticipantSendInvitesParams $params
      * @param RequestOpts|null $requestOptions
      *
@@ -256,7 +256,7 @@ interface ParticipantRawContract
     /**
      * @api
      *
-     * @param string $participantIDOrEmail growSurf participant ID or URL-encoded participant email address
+     * @param string $participantIDOrEmail growSurf participant ID or unencoded participant email address (the SDK encodes it automatically)
      * @param array<string,mixed>|ParticipantTriggerReferralParams $params
      * @param RequestOpts|null $requestOptions
      *
@@ -273,7 +273,7 @@ interface ParticipantRawContract
     /**
      * @api
      *
-     * @param string $participantIDOrEmail growSurf participant ID or URL-encoded participant email address
+     * @param string $participantIDOrEmail growSurf participant ID or unencoded participant email address (the SDK encodes it automatically)
      * @param array<string,mixed>|ParticipantCancelDelayedReferralParams $params
      * @param RequestOpts|null $requestOptions
      *
@@ -290,7 +290,7 @@ interface ParticipantRawContract
     /**
      * @api
      *
-     * @param string $participantIDOrEmail path param: GrowSurf participant ID or URL-encoded participant email address
+     * @param string $participantIDOrEmail path param: GrowSurf participant ID or unencoded participant email address (the SDK encodes it automatically)
      * @param array<string,mixed>|ParticipantEmailParams $params
      * @param RequestOpts|null $requestOptions
      *
@@ -307,7 +307,7 @@ interface ParticipantRawContract
     /**
      * @api
      *
-     * @param string $participantIDOrEmail growSurf participant ID or URL-encoded participant email address
+     * @param string $participantIDOrEmail growSurf participant ID or unencoded participant email address (the SDK encodes it automatically)
      * @param array<string,mixed>|ParticipantRetrieveAnalyticsParams $params
      * @param RequestOpts|null $requestOptions
      *
@@ -324,7 +324,7 @@ interface ParticipantRawContract
     /**
      * @api
      *
-     * @param string $participantIDOrEmail path param: GrowSurf participant ID or URL-encoded participant email address
+     * @param string $participantIDOrEmail path param: GrowSurf participant ID or unencoded participant email address (the SDK encodes it automatically)
      * @param array<string,mixed>|ParticipantListActivityLogsParams $params
      * @param RequestOpts|null $requestOptions
      *
@@ -341,7 +341,7 @@ interface ParticipantRawContract
     /**
      * @api
      *
-     * @param string $participantIDOrEmail growSurf participant ID or URL-encoded participant email address
+     * @param string $participantIDOrEmail growSurf participant ID or unencoded participant email address (the SDK encodes it automatically)
      * @param array<string,mixed>|ParticipantGetPayoutDestinationParams $params
      * @param RequestOpts|null $requestOptions
      *
@@ -358,7 +358,7 @@ interface ParticipantRawContract
     /**
      * @api
      *
-     * @param string $participantIDOrEmail path param: GrowSurf participant ID or URL-encoded participant email address
+     * @param string $participantIDOrEmail path param: GrowSurf participant ID or unencoded participant email address (the SDK encodes it automatically)
      * @param array<string,mixed>|ParticipantRequestPayoutDestinationConfirmationParams $params
      * @param RequestOpts|null $requestOptions
      *

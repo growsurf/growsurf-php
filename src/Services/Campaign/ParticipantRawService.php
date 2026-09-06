@@ -69,7 +69,7 @@ final class ParticipantRawService implements ParticipantRawContract
      *
      * Retrieves a single participant by GrowSurf participant ID or email address.
      *
-     * @param string $participantIDOrEmail growSurf participant ID or URL-encoded participant email address
+     * @param string $participantIDOrEmail growSurf participant ID or unencoded participant email address (the SDK encodes it automatically)
      * @param array{id: string}|ParticipantRetrieveParams $params
      * @param RequestOpts|null $requestOptions
      *
@@ -103,7 +103,7 @@ final class ParticipantRawService implements ParticipantRawContract
      *
      * Updates a participant by GrowSurf participant ID or email address. For affiliate programs, set `affiliateStatus` to `APPROVED`, `SUSPENDED`, or `BANNED`. `APPROVED` enrolls the participant as an affiliate. `SUSPENDED` and `BANNED` require an existing affiliate. This endpoint does not accept `isAffiliate`, and affiliate enrollment cannot be removed through REST.
      *
-     * @param string $participantIDOrEmail path param: GrowSurf participant ID or URL-encoded participant email address
+     * @param string $participantIDOrEmail path param: GrowSurf participant ID or unencoded participant email address (the SDK encodes it automatically)
      * @param array{
      *   id: string,
      *   affiliateStatus?: AffiliateStatus|value-of<AffiliateStatus>,
@@ -150,7 +150,7 @@ final class ParticipantRawService implements ParticipantRawContract
      *
      * Removes a participant by GrowSurf participant ID or email address.
      *
-     * @param string $participantIDOrEmail growSurf participant ID or URL-encoded participant email address
+     * @param string $participantIDOrEmail growSurf participant ID or unencoded participant email address (the SDK encodes it automatically)
      * @param array{id: string}|ParticipantDeleteParams $params
      * @param RequestOpts|null $requestOptions
      *
@@ -261,7 +261,7 @@ final class ParticipantRawService implements ParticipantRawContract
      *
      * **Affiliate programs only.** Retrieves a paged list of commissions earned by a participant.
      *
-     * @param string $participantIDOrEmail path param: GrowSurf participant ID or URL-encoded participant email address
+     * @param string $participantIDOrEmail path param: GrowSurf participant ID or unencoded participant email address (the SDK encodes it automatically)
      * @param array{
      *   id: string, limit?: int, nextID?: string, status?: Status|value-of<Status>
      * }|ParticipantListCommissionsParams $params
@@ -300,7 +300,7 @@ final class ParticipantRawService implements ParticipantRawContract
      *
      * **Affiliate programs only.** Retrieves a paged list of payouts that belong to a participant.
      *
-     * @param string $participantIDOrEmail path param: GrowSurf participant ID or URL-encoded participant email address
+     * @param string $participantIDOrEmail path param: GrowSurf participant ID or unencoded participant email address (the SDK encodes it automatically)
      * @param array{
      *   id: string,
      *   limit?: int,
@@ -342,7 +342,7 @@ final class ParticipantRawService implements ParticipantRawContract
      *
      * Retrieves referrals and email invites made by a participant.
      *
-     * @param string $participantIDOrEmail path param: GrowSurf participant ID or URL-encoded participant email address
+     * @param string $participantIDOrEmail path param: GrowSurf participant ID or unencoded participant email address (the SDK encodes it automatically)
      * @param array{
      *   id: string,
      *   desc?: bool,
@@ -390,7 +390,7 @@ final class ParticipantRawService implements ParticipantRawContract
      *
      * Retrieves a paged list of rewards earned by a participant.
      *
-     * @param string $participantIDOrEmail path param: GrowSurf participant ID or URL-encoded participant email address
+     * @param string $participantIDOrEmail path param: GrowSurf participant ID or unencoded participant email address (the SDK encodes it automatically)
      * @param array{
      *   id: string, limit?: int, nextID?: string
      * }|ParticipantListRewardsParams $params
@@ -429,7 +429,7 @@ final class ParticipantRawService implements ParticipantRawContract
      *
      * **Affiliate programs only.** Records a sale made by a referred customer and generates affiliate commissions for their referrer when applicable. Requires at least one transaction identifier (externalId, transactionId, orderId, paymentId, invoiceId, paymentIntentId, or chargeId) so repeated requests can be de-duplicated — without one, a resent sale would create a second commission. Reuse the same identifier(s) when refunding.
      *
-     * @param string $participantIDOrEmail path param: GrowSurf participant ID or URL-encoded participant email address
+     * @param string $participantIDOrEmail path param: GrowSurf participant ID or unencoded participant email address (the SDK encodes it automatically)
      * @param array{
      *   id: string,
      *   currency: string,
@@ -491,7 +491,7 @@ final class ParticipantRawService implements ParticipantRawContract
      *
      * **Affiliate programs only.** Records an amendment (refund, partial refund, refund cancellation, or chargeback) against a previously recorded transaction and reverses or adjusts the referrer's commission. The inverse of Record Affiliate Transaction. Identify the original transaction with the same identifier(s) you sent when recording it. Commissions already paid out to the affiliate are not clawed back. The amendment still updates the sale revenue used in program reporting; full refunds and chargebacks also update tax reporting.
      *
-     * @param string $participantIDOrEmail path param: GrowSurf participant ID or URL-encoded participant email address
+     * @param string $participantIDOrEmail path param: GrowSurf participant ID or unencoded participant email address (the SDK encodes it automatically)
      * @param array{
      *   id: string,
      *   amendmentType?: ParticipantRefundTransactionParams\AmendmentType|value-of<ParticipantRefundTransactionParams\AmendmentType>,
@@ -547,7 +547,7 @@ final class ParticipantRawService implements ParticipantRawContract
      *
      * Sends email invites on behalf of a participant to a list of email addresses. Sending invites via the API requires a **verified custom email domain** on the program; the request fails until one is verified.
      *
-     * @param string $participantIDOrEmail path param: GrowSurf participant ID or URL-encoded participant email address
+     * @param string $participantIDOrEmail path param: GrowSurf participant ID or unencoded participant email address (the SDK encodes it automatically)
      * @param array{
      *   id: string,
      *   emailAddresses: list<string>,
@@ -589,7 +589,7 @@ final class ParticipantRawService implements ParticipantRawContract
      *
      * Triggers referral credit for an existing referred participant by GrowSurf participant ID or email address. Optionally pass `delayInDays` to hold the credit for a number of days before it is awarded (for example, to cover your own refund window). A delayed trigger can be cancelled before it is awarded with the Cancel delayed referral trigger request (DELETE on this same path).
      *
-     * @param string $participantIDOrEmail growSurf participant ID or URL-encoded participant email address
+     * @param string $participantIDOrEmail growSurf participant ID or unencoded participant email address (the SDK encodes it automatically)
      * @param array{
      *   id: string, delayInDays?: int|null
      * }|ParticipantTriggerReferralParams $params
@@ -626,7 +626,7 @@ final class ParticipantRawService implements ParticipantRawContract
      *
      * Cancels a pending delayed referral trigger for a participant (the companion to a delayed Trigger referral request). Use this to undo a scheduled referral credit before it is awarded, for example when a refund occurs inside your refund window. If the participant has no pending delayed trigger, `success` is returned as `false`.
      *
-     * @param string $participantIDOrEmail growSurf participant ID or URL-encoded participant email address
+     * @param string $participantIDOrEmail growSurf participant ID or unencoded participant email address (the SDK encodes it automatically)
      * @param array{id: string}|ParticipantCancelDelayedReferralParams $params
      * @param RequestOpts|null $requestOptions
      *
@@ -660,7 +660,7 @@ final class ParticipantRawService implements ParticipantRawContract
      *
      * Sends an email to a participant. Provide EITHER `emailType` to trigger one of the program's configured email templates, OR `subject` + `body` for a free-form email. Free-form emails are sent with the same compliance handling (company name, postal address, and an unsubscribe link are added automatically, and unsubscribed participants are suppressed). Sending requires the team to be verified by GrowSurf. Requires a **verified custom email domain** on the program (which can be completed in *Campaign Editor > 3. Emails > Email Settings*). Returns `400` until one is verified. The email is accepted for delivery.
      *
-     * @param string $participantIDOrEmail path param: GrowSurf participant ID or URL-encoded participant email address
+     * @param string $participantIDOrEmail path param: GrowSurf participant ID or unencoded participant email address (the SDK encodes it automatically)
      * @param array{
      *   id: string,
      *   body?: string,
@@ -701,7 +701,7 @@ final class ParticipantRawService implements ParticipantRawContract
      *
      * Retrieves analytics for one participant. Add `activation` to `include` for covered enrollment and first-milestone values. Unknown pre-coverage history stays `null` with an explicit state and reason. Use `activation,series` for covered `portalViews` and `shareActions` alongside existing activity counters. Existing `email` and series-window behavior is unchanged.
      *
-     * @param string $participantIDOrEmail growSurf participant ID or URL-encoded participant email address
+     * @param string $participantIDOrEmail growSurf participant ID or unencoded participant email address (the SDK encodes it automatically)
      * @param array{
      *   id: string,
      *   days?: int,
@@ -745,7 +745,7 @@ final class ParticipantRawService implements ParticipantRawContract
      *
      * Returns a participant's activity logs, most recent first (offset/limit paginated).
      *
-     * @param string $participantIDOrEmail path param: GrowSurf participant ID or URL-encoded participant email address
+     * @param string $participantIDOrEmail path param: GrowSurf participant ID or unencoded participant email address (the SDK encodes it automatically)
      * @param array{
      *   id: string, limit?: int, offset?: int
      * }|ParticipantListActivityLogsParams $params
@@ -786,7 +786,7 @@ final class ParticipantRawService implements ParticipantRawContract
      *
      * Returns a participant's payout-destination status across every payout provider enabled for the program (PayPal and/or Wise). For each provider it reports the current status, the confirmed claim email, the legal recipient type, and — when a delivery bounced or a recipient was invalidated — the repair reason. `activeProvider` is the provider that currently gets paid, or `null` until the participant confirms one.
      *
-     * @param string $participantIDOrEmail growSurf participant ID or URL-encoded participant email address
+     * @param string $participantIDOrEmail growSurf participant ID or unencoded participant email address (the SDK encodes it automatically)
      * @param array{id: string}|ParticipantGetPayoutDestinationParams $params
      * @param RequestOpts|null $requestOptions
      *
@@ -824,7 +824,7 @@ final class ParticipantRawService implements ParticipantRawContract
      *
      * Sends the participant a one-time link to confirm their payout destination for the chosen provider. Only the participant can open the link and confirm — this endpoint just triggers the message. The provider must be enabled for the program.
      *
-     * @param string $participantIDOrEmail path param: GrowSurf participant ID or URL-encoded participant email address
+     * @param string $participantIDOrEmail path param: GrowSurf participant ID or unencoded participant email address (the SDK encodes it automatically)
      * @param array{
      *   id: string,
      *   provider: ParticipantRequestPayoutDestinationConfirmationParams\Provider|value-of<ParticipantRequestPayoutDestinationConfirmationParams\Provider>,
