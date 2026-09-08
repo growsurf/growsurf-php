@@ -496,7 +496,7 @@ final class ParticipantService implements ParticipantContract
      * @param string $orderID Body param
      * @param string $paymentID Body param
      * @param string $paymentIntentID Body param
-     * @param int $refundAmount body param: The per-refund delta (minor units). Optional bookkeeping field.
+     * @param int $refundAmount body param: Positive amount for this individual refund, no greater than the sale amount, in minor units. Record it with `refundId` on each original refund to support cancellation and out-of-order amendments. A cancellation may omit an already recorded amount. Missing or conflicting refund history returns `409` without applying the cancellation. Newly observed higher cumulative refunds and incomplete coverage are retained for reconciliation.
      * @param string $refundID body param: Stable per-refund identifier. Recommended for partial refunds so repeated calls stay idempotent.
      * @param string $refundStatus body param: Refund status. Send "canceled" with a lowered amountRefunded to restore a previously reduced commission.
      * @param string $transactionID Body param
@@ -523,6 +523,7 @@ final class ParticipantService implements ParticipantContract
         ?string $refundStatus = null,
         ?string $transactionID = null,
         RequestOptions|array|null $requestOptions = null,
+        ?bool $refundHistoryComplete = null,
     ): ParticipantRefundTransactionResponse {
         $params = Util::removeNulls(
             [
@@ -539,6 +540,7 @@ final class ParticipantService implements ParticipantContract
                 'paymentID' => $paymentID,
                 'paymentIntentID' => $paymentIntentID,
                 'refundAmount' => $refundAmount,
+                'refundHistoryComplete' => $refundHistoryComplete,
                 'refundID' => $refundID,
                 'refundStatus' => $refundStatus,
                 'transactionID' => $transactionID,

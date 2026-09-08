@@ -30,6 +30,7 @@ use Growsurf\Core\Contracts\BaseModel;
  *   paymentID?: string,
  *   paymentIntentID?: string,
  *   refundAmount?: int,
+ *   refundHistoryComplete?: bool,
  *   refundID?: string,
  *   refundStatus?: string,
  *   transactionID?: string,
@@ -92,13 +93,18 @@ final class ParticipantRefundTransactionParams implements BaseModel
     public ?string $paymentIntentID;
 
     /**
-     * The per-refund delta (minor units). Optional bookkeeping field.
+     * Positive amount for this individual refund, no greater than the sale amount, in minor units. Record it with `refundId` on each original refund to support cancellation and out-of-order amendments. A cancellation may omit an already recorded amount. Missing or conflicting refund history returns `409` without applying the cancellation. Newly observed higher cumulative refunds and incomplete coverage are retained for reconciliation.
      */
     #[Optional]
     public ?int $refundAmount;
 
+    /** Confirm only after every original refund ID and amount is recorded, including canceled refunds. */
+    #[Optional]
+    public ?bool $refundHistoryComplete;
+
     /**
-     * Stable per-refund identifier. Recommended for partial refunds so repeated calls stay idempotent.
+     * Stable per-refund identifier. Required when canceling a refund or changing the
+     * refunded total after a cancellation. Reuse the original refund's identifier for its cancellation.
      */
     #[Optional('refundId')]
     public ?string $refundID;
@@ -155,6 +161,7 @@ final class ParticipantRefundTransactionParams implements BaseModel
         ?string $refundID = null,
         ?string $refundStatus = null,
         ?string $transactionID = null,
+        ?bool $refundHistoryComplete = null,
     ): self {
         $self = new self;
 
@@ -172,6 +179,7 @@ final class ParticipantRefundTransactionParams implements BaseModel
         null !== $paymentID && $self['paymentID'] = $paymentID;
         null !== $paymentIntentID && $self['paymentIntentID'] = $paymentIntentID;
         null !== $refundAmount && $self['refundAmount'] = $refundAmount;
+        null !== $refundHistoryComplete && $self['refundHistoryComplete'] = $refundHistoryComplete;
         null !== $refundID && $self['refundID'] = $refundID;
         null !== $refundStatus && $self['refundStatus'] = $refundStatus;
         null !== $transactionID && $self['transactionID'] = $transactionID;
@@ -290,7 +298,7 @@ final class ParticipantRefundTransactionParams implements BaseModel
     }
 
     /**
-     * The per-refund delta (minor units). Optional bookkeeping field.
+     * Positive amount for this individual refund, no greater than the sale amount, in minor units. Record it with `refundId` on each original refund to support cancellation and out-of-order amendments. A cancellation may omit an already recorded amount. Missing or conflicting refund history returns `409` without applying the cancellation. Newly observed higher cumulative refunds and incomplete coverage are retained for reconciliation.
      */
     public function withRefundAmount(int $refundAmount): self
     {
@@ -301,7 +309,8 @@ final class ParticipantRefundTransactionParams implements BaseModel
     }
 
     /**
-     * Stable per-refund identifier. Recommended for partial refunds so repeated calls stay idempotent.
+     * Stable per-refund identifier. Required when canceling a refund or changing the
+     * refunded total after a cancellation. Reuse the original refund's identifier for its cancellation.
      */
     public function withRefundID(string $refundID): self
     {
@@ -326,6 +335,15 @@ final class ParticipantRefundTransactionParams implements BaseModel
     {
         $self = clone $this;
         $self['transactionID'] = $transactionID;
+
+        return $self;
+    }
+
+    /** Confirm only after every original refund ID and amount is recorded, including canceled refunds. */
+    public function withRefundHistoryComplete(bool $refundHistoryComplete): self
+    {
+        $self = clone $this;
+        $self['refundHistoryComplete'] = $refundHistoryComplete;
 
         return $self;
     }
