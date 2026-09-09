@@ -411,6 +411,8 @@ final class ParticipantService implements ParticipantContract
      * @param list<array<string,mixed>> $totalTaxAmounts Body param
      * @param list<array<string,mixed>> $totalTaxes Body param
      * @param string $transactionID Body param
+     * @param string $paymentProvider Connected provider: `stripe`, `chargebee` or `recurly`. Requires `transactionId` and `testMode`.
+     * @param bool $testMode `true` for test or `false` for live. Requires `paymentProvider`.
      * @param RequestOpts|null $requestOptions
      *
      * @throws APIException
@@ -441,6 +443,8 @@ final class ParticipantService implements ParticipantContract
         ?array $totalTaxAmounts = null,
         ?array $totalTaxes = null,
         ?string $transactionID = null,
+        ?string $paymentProvider = null,
+        ?bool $testMode = null,
         RequestOptions|array|null $requestOptions = null,
     ): UnionMember0|UnionMember1 {
         $params = Util::removeNulls(
@@ -469,6 +473,8 @@ final class ParticipantService implements ParticipantContract
                 'totalTaxAmounts' => $totalTaxAmounts,
                 'totalTaxes' => $totalTaxes,
                 'transactionID' => $transactionID,
+                'paymentProvider' => $paymentProvider,
+                'testMode' => $testMode,
             ],
         );
 
@@ -500,6 +506,8 @@ final class ParticipantService implements ParticipantContract
      * @param string $refundID body param: Stable per-refund identifier. Recommended for partial refunds so repeated calls stay idempotent.
      * @param string $refundStatus body param: Refund status. Send "canceled" with a lowered amountRefunded to restore a previously reduced commission.
      * @param string $transactionID Body param
+     * @param string $paymentProvider Connected provider: `stripe`, `chargebee` or `recurly`. Requires `transactionId` and `testMode`.
+     * @param bool $testMode `true` for test or `false` for live. Requires `paymentProvider`.
      * @param RequestOpts|null $requestOptions
      *
      * @throws APIException
@@ -522,6 +530,8 @@ final class ParticipantService implements ParticipantContract
         ?string $refundID = null,
         ?string $refundStatus = null,
         ?string $transactionID = null,
+        ?string $paymentProvider = null,
+        ?bool $testMode = null,
         RequestOptions|array|null $requestOptions = null,
         ?bool $refundHistoryComplete = null,
     ): ParticipantRefundTransactionResponse {
@@ -544,6 +554,8 @@ final class ParticipantService implements ParticipantContract
                 'refundID' => $refundID,
                 'refundStatus' => $refundStatus,
                 'transactionID' => $transactionID,
+                'paymentProvider' => $paymentProvider,
+                'testMode' => $testMode,
             ],
         );
 

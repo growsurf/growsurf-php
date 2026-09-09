@@ -34,6 +34,8 @@ use Growsurf\Core\Contracts\BaseModel;
  *   refundID?: string,
  *   refundStatus?: string,
  *   transactionID?: string,
+ *   paymentProvider?: string,
+ *   testMode?: bool,
  * }
  */
 final class ParticipantRefundTransactionParams implements BaseModel
@@ -118,6 +120,14 @@ final class ParticipantRefundTransactionParams implements BaseModel
     #[Optional('transactionId')]
     public ?string $transactionID;
 
+    /** Connected provider: `stripe`, `chargebee` or `recurly`. Requires `transactionId` and `testMode`. */
+    #[Optional]
+    public ?string $paymentProvider;
+
+    /** `true` for test or `false` for live. Requires `paymentProvider`. */
+    #[Optional]
+    public ?bool $testMode;
+
     /**
      * `new ParticipantRefundTransactionParams()` is missing required properties by the API.
      *
@@ -161,6 +171,8 @@ final class ParticipantRefundTransactionParams implements BaseModel
         ?string $refundID = null,
         ?string $refundStatus = null,
         ?string $transactionID = null,
+        ?string $paymentProvider = null,
+        ?bool $testMode = null,
         ?bool $refundHistoryComplete = null,
     ): self {
         $self = new self;
@@ -183,6 +195,8 @@ final class ParticipantRefundTransactionParams implements BaseModel
         null !== $refundID && $self['refundID'] = $refundID;
         null !== $refundStatus && $self['refundStatus'] = $refundStatus;
         null !== $transactionID && $self['transactionID'] = $transactionID;
+        null !== $paymentProvider && $self['paymentProvider'] = $paymentProvider;
+        null !== $testMode && $self['testMode'] = $testMode;
 
         return $self;
     }
@@ -327,6 +341,22 @@ final class ParticipantRefundTransactionParams implements BaseModel
     {
         $self = clone $this;
         $self['refundStatus'] = $refundStatus;
+
+        return $self;
+    }
+
+    public function withPaymentProvider(string $paymentProvider): self
+    {
+        $self = clone $this;
+        $self['paymentProvider'] = $paymentProvider;
+
+        return $self;
+    }
+
+    public function withTestMode(bool $testMode): self
+    {
+        $self = clone $this;
+        $self['testMode'] = $testMode;
 
         return $self;
     }

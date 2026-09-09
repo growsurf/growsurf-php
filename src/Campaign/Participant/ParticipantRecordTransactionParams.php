@@ -41,6 +41,8 @@ use Growsurf\Core\Conversion\MapOf;
  *   totalTaxAmounts?: list<array<string,mixed>>,
  *   totalTaxes?: list<array<string,mixed>>,
  *   transactionID?: string,
+ *   paymentProvider?: string,
+ *   testMode?: bool,
  * }
  */
 final class ParticipantRecordTransactionParams implements BaseModel
@@ -123,6 +125,14 @@ final class ParticipantRecordTransactionParams implements BaseModel
     #[Optional('transactionId')]
     public ?string $transactionID;
 
+    /** Connected provider: `stripe`, `chargebee` or `recurly`. Requires `transactionId` and `testMode`. */
+    #[Optional]
+    public ?string $paymentProvider;
+
+    /** `true` for test or `false` for live. Requires `paymentProvider`. */
+    #[Optional]
+    public ?bool $testMode;
+
     /**
      * `new ParticipantRecordTransactionParams()` is missing required properties by the API.
      *
@@ -180,6 +190,8 @@ final class ParticipantRecordTransactionParams implements BaseModel
         ?array $totalTaxAmounts = null,
         ?array $totalTaxes = null,
         ?string $transactionID = null,
+        ?string $paymentProvider = null,
+        ?bool $testMode = null,
     ): self {
         $self = new self;
 
@@ -208,6 +220,8 @@ final class ParticipantRecordTransactionParams implements BaseModel
         null !== $totalTaxAmounts && $self['totalTaxAmounts'] = $totalTaxAmounts;
         null !== $totalTaxes && $self['totalTaxes'] = $totalTaxes;
         null !== $transactionID && $self['transactionID'] = $transactionID;
+        null !== $paymentProvider && $self['paymentProvider'] = $paymentProvider;
+        null !== $testMode && $self['testMode'] = $testMode;
 
         return $self;
     }
@@ -400,6 +414,22 @@ final class ParticipantRecordTransactionParams implements BaseModel
     {
         $self = clone $this;
         $self['totalTaxes'] = $totalTaxes;
+
+        return $self;
+    }
+
+    public function withPaymentProvider(string $paymentProvider): self
+    {
+        $self = clone $this;
+        $self['paymentProvider'] = $paymentProvider;
+
+        return $self;
+    }
+
+    public function withTestMode(bool $testMode): self
+    {
+        $self = clone $this;
+        $self['testMode'] = $testMode;
 
         return $self;
     }
