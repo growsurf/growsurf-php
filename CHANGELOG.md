@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.5.1](https://github.com/growsurf/growsurf-php/compare/v1.5.0...v1.5.1) (2026-09-10)
+
+
+### Chores
+
+* merge main (release 1.5.0) into dev ([655f9d5](https://github.com/growsurf/growsurf-php/commit/655f9d5e376ba0e13c7e515458c4483da24b700d))
+
+
+### Documentation
+
+* **api:** warn that a new account API key cannot be recovered ([839e738](https://github.com/growsurf/growsurf-php/commit/839e738a5ef5b8fce700503c3fb57ef1b157f950))
+
 ## [1.5.0](https://github.com/growsurf/growsurf-php/compare/v1.4.0...v1.5.0) (2026-09-10)
 
 
