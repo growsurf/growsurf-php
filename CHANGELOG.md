@@ -1,5 +1,22 @@
 # Changelog
 
+## [1.5.0](https://github.com/growsurf/growsurf-php/compare/v1.4.0...v1.5.0) (2026-09-10)
+
+
+### Features
+
+* **api:** add campaign integrations list endpoint ([95b6850](https://github.com/growsurf/growsurf-php/commit/95b685032fc19ced78be5a272b68d762815197eb))
+* **api:** add CampaignEmails, CampaignInstallation, and CampaignOptions models and documented error fields ([215f220](https://github.com/growsurf/growsurf-php/commit/215f22081fcff539626b47d834a925e7a8352083))
+* **api:** add EMBEDDABLE_ELEMENT portal view source ([2ac0d1b](https://github.com/growsurf/growsurf-php/commit/2ac0d1b1e1bc3c8fb146afed0edef28b49444ecb))
+* **api:** add paymentProvider and testMode to transaction params ([ca254de](https://github.com/growsurf/growsurf-php/commit/ca254de421a3c820fc1328626ece6e99463e0d26))
+* **api:** add refundHistoryComplete to refund transaction params ([debe9f3](https://github.com/growsurf/growsurf-php/commit/debe9f3495e6c74c18d182bf14d835cdbbefc0d8))
+* **api:** sync analytics and program resources ([35a3fce](https://github.com/growsurf/growsurf-php/commit/35a3fced867894bcba207c413924a50b81152963))
+
+
+### Documentation
+
+* clarify participant email addresses must be unencoded ([7824c5f](https://github.com/growsurf/growsurf-php/commit/7824c5f933a374b25456236970a7f5d52923e65d))
+
 ## [1.4.0](https://github.com/growsurf/growsurf-php/compare/v1.3.0...v1.4.0) (2026-08-25)
 
 
