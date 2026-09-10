@@ -37,6 +37,7 @@ use Growsurf\Services\Campaign\CommissionService;
 use Growsurf\Services\Campaign\DesignService;
 use Growsurf\Services\Campaign\EmailsService;
 use Growsurf\Services\Campaign\InstallationService;
+use Growsurf\Services\Campaign\IntegrationsService;
 use Growsurf\Services\Campaign\OptionsService;
 use Growsurf\Services\Campaign\ParticipantService;
 use Growsurf\Services\Campaign\ProgramResourcesService;
@@ -101,6 +102,11 @@ final class CampaignService implements CampaignContract
     /**
      * @api
      */
+    public IntegrationsService $integrations;
+
+    /**
+     * @api
+     */
     public WebhooksService $webhooks;
 
     /**
@@ -118,6 +124,7 @@ final class CampaignService implements CampaignContract
         $this->emails = new EmailsService($client);
         $this->options = new OptionsService($client);
         $this->installation = new InstallationService($client);
+        $this->integrations = new IntegrationsService($client);
         $this->webhooks = new WebhooksService($client);
     }
 
