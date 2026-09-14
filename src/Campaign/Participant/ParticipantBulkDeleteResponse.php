@@ -6,16 +6,19 @@ namespace Growsurf\Campaign\Participant;
 
 use Growsurf\Campaign\Participant\ParticipantBulkDeleteResponse\Result;
 use Growsurf\Campaign\Participant\ParticipantBulkDeleteResponse\Summary;
+use Growsurf\Core\Attributes\Optional;
 use Growsurf\Core\Attributes\Required;
 use Growsurf\Core\Concerns\SdkModel;
 use Growsurf\Core\Contracts\BaseModel;
 
 /**
+ * @phpstan-import-type PendingAnalyticsErasureShape from \Growsurf\Campaign\Participant\PendingAnalyticsErasure
  * @phpstan-import-type ResultShape from \Growsurf\Campaign\Participant\ParticipantBulkDeleteResponse\Result
  * @phpstan-import-type SummaryShape from \Growsurf\Campaign\Participant\ParticipantBulkDeleteResponse\Summary
  *
  * @phpstan-type ParticipantBulkDeleteResponseShape = array{
- *   results: list<Result|ResultShape>, summary: Summary|SummaryShape
+ *   results: list<Result|ResultShape>, summary: Summary|SummaryShape,
+ *   analyticsErasure?: PendingAnalyticsErasure|PendingAnalyticsErasureShape|null
  * }
  */
 final class ParticipantBulkDeleteResponse implements BaseModel
@@ -33,6 +36,10 @@ final class ParticipantBulkDeleteResponse implements BaseModel
 
     #[Required]
     public Summary $summary;
+
+    /** Analytics erasure is pending. Do not repeat successful deletions. */
+    #[Optional]
+    public ?PendingAnalyticsErasure $analyticsErasure;
 
     /**
      * `new ParticipantBulkDeleteResponse()` is missing required properties by the API.
@@ -58,15 +65,18 @@ final class ParticipantBulkDeleteResponse implements BaseModel
      *
      * You must use named parameters to construct any parameters with a default value.
      *
+     * @param PendingAnalyticsErasure|PendingAnalyticsErasureShape|null $analyticsErasure
      * @param list<Result|ResultShape> $results
      * @param Summary|SummaryShape $summary
      */
-    public static function with(array $results, Summary|array $summary): self
+    public static function with(array $results, Summary|array $summary, PendingAnalyticsErasure|array|null $analyticsErasure = null): self
     {
         $self = new self;
 
         $self['results'] = $results;
         $self['summary'] = $summary;
+
+        null !== $analyticsErasure && $self['analyticsErasure'] = $analyticsErasure;
 
         return $self;
     }
@@ -91,6 +101,15 @@ final class ParticipantBulkDeleteResponse implements BaseModel
     {
         $self = clone $this;
         $self['summary'] = $summary;
+
+        return $self;
+    }
+
+    /** @param PendingAnalyticsErasure|PendingAnalyticsErasureShape|null $analyticsErasure */
+    public function withAnalyticsErasure(PendingAnalyticsErasure|array|null $analyticsErasure): self
+    {
+        $self = clone $this;
+        $self['analyticsErasure'] = $analyticsErasure;
 
         return $self;
     }
