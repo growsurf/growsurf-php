@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.7.0](https://github.com/growsurf/growsurf-php/compare/v1.6.0...v1.7.0) (2026-09-17)
+
+
+### Features
+
+* **api:** add metadata filter to campaign.listParticipants ([c5aed20](https://github.com/growsurf/growsurf-php/commit/c5aed20dd42e1d9c616d537611e6785a59769773))
+
+
+### Chores
+
+* merge main (release 1.6.0) into dev ([417faed](https://github.com/growsurf/growsurf-php/commit/417faedcef2cc950262778cdeacb3d222972cbfe))
+
 ## [1.6.0](https://github.com/growsurf/growsurf-php/compare/v1.5.1...v1.6.0) (2026-09-14)
 
 
