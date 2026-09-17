@@ -383,6 +383,7 @@ final class CampaignService implements CampaignContract
      *
      * @param string $id growSurf program ID
      * @param int $limit Number of results to return. Maximum 100.
+     * @param array<string,string> $metadata return only participants whose metadata matches every given key and value exactly. Send each pair as `metadata[key]=value`. Up to 3 keys per request. Values compare as strings, which is how metadata is stored
      * @param string $nextID ID to start the next paged result set with
      * @param RequestOpts|null $requestOptions
      *
@@ -391,10 +392,13 @@ final class CampaignService implements CampaignContract
     public function listParticipants(
         string $id,
         int $limit = 10,
+        ?array $metadata = null,
         ?string $nextID = null,
         RequestOptions|array|null $requestOptions = null,
     ): ParticipantList {
-        $params = Util::removeNulls(['limit' => $limit, 'nextID' => $nextID]);
+        $params = Util::removeNulls(
+            ['limit' => $limit, 'metadata' => $metadata, 'nextID' => $nextID]
+        );
 
         // @phpstan-ignore-next-line argument.type
         $response = $this->raw->listParticipants($id, params: $params, requestOptions: $requestOptions);

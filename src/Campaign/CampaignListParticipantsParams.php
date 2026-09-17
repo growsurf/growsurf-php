@@ -15,7 +15,7 @@ use Growsurf\Core\Contracts\BaseModel;
  * @see Growsurf\Services\CampaignService::listParticipants()
  *
  * @phpstan-type CampaignListParticipantsParamsShape = array{
- *   limit?: int|null, nextID?: string|null
+ *   limit?: int|null, metadata?: array<string,string>|null, nextID?: string|null
  * }
  */
 final class CampaignListParticipantsParams implements BaseModel
@@ -29,6 +29,14 @@ final class CampaignListParticipantsParams implements BaseModel
      */
     #[Optional]
     public ?int $limit;
+
+    /**
+     * Return only participants whose metadata matches every given key and value exactly. Send each pair as `metadata[key]=value`. Up to 3 keys per request. Values compare as strings, which is how metadata is stored.
+     *
+     * @var array<string,string>|null $metadata
+     */
+    #[Optional(map: 'string')]
+    public ?array $metadata;
 
     /**
      * ID to start the next paged result set with.
@@ -45,12 +53,18 @@ final class CampaignListParticipantsParams implements BaseModel
      * Construct an instance from the required parameters.
      *
      * You must use named parameters to construct any parameters with a default value.
+     *
+     * @param array<string,string>|null $metadata
      */
-    public static function with(?int $limit = null, ?string $nextID = null): self
-    {
+    public static function with(
+        ?int $limit = null,
+        ?array $metadata = null,
+        ?string $nextID = null,
+    ): self {
         $self = new self;
 
         null !== $limit && $self['limit'] = $limit;
+        null !== $metadata && $self['metadata'] = $metadata;
         null !== $nextID && $self['nextID'] = $nextID;
 
         return $self;
@@ -63,6 +77,19 @@ final class CampaignListParticipantsParams implements BaseModel
     {
         $self = clone $this;
         $self['limit'] = $limit;
+
+        return $self;
+    }
+
+    /**
+     * Return only participants whose metadata matches every given key and value exactly. Send each pair as `metadata[key]=value`. Up to 3 keys per request. Values compare as strings, which is how metadata is stored.
+     *
+     * @param array<string,string> $metadata
+     */
+    public function withMetadata(array $metadata): self
+    {
+        $self = clone $this;
+        $self['metadata'] = $metadata;
 
         return $self;
     }
