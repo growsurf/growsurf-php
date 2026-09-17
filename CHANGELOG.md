@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.6.0](https://github.com/growsurf/growsurf-php/compare/v1.5.1...v1.6.0) (2026-09-14)
+
+
+### Features
+
+* **api:** add pending analyticsErasure to participant delete responses ([8419309](https://github.com/growsurf/growsurf-php/commit/8419309c44ba5671f450f3c920028ddb7f4d7c3b))
+
+
+### Chores
+
+* merge dev into main ([c686f45](https://github.com/growsurf/growsurf-php/commit/c686f45dd1d991f7f20d6f538ae69096f4a49036))
+
 ## [1.5.1](https://github.com/growsurf/growsurf-php/compare/v1.5.0...v1.5.1) (2026-09-10)
 
 
