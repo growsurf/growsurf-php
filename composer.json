@@ -26,6 +26,7 @@
     "sort-packages": true
   },
   "description": "Growsurf PHP SDK",
+  "homepage": "https://growsurf.com/",
   "name": "growsurf/growsurf-php",
   "require": {
     "php": "^8.1",
