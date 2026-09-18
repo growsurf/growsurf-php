@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.7.1](https://github.com/growsurf/growsurf-php/compare/v1.7.0...v1.7.1) (2026-09-18)
+
+
+### Bug Fixes
+
+* **package:** point package homepage at growsurf.com ([4288f38](https://github.com/growsurf/growsurf-php/commit/4288f3814c09dbcab0e03524c0e1306f0b0262d7))
+
+
+### Chores
+
+* merge dev into main ([affab55](https://github.com/growsurf/growsurf-php/commit/affab55fbaac4efe476a1946b34c2e75eed8c991))
+
 ## [1.7.0](https://github.com/growsurf/growsurf-php/compare/v1.6.0...v1.7.0) (2026-09-17)
 
 
