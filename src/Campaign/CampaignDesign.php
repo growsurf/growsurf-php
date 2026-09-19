@@ -8,7 +8,9 @@ namespace Growsurf\Campaign;
  * Public array shapes for a program's open Design configuration.
  *
  * `resources` controls participant presentation. Resource items and their order use the Program
- * Resources service.
+ * Resources service. `widget` is the website widget shown in a corner of your own site, with its
+ * colors under `theme.widget`; both of its audience switches start off, so a program shows nothing
+ * until you turn one on.
  *
  * @phpstan-type ParticipantLoginDesignShape = array{heading?: string, description?: string, fieldLabel?: string, fieldPlaceholder?: string, buttonText?: string, successHeading?: string, successBody?: string, resendPrompt?: string, resend?: string, resent?: string, invalidEmail?: string, cooldown?: string, serverError?: string, invalidLink?: string, ...<string, mixed>}
  * @phpstan-type PayoutDestinationConfirmationErrorMessagesShape = array{invalidEmail?: string|null, emailMismatch?: string|null, tokenExpired?: string|null, tokenUsed?: string|null, alreadyConfirmed?: string|null, generic?: string|null}
@@ -61,7 +63,35 @@ namespace Growsurf\Campaign;
  *   referrerNameFallback?: string|null,
  *   ...<string, mixed>
  * }
- * @phpstan-type CampaignDesignThemeShape = array{referredExperienceOfferPopup?: array{color?: string|null, backgroundColor?: string|null, ...<string, mixed>}, ...<string, mixed>}
+ * @phpstan-type CampaignDesignWidgetPageRulesShape = array{
+ *   mode?: 'ALL'|'ONLY'|'EXCEPT',
+ *   patterns?: list<string>
+ * }
+ * @phpstan-type CampaignDesignWidgetShape = array{
+ *   isShownToNewVisitors?: bool,
+ *   isShownToParticipants?: bool,
+ *   appearance?: 'BUTTON'|'CARD',
+ *   isArtShown?: bool,
+ *   artImageUrl?: string|null,
+ *   newVisitorText?: string|null,
+ *   participantText?: string|null,
+ *   newVisitorDescription?: string|null,
+ *   participantDescription?: string|null,
+ *   buttonText?: string|null,
+ *   markKey?: 'GIFT'|'TICKET'|'DISCOUNT'|'CASH'|'PERK'|'SHARE'|'LINK'|'INVITE'|'FRIENDS'|'THANKS'|null,
+ *   icon?: 'CUSTOM'|'NONE'|'DEFAULT',
+ *   iconImageUrl?: string|null,
+ *   placement?: 'TOP_LEFT'|'TOP_CENTER'|'TOP_RIGHT'|'BOTTOM_LEFT'|'BOTTOM_CENTER'|'BOTTOM_RIGHT',
+ *   offsetSide?: int,
+ *   offsetEdge?: int,
+ *   reveal?: 'IMMEDIATE'|'DELAY'|'SCROLL',
+ *   revealDelaySeconds?: int,
+ *   returnAfterDays?: int,
+ *   isHiddenOnMobile?: bool,
+ *   pageRules?: CampaignDesignWidgetPageRulesShape,
+ *   ...<string, mixed>
+ * }
+ * @phpstan-type CampaignDesignThemeShape = array{referredExperienceOfferPopup?: array{color?: string|null, backgroundColor?: string|null, ...<string, mixed>}, widget?: array{color?: string|null, backgroundColor?: string|null, borderRadius?: string|null, ...<string, mixed>}, ...<string, mixed>}
  * @phpstan-type CampaignDesignShape = array{
  *   participantAvatarStyle?: 'CHARACTERS'|'INITIALS'|'ANIMALS'|'GRADIENT',
  *   window?: array<string, mixed>,
@@ -75,6 +105,7 @@ namespace Growsurf\Campaign;
  *   referralStatus?: array<string, mixed>,
  *   leaderboard?: array<string, mixed>,
  *   referredExperience?: CampaignDesignReferredExperienceShape,
+ *   widget?: CampaignDesignWidgetShape,
  *   referralSummary?: array<string, mixed>,
  *   affiliateSummary?: array<string, mixed>,
  *   commissions?: array<string, mixed>,
