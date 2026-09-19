@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.8.0](https://github.com/growsurf/growsurf-php/compare/v1.7.1...v1.8.0) (2026-09-19)
+
+
+### Features
+
+* **api:** add campaign design widget section and healthcare goals ([133b051](https://github.com/growsurf/growsurf-php/commit/133b051d86fa3737b5941feee78255e5236cff50))
+
+
+### Chores
+
+* merge dev into main ([0ea543b](https://github.com/growsurf/growsurf-php/commit/0ea543ba433d7b718339605fcc37dac50bc16752))
+
 ## [1.7.1](https://github.com/growsurf/growsurf-php/compare/v1.7.0...v1.7.1) (2026-09-18)
 
 
