@@ -173,7 +173,7 @@ final class CampaignService implements CampaignContract
      *
      * @param Type|value-of<Type> $type The program type. Immutable after creation.
      * @param string $currencyISO ISO 4217 currency code. Defaults to USD. Chosen when the program is created and immutable afterward — it cannot be changed on update.
-     * @param Goal|value-of<Goal> $goal What the program is for, which seeds share settings that suit that audience. Programs whose participants refer other businesses start with the LinkedIn share button visible; consumer, financial, education, insurance, telehealth, newsletter, and waitlist programs start with it hidden. Set only when the program is created; it is not accepted on update.
+     * @param Goal|value-of<Goal> $goal What the program is for, which seeds the share buttons and the starter rewards that suit that audience. Programs whose participants refer other businesses start with the LinkedIn share button visible; consumer, financial, education, insurance, telehealth, newsletter, and waitlist programs start with it hidden. Starter rewards arrive switched off with a placeholder name, so the program awards nothing until you set the amount and turn one on. Set only when the program is created; it is not accepted on update.
      * @param string $name The program name. Defaults to a generated friendly label plus the creation date.
      * @param list<RewardCreateParams|RewardCreateParamsShape> $rewards optional inline rewards to create with the program
      * @param RequestOpts|null $requestOptions
