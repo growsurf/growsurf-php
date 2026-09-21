@@ -26,6 +26,7 @@ use Growsurf\Campaign\CampaignRetrieveAnalyticsParams\Platform;
 use Growsurf\Campaign\ParticipantCommissionList;
 use Growsurf\Campaign\ParticipantList;
 use Growsurf\Campaign\ParticipantPayoutList;
+use Growsurf\Campaign\ReferralFlowScreenshotsResponse;
 use Growsurf\Campaign\ReferralList;
 use Growsurf\Campaign\RewardCreateParams;
 use Growsurf\Client;
@@ -258,6 +259,26 @@ final class CampaignService implements CampaignContract
     ): Campaign {
         // @phpstan-ignore-next-line argument.type
         $response = $this->raw->clone($id, requestOptions: $requestOptions);
+
+        return $response->parse();
+    }
+
+    /**
+     * @api
+     *
+     * Renders the program's current saved configuration into two preview images: the referrer window a participant sees, and the referred-friend experience. Use them to show a person what the draft looks like before anything launches. The images render GrowSurf's own preview, not the program's installed website, so they do not prove an installation. Each `url` is private and stops working at `expiresAt`; capture again when you need a fresh view. Only the account owner's credential can capture screenshots, and the endpoint takes no request body.
+     *
+     * @param string $id growSurf program ID
+     * @param RequestOpts|null $requestOptions
+     *
+     * @throws APIException
+     */
+    public function captureReferralFlowScreenshots(
+        string $id,
+        RequestOptions|array|null $requestOptions = null
+    ): ReferralFlowScreenshotsResponse {
+        // @phpstan-ignore-next-line argument.type
+        $response = $this->raw->captureReferralFlowScreenshots($id, requestOptions: $requestOptions);
 
         return $response->parse();
     }

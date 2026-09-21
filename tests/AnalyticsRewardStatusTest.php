@@ -13,6 +13,9 @@ use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @internal
+ */
 #[CoversNothing]
 final class AnalyticsRewardStatusTest extends TestCase
 {

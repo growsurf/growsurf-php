@@ -5,15 +5,20 @@ declare(strict_types=1);
 namespace Tests\Models;
 
 use Growsurf\Campaign\AffiliateApplication;
+use Growsurf\Campaign\AffiliateApplication\RiskLevel;
 use Growsurf\Campaign\AffiliateApplicationAnswer;
 use Growsurf\Campaign\AffiliateApplicationAnswer\Type;
-use Growsurf\Campaign\AffiliateApplication\RiskLevel;
 use Growsurf\Campaign\AffiliateInvite;
 use Growsurf\Core\Attributes\Optional;
 use Growsurf\Core\Attributes\Required;
 use Growsurf\Core\Conversion;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @internal
+ *
+ * @coversNothing
+ */
 final class AffiliateNullabilityTest extends TestCase
 {
     public function testAffiliateApplicationHydratesAndSetsExplicitNulls(): void
@@ -212,7 +217,8 @@ final class AffiliateNullabilityTest extends TestCase
             ->withAcceptedAt(null)
             ->withFirstName(null)
             ->withLastName(null)
-            ->withRevokedAt(null);
+            ->withRevokedAt(null)
+        ;
 
         self::assertSame($payload, $withNulls->jsonSerialize());
         $this->assertNullableMetadata(AffiliateInvite::class, [
@@ -233,7 +239,8 @@ final class AffiliateNullabilityTest extends TestCase
     ): void {
         foreach ($properties as $property) {
             $attributes = (new \ReflectionProperty($model, $property))
-                ->getAttributes(Optional::class);
+                ->getAttributes(Optional::class)
+            ;
 
             self::assertCount(1, $attributes);
             self::assertTrue(
@@ -253,7 +260,8 @@ final class AffiliateNullabilityTest extends TestCase
     ): void {
         foreach ($properties as $property) {
             $attributes = (new \ReflectionProperty($model, $property))
-                ->getAttributes(Required::class);
+                ->getAttributes(Required::class)
+            ;
 
             self::assertCount(1, $attributes);
             self::assertTrue(

@@ -41,6 +41,7 @@ use Growsurf\Core\Conversion\MapOf;
  *   isNew?: bool|null,
  *   isWinner?: bool|null,
  *   lastName?: string|null,
+ *   leadCount?: int|null,
  *   metadata?: array<string,mixed>|null,
  *   mobileInstanceID?: string|null,
  *   monthlyReferrals?: list<string>|null,
@@ -150,6 +151,12 @@ final class Participant implements BaseModel
 
     #[Optional(nullable: true)]
     public ?string $lastName;
+
+    /**
+     * The number of pending referrals the participant made that have not converted into successful referrals yet.
+     */
+    #[Optional]
+    public ?int $leadCount;
 
     /**
      * Shallow custom metadata object.
@@ -301,6 +308,7 @@ final class Participant implements BaseModel
         ?bool $isNew = null,
         ?bool $isWinner = null,
         ?string $lastName = null,
+        ?int $leadCount = null,
         ?array $metadata = null,
         ?string $mobileInstanceID = null,
         ?array $monthlyReferrals = null,
@@ -347,6 +355,7 @@ final class Participant implements BaseModel
         null !== $isNew && $self['isNew'] = $isNew;
         null !== $isWinner && $self['isWinner'] = $isWinner;
         null !== $lastName && $self['lastName'] = $lastName;
+        null !== $leadCount && $self['leadCount'] = $leadCount;
         null !== $metadata && $self['metadata'] = $metadata;
         null !== $mobileInstanceID && $self['mobileInstanceID'] = $mobileInstanceID;
         null !== $monthlyReferrals && $self['monthlyReferrals'] = $monthlyReferrals;
@@ -574,6 +583,17 @@ final class Participant implements BaseModel
     {
         $self = clone $this;
         $self['lastName'] = $lastName;
+
+        return $self;
+    }
+
+    /**
+     * The number of pending referrals the participant made that have not converted into successful referrals yet.
+     */
+    public function withLeadCount(int $leadCount): self
+    {
+        $self = clone $this;
+        $self['leadCount'] = $leadCount;
 
         return $self;
     }

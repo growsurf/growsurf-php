@@ -52,8 +52,7 @@ final class RewardStatus implements BaseModel
         ?int $completed = null,
         ?int $unapproved = null,
         ?int $unfulfilled = null,
-    ): self
-    {
+    ): self {
         $self = new self;
 
         null !== $completed && $self['completed'] = $completed;

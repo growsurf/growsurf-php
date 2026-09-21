@@ -334,5 +334,4 @@ final class AffiliateApplication implements BaseModel
 
         return $self;
     }
-
 }
