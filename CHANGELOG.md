@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.9.0](https://github.com/growsurf/growsurf-php/compare/v1.8.1...v1.9.0) (2026-09-21)
+
+
+### Features
+
+* **api:** add referral-flow screenshot capture and participant leadCount ([48a13d8](https://github.com/growsurf/growsurf-php/commit/48a13d84d1c2d47d365ede3f580732172fed767f))
+
+
+### Chores
+
+* merge origin/main ([7ecea78](https://github.com/growsurf/growsurf-php/commit/7ecea7803d6f43fa9491773224a80c956c0e0497))
+
 ## [1.8.1](https://github.com/growsurf/growsurf-php/compare/v1.8.0...v1.8.1) (2026-09-19)
 
 
