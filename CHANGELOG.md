@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.8.1](https://github.com/growsurf/growsurf-php/compare/v1.8.0...v1.8.1) (2026-09-19)
+
+
+### Chores
+
+* merge dev into main ([9f6d89f](https://github.com/growsurf/growsurf-php/commit/9f6d89fc96e637ccdd48a5b9fccf6c3f8cb80023))
+* merge dev into main ([f7ea4cd](https://github.com/growsurf/growsurf-php/commit/f7ea4cd2e1f168a936c819a20b439d408c868346))
+
+
+### Documentation
+
+* **api:** document the starter rewards each campaign goal seeds ([067f298](https://github.com/growsurf/growsurf-php/commit/067f2986358cbf51ff20ebdf3a38e34d45d623ba))
+* **api:** document the starter rewards each campaign goal seeds ([3e9dd47](https://github.com/growsurf/growsurf-php/commit/3e9dd478624873661edfa70b55af2c7dfe21458e))
+
 ## [1.8.0](https://github.com/growsurf/growsurf-php/compare/v1.7.1...v1.8.0) (2026-09-19)
 
 
