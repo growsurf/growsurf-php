@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.10.0](https://github.com/growsurf/growsurf-php/compare/v1.9.0...v1.10.0) (2026-09-23)
+
+
+### Features
+
+* **api:** update SDK campaign contracts and request handling ([4492e12](https://github.com/growsurf/growsurf-php/commit/4492e128f8a75ca69d051f5fdca7a5a2d7544e5f))
+
 ## [1.9.0](https://github.com/growsurf/growsurf-php/compare/v1.8.1...v1.9.0) (2026-09-21)
 
 
