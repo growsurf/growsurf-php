@@ -10,7 +10,9 @@ namespace Growsurf\Campaign;
  * `resources` controls participant presentation. Resource items and their order use the Program
  * Resources service. `widget` is the website widget shown in a corner of your own site, with its
  * colors under `theme.widget`; both of its audience switches start off, so a program shows nothing
- * until you turn one on.
+ * until you turn one on. `trafficInsights` is the participant Traffic report. It starts on for new
+ * affiliate programs and hidden for referral programs; `GET` returns every setting with its default
+ * copy, a `PATCH` changes only the settings you send, and its labels cannot be blank.
  *
  * @phpstan-type ParticipantLoginDesignShape = array{heading?: string, description?: string, fieldLabel?: string, fieldPlaceholder?: string, buttonText?: string, successHeading?: string, successBody?: string, resendPrompt?: string, resend?: string, resent?: string, invalidEmail?: string, cooldown?: string, serverError?: string, invalidLink?: string, ...<string, mixed>}
  * @phpstan-type PayoutDestinationConfirmationErrorMessagesShape = array{invalidEmail?: string|null, emailMismatch?: string|null, tokenExpired?: string|null, tokenUsed?: string|null, alreadyConfirmed?: string|null, generic?: string|null}
@@ -91,6 +93,34 @@ namespace Growsurf\Campaign;
  *   pageRules?: CampaignDesignWidgetPageRulesShape,
  *   ...<string, mixed>
  * }
+ * @phpstan-type CampaignDesignTrafficInsightsMetricShape = array{
+ *   isVisible?: bool,
+ *   label?: string,
+ *   helperText?: string
+ * }
+ * @phpstan-type CampaignDesignTrafficInsightsBreakdownShape = array{
+ *   isVisible?: bool,
+ *   label?: string,
+ *   levels?: array<string, string>,
+ *   values?: array<string, string>
+ * }
+ * @phpstan-type CampaignDesignTrafficInsightsShape = array{
+ *   isPublicDisplayed?: bool,
+ *   title?: string,
+ *   trafficForLabel?: string,
+ *   allLinksLabel?: string,
+ *   visitsOverTimeTitle?: string,
+ *   breakdownsTitle?: string,
+ *   viewTrafficInsightsLinkText?: string,
+ *   backLinkText?: string,
+ *   emptyState?: string,
+ *   notSetLabel?: string,
+ *   messages?: array{error?: string, unavailable?: string, partial?: string, partialFrom?: string, breakdownPartial?: string, breakdownEmpty?: string},
+ *   dateRangeLabels?: array{LAST_7_DAYS?: string, LAST_30_DAYS?: string, LAST_90_DAYS?: string, ALL_TIME?: string},
+ *   defaultDateRange?: 'LAST_7_DAYS'|'LAST_30_DAYS'|'LAST_90_DAYS'|'ALL_TIME',
+ *   metrics?: array{visits?: CampaignDesignTrafficInsightsMetricShape, uniqueVisitors?: CampaignDesignTrafficInsightsMetricShape},
+ *   breakdowns?: array{utm?: CampaignDesignTrafficInsightsBreakdownShape, referrer?: CampaignDesignTrafficInsightsBreakdownShape, destination?: CampaignDesignTrafficInsightsBreakdownShape, geo?: CampaignDesignTrafficInsightsBreakdownShape, technology?: CampaignDesignTrafficInsightsBreakdownShape, trigger?: CampaignDesignTrafficInsightsBreakdownShape}
+ * }
  * @phpstan-type CampaignDesignThemeShape = array{referredExperienceOfferPopup?: array{color?: string|null, backgroundColor?: string|null, ...<string, mixed>}, widget?: array{color?: string|null, backgroundColor?: string|null, borderRadius?: string|null, ...<string, mixed>}, ...<string, mixed>}
  * @phpstan-type CampaignDesignShape = array{
  *   participantAvatarStyle?: 'CHARACTERS'|'INITIALS'|'ANIMALS'|'GRADIENT',
@@ -106,6 +136,7 @@ namespace Growsurf\Campaign;
  *   leaderboard?: array<string, mixed>,
  *   referredExperience?: CampaignDesignReferredExperienceShape,
  *   widget?: CampaignDesignWidgetShape,
+ *   trafficInsights?: CampaignDesignTrafficInsightsShape,
  *   referralSummary?: array<string, mixed>,
  *   affiliateSummary?: array<string, mixed>,
  *   commissions?: array<string, mixed>,

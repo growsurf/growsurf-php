@@ -184,9 +184,26 @@ abstract class BaseClient
             throw new APIConnectionException($req, message: 'Redirection without Location header');
         }
 
-        $uri = Util::joinUri($req->getUri(), path: $location);
+        $from = $req->getUri();
+        $uri = Util::joinUri($from, path: $location);
 
-        return $req->withUri($uri);
+        if ('https' === strtolower($from->getScheme()) && 'http' === strtolower($uri->getScheme())) {
+            throw new APIConnectionException($req, message: 'Tried to redirect to an insecure URL');
+        }
+
+        $req = $req->withUri($uri);
+
+        // Never forward credentials to another origin (matches the fetch spec and the other SDKs).
+        $sameOrigin = strtolower($from->getScheme()) === strtolower($uri->getScheme())
+            && strtolower($from->getHost()) === strtolower($uri->getHost())
+            && $from->getPort() === $uri->getPort();
+        if (!$sameOrigin) {
+            foreach (['Authorization', 'Cookie', 'Proxy-Authorization'] as $header) {
+                $req = $req->withoutHeader($header);
+            }
+        }
+
+        return $req;
     }
 
     /**
