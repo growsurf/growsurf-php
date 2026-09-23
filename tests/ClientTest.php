@@ -175,6 +175,34 @@ class ClientTest extends TestCase
         $this->assertFalse($transporter->getRequests()[0]->hasHeader('Idempotency-Key'));
     }
 
+    public function testCrossOriginRedirectDropsTheApiKey(): void
+    {
+        $transporter = new Client;
+        $responseFactory = Psr17FactoryDiscovery::findResponseFactory();
+        $transporter->addResponse(
+            $responseFactory->createResponse(302)->withHeader('Location', 'https://elsewhere.example/campaigns')
+        );
+        $transporter->addResponse(
+            $responseFactory
+                ->createResponse(200)
+                ->withHeader('Content-Type', 'application/json')
+                ->withBody(Psr17FactoryDiscovery::findStreamFactory()->createStream('{"campaigns":[]}'))
+        );
+        $client = new \Growsurf\Client(
+            baseUrl: 'https://api.growsurf.com/v2',
+            apiKey: 'My API Key',
+            requestOptions: ['transporter' => $transporter],
+        );
+
+        $client->campaign->list();
+
+        $requests = $transporter->getRequests();
+        $this->assertCount(2, $requests);
+        $this->assertSame('Bearer My API Key', $requests[0]->getHeaderLine('Authorization'));
+        $this->assertSame('elsewhere.example', $requests[1]->getUri()->getHost());
+        $this->assertFalse($requests[1]->hasHeader('Authorization'));
+    }
+
     public function testStatusExceptionRetainsStructuredErrorBody(): void
     {
         $transporter = new Client;

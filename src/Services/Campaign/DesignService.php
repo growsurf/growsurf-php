@@ -10,7 +10,7 @@ use Growsurf\RequestOptions;
 use Growsurf\ServiceContracts\Campaign\DesignContract;
 
 /**
- * Campaign design (`CampaignDesign`) configuration — the Program Editor's **Design** tab, including Resources presentation, `participantAvatarStyle` (`CHARACTERS`, `INITIALS`, `ANIMALS`, or `GRADIENT`), the Claim Offer Popup, the website widget under `widget`, and payout-destination confirmation page copy.
+ * Campaign design (`CampaignDesign`) configuration — the Program Editor's **Design** tab, including Resources presentation, `participantAvatarStyle` (`CHARACTERS`, `INITIALS`, `ANIMALS`, or `GRADIENT`), the Claim Offer Popup, the website widget under `widget`, the participant Traffic report under `trafficInsights`, and payout-destination confirmation page copy.
  *
  * @phpstan-import-type RequestOpts from \Growsurf\RequestOptions
  * @phpstan-import-type CampaignDesignShape from \Growsurf\Campaign\CampaignDesign

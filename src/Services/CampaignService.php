@@ -366,7 +366,7 @@ final class CampaignService implements CampaignContract
      * Retrieves participants in leaderboard order for the specified leaderboard type.
      *
      * @param string $id growSurf program ID
-     * @param bool $isMonthly Deprecated. Use `leaderboardType=CURRENT_MONTH` instead.
+     * @param bool|null $isMonthly Deprecated. Use `leaderboardType=CURRENT_MONTH` instead.
      * @param LeaderboardType|value-of<LeaderboardType> $leaderboardType leaderboard ordering mode
      * @param int $limit Number of results to return. Maximum 100.
      * @param string $nextID ID to start the next paged result set with
@@ -376,7 +376,7 @@ final class CampaignService implements CampaignContract
      */
     public function listLeaderboard(
         string $id,
-        bool $isMonthly = false,
+        ?bool $isMonthly = null,
         LeaderboardType|string $leaderboardType = 'ALL_TIME',
         int $limit = 10,
         ?string $nextID = null,

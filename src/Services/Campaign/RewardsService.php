@@ -44,7 +44,9 @@ final class RewardsService implements RewardsContract
     /**
      * @api
      *
-     * Retrieves the list of a program's configured rewards (`CampaignReward`s) — the same set embedded in the `rewards` array of the campaign response. Delete a reward with `DELETE /campaign/{id}/reward-configs/{campaignRewardId}`.
+     * Retrieves configured Campaign Rewards, including switched-off rewards and rewards
+     * whose group is not selected. Deleted rewards are excluded. The campaign response's
+     * embedded rewards array includes only enabled, visible rewards.
      *
      * @param string $id growSurf program ID
      * @param RequestOpts|null $requestOptions
