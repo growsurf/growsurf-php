@@ -1,0 +1,29 @@
+name: Enable auto-merge
+
+# Set AUTO_MERGE_READY only after main requires PR review and CI checks.
+
+on:
+  pull_request_target:
+    types: [opened, reopened, synchronize, ready_for_review]
+    branches: [main]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  enable:
+    if: >-
+      vars.AUTO_MERGE_READY == 'true' &&
+      github.event.pull_request.head.repo.full_name == github.repository &&
+      github.event.pull_request.head.ref != 'dev' &&
+      !github.event.pull_request.draft
+    runs-on: ubuntu-latest
+    steps:
+      # This privileged event never checks out or runs pull request code.
+      - name: Enable merge after required checks and review
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: gh pr merge "$PR_NUMBER" --repo "$GH_REPO" --auto --merge
