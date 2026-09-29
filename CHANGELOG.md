@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.11.0](https://github.com/growsurf/growsurf-php/compare/v1.10.0...v1.11.0) (2026-09-29)
+
+
+### Features
+
+* **api:** update campaign contracts ([af9114a](https://github.com/growsurf/growsurf-php/commit/af9114ac42b28d0001bcf4d38194440d9f4dc1a5))
+
 ## [1.10.0](https://github.com/growsurf/growsurf-php/compare/v1.9.0...v1.10.0) (2026-09-23)
 
 
