@@ -11,5 +11,7 @@ enum Provider: string
 {
     case PAYPAL = 'PAYPAL';
 
+    case VENMO = 'VENMO';
+
     case WISECOM = 'WISECOM';
 }
