@@ -8,6 +8,7 @@ namespace Growsurf\Campaign;
  * Public array shapes for a program's open email configuration.
  *
  * @phpstan-type CampaignEmailTemplateShape = array{subject?: string, preheader?: string, body?: string, isEnabled?: bool, ...<string, mixed>}
+ * @phpstan-type CampaignFollowUpReminderEmailTemplateShape = array{subject?: string, preheader?: string, body?: string, isEnabled?: bool, delayDays?: int, ...<string, mixed>}
  * @phpstan-type CampaignInviteEmailTemplateShape = array{subject?: string, preheader?: string, body?: string, isEnabled?: bool, useCompanyReplyTo?: bool, ...<string, mixed>}
  * @phpstan-type CampaignEmailSenderSettingsShape = array{fromName?: string, replyToEmail?: string, fromEmail?: string, ...<string, mixed>}
  * @phpstan-type CampaignEmailContactSettingsShape = array{companyName?: string, addressLine1?: string, addressLine2?: string|null, city?: string, state?: string|null, postalCode?: string|null, country?: string|null, ...<string, mixed>}
@@ -17,6 +18,7 @@ namespace Growsurf\Campaign;
  *   welcomeNonReferred?: CampaignEmailTemplateShape,
  *   welcomeReferred?: CampaignEmailTemplateShape,
  *   offerClaimed?: CampaignEmailTemplateShape,
+ *   followUpReminder?: CampaignFollowUpReminderEmailTemplateShape,
  *   referralLinkViewedFirstTime?: CampaignEmailTemplateShape,
  *   referralLinkUsed?: CampaignEmailTemplateShape,
  *   referredSignup?: CampaignEmailTemplateShape,
@@ -56,6 +58,7 @@ namespace Growsurf\Campaign;
  *   welcomeNonReferred?: CampaignEmailTemplateUpdateShape,
  *   welcomeReferred?: CampaignEmailTemplateUpdateShape,
  *   offerClaimed?: CampaignEmailTemplateUpdateShape,
+ *   followUpReminder?: CampaignFollowUpReminderEmailTemplateShape,
  *   referralLinkViewedFirstTime?: CampaignEmailTemplateUpdateShape,
  *   referralLinkUsed?: CampaignEmailTemplateUpdateShape,
  *   referredSignup?: CampaignEmailTemplateUpdateShape,
