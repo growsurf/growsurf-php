@@ -12,7 +12,7 @@ namespace Growsurf\Campaign;
  * @phpstan-type CampaignInviteEmailTemplateShape = array{subject?: string, preheader?: string, body?: string, isEnabled?: bool, useCompanyReplyTo?: bool, ...<string, mixed>}
  * @phpstan-type CampaignEmailSenderSettingsShape = array{fromName?: string, replyToEmail?: string, fromEmail?: string, ...<string, mixed>}
  * @phpstan-type CampaignEmailContactSettingsShape = array{companyName?: string, addressLine1?: string, addressLine2?: string|null, city?: string, state?: string|null, postalCode?: string|null, country?: string|null, ...<string, mixed>}
- * @phpstan-type CampaignEmailDesignSettingsShape = array{header?: string|null, footer?: string|null, unsubscribePromotional?: string, unsubscribeInvite?: string, unsubscribeAffiliateInvite?: string, unsubscribeTransactional?: string, ...<string, mixed>}
+ * @phpstan-type CampaignEmailDesignSettingsShape = array{layoutMode?: 'INLINE', header?: string|null, footer?: string|null, unsubscribePromotional?: string, unsubscribeInvite?: string, unsubscribeAffiliateInvite?: string, unsubscribeTransactional?: string, ...<string, mixed>}
  * @phpstan-type CampaignEmailSettingsShape = array{sender?: CampaignEmailSenderSettingsShape, contact?: CampaignEmailContactSettingsShape, design?: CampaignEmailDesignSettingsShape, ...<string, mixed>}
  * @phpstan-type CampaignEmailsShape = array{
  *   welcomeNonReferred?: CampaignEmailTemplateShape,
@@ -52,7 +52,9 @@ namespace Growsurf\Campaign;
  * @phpstan-type CampaignInviteEmailTemplateUpdateShape = CampaignInviteEmailTemplateShape
  * @phpstan-type CampaignEmailSenderSettingsUpdateShape = array{fromName?: string, replyToEmail?: string, ...<string, mixed>}
  * @phpstan-type CampaignEmailContactSettingsUpdateShape = CampaignEmailContactSettingsShape
- * @phpstan-type CampaignEmailDesignSettingsUpdateShape = CampaignEmailDesignSettingsShape
+ * New programs return read-only settings.design.layoutMode=INLINE. Their bodies require
+ * {{emailFooter}}; {{emailHeader}} is optional. Older programs keep their existing layout.
+ * @phpstan-type CampaignEmailDesignSettingsUpdateShape = array{header?: string|null, footer?: string|null, unsubscribePromotional?: string, unsubscribeInvite?: string, unsubscribeAffiliateInvite?: string, unsubscribeTransactional?: string, ...<string, mixed>}
  * @phpstan-type CampaignEmailSettingsUpdateShape = array{sender?: CampaignEmailSenderSettingsUpdateShape, contact?: CampaignEmailContactSettingsUpdateShape, design?: CampaignEmailDesignSettingsUpdateShape, ...<string, mixed>}
  * @phpstan-type CampaignEmailsUpdateShape = array{
  *   welcomeNonReferred?: CampaignEmailTemplateUpdateShape,
