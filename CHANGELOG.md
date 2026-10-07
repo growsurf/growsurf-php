@@ -1,5 +1,24 @@
 # Changelog
 
+## [1.12.0](https://github.com/growsurf/growsurf-php/compare/v1.11.0...v1.12.0) (2026-10-07)
+
+
+### Features
+
+* add follow-up reminder email configuration ([54fec7d](https://github.com/growsurf/growsurf-php/commit/54fec7dfffa322392046671b788b0e72bfd8cbf9))
+* model read-only inline email layout settings ([9eee50d](https://github.com/growsurf/growsurf-php/commit/9eee50d407f86b3d9dcc3a1b5351ba26e6ba5605))
+
+
+### Chores
+
+* prepare SDK 1.12.0 ([62fafdc](https://github.com/growsurf/growsurf-php/commit/62fafdc93f7414c43e273f55cce29a8f1583e772))
+* release 1.12.0 ([c6f8154](https://github.com/growsurf/growsurf-php/commit/c6f8154b05af6aff4a8989e81c44820bd27039cb))
+
+
+### Documentation
+
+* clarify welcome email recipient eligibility ([e0c8229](https://github.com/growsurf/growsurf-php/commit/e0c8229384069bb970bb05333724690cdfcea266))
+
 ## [1.11.0](https://github.com/growsurf/growsurf-php/compare/v1.10.0...v1.11.0) (2026-09-29)
 
 
