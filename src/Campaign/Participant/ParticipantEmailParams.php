@@ -39,7 +39,7 @@ final class ParticipantEmailParams implements BaseModel
     public ?string $body;
 
     /**
-     * The program email template to trigger (template mode). Send the camelCase email-type key; the available types depend on the program type, and `isEnabled` only controls automatic sends. System/transactional types (login link, PayPal confirmation, tax) and the invite email cannot be sent. Referral programs: welcomeNonReferred, referralLinkViewedFirstTime, referralLinkUsed, referredSignup, welcomeReferred, goalAchieved, campaignEndedWinners, campaignEndedNonWinners, progressUpdateMonthly. Affiliate programs: welcomeNonReferred, referralLinkViewedFirstTime, referredSignup, commissionGenerated, commissionAdjusted, payoutPending, payoutSentSuccess, progressUpdateMonthly.
+     * The program email template to trigger (template mode). Send the camelCase email-type key; the available types depend on the program type, and `isEnabled` only controls automatic sends. System/transactional types (login link, PayPal confirmation, tax) and the invite email cannot be sent. Referral programs: welcomeNonReferred, referralLinkViewedFirstTime, referralLinkUsed, referredSignup, welcomeReferred, goalAchieved, campaignEndedWinners, campaignEndedNonWinners, progressUpdateMonthly. Affiliate programs: welcomeNonReferred, referralLinkViewedFirstTime, referredSignup, commissionGenerated, commissionAdjusted, payoutPending, payoutSentSuccess, progressUpdateMonthly. `welcomeNonReferred` can only be sent to advocates or approved, enrolled affiliates in a program that has not ended.
      */
     #[Optional]
     public ?string $emailType;
@@ -119,7 +119,7 @@ final class ParticipantEmailParams implements BaseModel
     }
 
     /**
-     * The program email template to trigger (template mode). Send the camelCase email-type key; the available types depend on the program type, and `isEnabled` only controls automatic sends. System/transactional types (login link, PayPal confirmation, tax) and the invite email cannot be sent. Referral programs: welcomeNonReferred, referralLinkViewedFirstTime, referralLinkUsed, referredSignup, welcomeReferred, goalAchieved, campaignEndedWinners, campaignEndedNonWinners, progressUpdateMonthly. Affiliate programs: welcomeNonReferred, referralLinkViewedFirstTime, referredSignup, commissionGenerated, commissionAdjusted, payoutPending, payoutSentSuccess, progressUpdateMonthly.
+     * The program email template to trigger (template mode). Send the camelCase email-type key; the available types depend on the program type, and `isEnabled` only controls automatic sends. System/transactional types (login link, PayPal confirmation, tax) and the invite email cannot be sent. Referral programs: welcomeNonReferred, referralLinkViewedFirstTime, referralLinkUsed, referredSignup, welcomeReferred, goalAchieved, campaignEndedWinners, campaignEndedNonWinners, progressUpdateMonthly. Affiliate programs: welcomeNonReferred, referralLinkViewedFirstTime, referredSignup, commissionGenerated, commissionAdjusted, payoutPending, payoutSentSuccess, progressUpdateMonthly. `welcomeNonReferred` can only be sent to advocates or approved, enrolled affiliates in a program that has not ended.
      */
     public function withEmailType(string $emailType): self
     {

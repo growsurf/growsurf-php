@@ -29,6 +29,18 @@ jobs:
         with:
           php-version: '8.3'
 
+      - name: Get Composer cache directory
+        id: composer-cache-dir
+        run: echo "dir=$(composer config cache-files-dir --absolute)" >> "$GITHUB_OUTPUT"
+
+      - name: Cache Composer downloads
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ${{ steps.composer-cache-dir.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-composer-
+
       - name: Run Bootstrap
         run: ./scripts/bootstrap
 
@@ -51,11 +63,25 @@ jobs:
         with:
           php-version: ${{ matrix.php-version }}
 
+      - name: Get Composer cache directory
+        id: composer-cache-dir
+        run: echo "dir=$(composer config cache-files-dir --absolute)" >> "$GITHUB_OUTPUT"
+
+      - name: Cache Composer downloads
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ${{ steps.composer-cache-dir.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-composer-
+
       - name: Run bootstrap
         run: ./scripts/bootstrap
 
-      - name: Run tests
-        run: ./scripts/test
+      # Bootstrap is complete; tests and the dependency audit can run independently.
+      - parallel:
+          - name: Run tests
+            run: ./scripts/test
 
-      - name: Audit dependencies
-        run: composer audit --locked
+          - name: Audit dependencies
+            run: composer audit --locked
