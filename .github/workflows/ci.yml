@@ -78,8 +78,10 @@ jobs:
       - name: Run bootstrap
         run: ./scripts/bootstrap
 
-      - name: Run tests
-        run: ./scripts/test
+      # Bootstrap is complete; tests and the dependency audit can run independently.
+      - parallel:
+          - name: Run tests
+            run: ./scripts/test
 
-      - name: Audit dependencies
-        run: composer audit --locked
+          - name: Audit dependencies
+            run: composer audit --locked
