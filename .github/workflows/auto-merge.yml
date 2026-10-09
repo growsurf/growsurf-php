@@ -23,7 +23,9 @@ jobs:
       # This privileged event never checks out or runs pull request code.
       - name: Enable merge after required checks and review
         env:
-          GH_TOKEN: ${{ github.token }}
+          # A merge made with GITHUB_TOKEN does not trigger other workflows, so a
+          # merged release PR would never run Release Please on main.
+          GH_TOKEN: ${{ secrets.RELEASE_PLEASE_TOKEN || github.token }}
           GH_REPO: ${{ github.repository }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
         run: gh pr merge "$PR_NUMBER" --repo "$GH_REPO" --auto --merge
