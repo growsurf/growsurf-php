@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.13.0](https://github.com/growsurf/growsurf-php/compare/v1.12.0...v1.13.0) (2026-10-09)
+
+
+### Features
+
+* add program and participant language support ([d880eb4](https://github.com/growsurf/growsurf-php/commit/d880eb44bdeab29f78f0fb5fd0f9c85af1978294))
+* add program languages and update SDK guidance ([387f172](https://github.com/growsurf/growsurf-php/commit/387f172dba6f8882ff6a5236c4a7d02e1b269aa1))
+
 ## [1.12.0](https://github.com/growsurf/growsurf-php/compare/v1.11.0...v1.12.0) (2026-10-07)
 
 
