@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Growsurf\Services\Campaign;
 
+use Growsurf\Campaign\Language;
 use Growsurf\Campaign\Participant\Participant;
 use Growsurf\Campaign\Participant\ParticipantAddParams;
 use Growsurf\Campaign\Participant\ParticipantBulkDeleteParams;
@@ -109,6 +110,7 @@ final class ParticipantRawService implements ParticipantRawContract
      *   affiliateStatus?: AffiliateStatus|value-of<AffiliateStatus>,
      *   email?: string,
      *   firstName?: string,
+     *   language?: Language|value-of<Language>|null,
      *   lastName?: string,
      *   metadata?: array<string,mixed>,
      *   notes?: string,
@@ -224,6 +226,7 @@ final class ParticipantRawService implements ParticipantRawContract
      *   firstName?: string,
      *   ipAddress?: string,
      *   isAffiliate?: bool,
+     *   language?: Language|value-of<Language>,
      *   lastName?: string,
      *   metadata?: array<string,mixed>,
      *   mobileInstanceID?: string,
@@ -662,7 +665,7 @@ final class ParticipantRawService implements ParticipantRawContract
     /**
      * @api
      *
-     * Sends an email to a participant. Provide EITHER `emailType` to trigger one of the program's configured email templates, OR `subject` + `body` for a free-form email. Free-form emails are sent with the same compliance handling (company name, postal address, and an unsubscribe link are added automatically, and unsubscribed participants are suppressed). Sending requires the team to be verified by GrowSurf. Requires a **verified custom email domain** on the program (which can be completed in *Campaign Editor > 3. Emails > Email Settings*). Returns `400` until one is verified. The email is accepted for delivery.
+     * Sends an email to a participant. Provide EITHER `emailType` to trigger one of the program's configured email templates, OR `subject` + `body` for a free-form email. Free-form emails are sent with the same compliance handling (company name, postal address, and an unsubscribe link are added automatically, and unsubscribed participants are suppressed). Sending requires the team to be verified by GrowSurf. Requires a **verified custom email domain** on the program (which can be completed in *Program Editor > 3. Emails > Email Settings*). Returns `400` until one is verified. The email is accepted for delivery.
      *
      * @param string $participantIDOrEmail path param: GrowSurf participant ID or unencoded participant email address (the SDK encodes it automatically)
      * @param array{

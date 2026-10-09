@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Growsurf\Services\Campaign;
 
+use Growsurf\Campaign\Language;
 use Growsurf\Campaign\Participant\Participant;
+use Growsurf\Campaign\Participant\ParticipantAddParams;
 use Growsurf\Campaign\Participant\ParticipantBulkDeleteResponse;
 use Growsurf\Campaign\Participant\ParticipantDeleteResponse;
 use Growsurf\Campaign\Participant\ParticipantEmailResponse;
@@ -23,6 +25,7 @@ use Growsurf\Campaign\Participant\ParticipantRequestPayoutDestinationConfirmatio
 use Growsurf\Campaign\Participant\ParticipantRetrieveAnalyticsParams\Interval;
 use Growsurf\Campaign\Participant\ParticipantSendInvitesResponse;
 use Growsurf\Campaign\Participant\ParticipantTriggerReferralResponse;
+use Growsurf\Campaign\Participant\ParticipantUpdateParams;
 use Growsurf\Campaign\Participant\ParticipantUpdateParams\AffiliateStatus;
 use Growsurf\Campaign\Participant\ParticipantUpdateParams\ReferralStatus;
 use Growsurf\Campaign\ParticipantCommissionList;
@@ -79,7 +82,7 @@ final class ParticipantService implements ParticipantContract
     /**
      * @api
      *
-     * Updates a participant by GrowSurf participant ID or email address. For affiliate programs, set `affiliateStatus` to `APPROVED`, `SUSPENDED`, or `BANNED`. `APPROVED` enrolls the participant as an affiliate. `SUSPENDED` and `BANNED` require an existing affiliate. This endpoint does not accept `isAffiliate`, and affiliate enrollment cannot be removed through REST.
+     * Updates a participant by GrowSurf participant ID or email address. For affiliate programs, set `affiliateStatus` to `APPROVED`, `SUSPENDED`, or `BANNED`. `APPROVED` enrolls the participant as an affiliate. `SUSPENDED` and `BANNED` require an existing affiliate. This endpoint does not accept `isAffiliate`, and affiliate enrollment cannot be removed through REST. Use `updateWithParams()` to set or clear the participant `language`.
      *
      * @param string $participantIDOrEmail path param: GrowSurf participant ID or unencoded participant email address (the SDK encodes it automatically)
      * @param string $id path param: GrowSurf program ID
@@ -132,6 +135,23 @@ final class ParticipantService implements ParticipantContract
         $response = $this->raw->update($participantIDOrEmail, params: $params, requestOptions: $requestOptions);
 
         return $response->parse();
+    }
+
+    /**
+     * Updates a participant from a parameter model. Use this form to set `language`.
+     * This form also distinguishes an omitted field from an explicit JSON null; send
+     * `withLanguage(null)` to use the program's base language.
+     *
+     * @param RequestOpts|null $requestOptions
+     *
+     * @throws APIException
+     */
+    public function updateWithParams(
+        string $participantIDOrEmail,
+        ParticipantUpdateParams $params,
+        RequestOptions|array|null $requestOptions = null,
+    ): Participant {
+        return $this->raw->update($participantIDOrEmail, $params, $requestOptions)->parse();
     }
 
     /**
@@ -191,12 +211,14 @@ final class ParticipantService implements ParticipantContract
      * @param bool $isAffiliate Affiliate programs only. Controls affiliate enrollment for a new participant. `true` enrolls the participant with `affiliateStatus: APPROVED`; `false` creates a non-affiliate without `affiliateStatus`. Existing participants are returned unchanged.
      * @param array<string,mixed> $metadata shallow custom metadata object
      * @param string $mobileInstanceID Optional app-install scoped identifier for native mobile anti-fraud. Recommended for mobile participant creation and mobile participant token flows. The official mobile SDKs generate this as a lowercase UUID.
-     * @param \Growsurf\Campaign\Participant\ParticipantAddParams\ReferralStatus|value-of<\Growsurf\Campaign\Participant\ParticipantAddParams\ReferralStatus> $referralStatus The referral credit status. Only meaningful when `referredBy` resolves to a referrer. When omitted, it is derived from the program's referral trigger (`CREDIT_AWARDED`, `CREDIT_PENDING`, or `CREDIT_EXPIRED`); left unset when no referrer resolves.
+     * @param ParticipantAddParams\ReferralStatus|value-of<ParticipantAddParams\ReferralStatus> $referralStatus The referral credit status. Only meaningful when `referredBy` resolves to a referrer. When omitted, it is derived from the program's referral trigger (`CREDIT_AWARDED`, `CREDIT_PENDING`, or `CREDIT_EXPIRED`); left unset when no referrer resolves.
      * @param string $referredBy referrer participant ID or email address
+     * @param Language|value-of<Language> $language The language of the participant's portal and program emails. Must be one of the program's languages. Applied only when this request creates the participant.
      * @param RequestOpts|null $requestOptions
      *
      * @throws APIException
      */
+    // Keep requestOptions in its original positional slot for existing callers.
     public function add(
         string $id,
         string $email,
@@ -207,9 +229,10 @@ final class ParticipantService implements ParticipantContract
         ?string $lastName = null,
         ?array $metadata = null,
         ?string $mobileInstanceID = null,
-        \Growsurf\Campaign\Participant\ParticipantAddParams\ReferralStatus|string|null $referralStatus = null,
+        ParticipantAddParams\ReferralStatus|string|null $referralStatus = null,
         ?string $referredBy = null,
         RequestOptions|array|null $requestOptions = null,
+        Language|string|null $language = null,
     ): Participant {
         $params = Util::removeNulls(
             [
@@ -218,6 +241,7 @@ final class ParticipantService implements ParticipantContract
                 'firstName' => $firstName,
                 'ipAddress' => $ipAddress,
                 'isAffiliate' => $isAffiliate,
+                'language' => $language,
                 'lastName' => $lastName,
                 'metadata' => $metadata,
                 'mobileInstanceID' => $mobileInstanceID,
@@ -655,7 +679,7 @@ final class ParticipantService implements ParticipantContract
     /**
      * @api
      *
-     * Sends an email to a participant. Provide EITHER `emailType` to trigger one of the program's configured email templates, OR `subject` + `body` for a free-form email. Free-form emails are sent with the same compliance handling (company name, postal address, and an unsubscribe link are added automatically, and unsubscribed participants are suppressed). Sending requires the team to be verified by GrowSurf. Requires a **verified custom email domain** on the program (which can be completed in *Campaign Editor > 3. Emails > Email Settings*). Returns `400` until one is verified. The email is accepted for delivery.
+     * Sends an email to a participant. Provide EITHER `emailType` to trigger one of the program's configured email templates, OR `subject` + `body` for a free-form email. Free-form emails are sent with the same compliance handling (company name, postal address, and an unsubscribe link are added automatically, and unsubscribed participants are suppressed). Sending requires the team to be verified by GrowSurf. Requires a **verified custom email domain** on the program (which can be completed in *Program Editor > 3. Emails > Email Settings*). Returns `400` until one is verified. The email is accepted for delivery.
      *
      * @param string $participantIDOrEmail path param: GrowSurf participant ID or unencoded participant email address (the SDK encodes it automatically)
      * @param string $id path param: GrowSurf program ID

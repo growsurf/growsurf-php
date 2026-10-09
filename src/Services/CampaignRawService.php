@@ -37,6 +37,7 @@ use Growsurf\Campaign\CampaignRetrieveAnalyticsParams\Interval;
 use Growsurf\Campaign\CampaignRetrieveAnalyticsParams\Platform;
 use Growsurf\Campaign\CampaignReviewAffiliateApplicationParams;
 use Growsurf\Campaign\CampaignUpdateParams;
+use Growsurf\Campaign\Language;
 use Growsurf\Campaign\ParticipantCommissionList;
 use Growsurf\Campaign\ParticipantList;
 use Growsurf\Campaign\ParticipantPayoutList;
@@ -248,6 +249,8 @@ final class CampaignRawService implements CampaignRawContract
      *   fingerprint?: string,
      *   firstName?: string,
      *   ipAddress?: string,
+     *   isAffiliate?: bool,
+     *   language?: Language|value-of<Language>,
      *   lastName?: string,
      *   metadata?: array<string,mixed>,
      *   mobileInstanceID?: string,
