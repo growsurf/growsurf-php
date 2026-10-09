@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Growsurf\ServiceContracts\Campaign;
 
+use Growsurf\Campaign\Language;
 use Growsurf\Campaign\Participant\Participant;
 use Growsurf\Campaign\Participant\ParticipantBulkDeleteResponse;
 use Growsurf\Campaign\Participant\ParticipantDeleteResponse;
@@ -23,6 +24,7 @@ use Growsurf\Campaign\Participant\ParticipantRequestPayoutDestinationConfirmatio
 use Growsurf\Campaign\Participant\ParticipantRetrieveAnalyticsParams\Interval;
 use Growsurf\Campaign\Participant\ParticipantSendInvitesResponse;
 use Growsurf\Campaign\Participant\ParticipantTriggerReferralResponse;
+use Growsurf\Campaign\Participant\ParticipantUpdateParams;
 use Growsurf\Campaign\Participant\ParticipantUpdateParams\AffiliateStatus;
 use Growsurf\Campaign\Participant\ParticipantUpdateParams\ReferralStatus;
 use Growsurf\Campaign\ParticipantCommissionList;
@@ -54,6 +56,9 @@ interface ParticipantContract
     /**
      * @api
      *
+     * To set or clear the participant `language`, use `updateWithParams()` with a
+     * `ParticipantUpdateParams` model.
+     *
      * @param string $participantIDOrEmail path param: GrowSurf participant ID or unencoded participant email address (the SDK encodes it automatically)
      * @param string $id path param: GrowSurf program ID
      * @param AffiliateStatus|value-of<AffiliateStatus> $affiliateStatus Body param: Affiliate programs only. Sets the affiliate status. `APPROVED` also enrolls a participant who is not yet an affiliate. `SUSPENDED` and `BANNED` are rejected for non-affiliates.
@@ -83,6 +88,21 @@ interface ParticipantContract
         ?string $referredBy = null,
         ?bool $unsubscribed = null,
         ?array $vanityKeys = null,
+        RequestOptions|array|null $requestOptions = null,
+    ): Participant;
+
+    /**
+     * Updates a participant from a parameter model. Use this form to set `language`.
+     * This form also distinguishes an omitted field from an explicit JSON null; send
+     * `withLanguage(null)` to use the program's base language.
+     *
+     * @param RequestOpts|null $requestOptions
+     *
+     * @throws APIException
+     */
+    public function updateWithParams(
+        string $participantIDOrEmail,
+        ParticipantUpdateParams $params,
         RequestOptions|array|null $requestOptions = null,
     ): Participant;
 
@@ -125,10 +145,12 @@ interface ParticipantContract
      * @param string $mobileInstanceID Optional app-install scoped identifier for native mobile anti-fraud. Recommended for mobile participant creation and mobile participant token flows. The official mobile SDKs generate this as a lowercase UUID.
      * @param \Growsurf\Campaign\Participant\ParticipantAddParams\ReferralStatus|value-of<\Growsurf\Campaign\Participant\ParticipantAddParams\ReferralStatus> $referralStatus The referral credit status. Only meaningful when `referredBy` resolves to a referrer. When omitted, it is derived from the program's referral trigger (`CREDIT_AWARDED`, `CREDIT_PENDING`, or `CREDIT_EXPIRED`); left unset when no referrer resolves.
      * @param string $referredBy referrer participant ID or email address
+     * @param Language|value-of<Language> $language The language of the participant's portal and program emails. Must be one of the program's languages. Applied only when this request creates the participant.
      * @param RequestOpts|null $requestOptions
      *
      * @throws APIException
      */
+    // Keep requestOptions in its original positional slot for existing callers.
     public function add(
         string $id,
         string $email,
@@ -142,6 +164,7 @@ interface ParticipantContract
         \Growsurf\Campaign\Participant\ParticipantAddParams\ReferralStatus|string|null $referralStatus = null,
         ?string $referredBy = null,
         RequestOptions|array|null $requestOptions = null,
+        Language|string|null $language = null,
     ): Participant;
 
     /**

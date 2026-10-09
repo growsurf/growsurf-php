@@ -10,7 +10,7 @@ use Growsurf\Core\Concerns\SdkParams;
 use Growsurf\Core\Contracts\BaseModel;
 
 /**
- * Removes a manually approved participant reward that has not already been approved.
+ * Removes a participant reward that requires manual approval and has not yet been approved.
  *
  * @see Growsurf\Services\Campaign\RewardService::delete()
  *

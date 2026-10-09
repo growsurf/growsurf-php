@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Growsurf\Campaign\Participant;
 
+use Growsurf\Campaign\Language;
 use Growsurf\Campaign\Participant\ParticipantUpdateParams\AffiliateStatus;
 use Growsurf\Campaign\Participant\ParticipantUpdateParams\ReferralStatus;
 use Growsurf\Core\Attributes\Optional;
@@ -15,13 +16,14 @@ use Growsurf\Core\Contracts\BaseModel;
 /**
  * Updates a participant by GrowSurf participant ID or email address. For affiliate programs, set `affiliateStatus` to `APPROVED`, `SUSPENDED`, or `BANNED`. `APPROVED` enrolls the participant as an affiliate. `SUSPENDED` and `BANNED` require an existing affiliate. This endpoint does not accept `isAffiliate`, and affiliate enrollment cannot be removed through REST.
  *
- * @see Growsurf\Services\Campaign\ParticipantService::update()
+ * @see Growsurf\Services\Campaign\ParticipantService::updateWithParams()
  *
  * @phpstan-type ParticipantUpdateParamsShape = array{
  *   id: string,
  *   affiliateStatus?: \Growsurf\Campaign\Participant\ParticipantUpdateParams\AffiliateStatus|value-of<\Growsurf\Campaign\Participant\ParticipantUpdateParams\AffiliateStatus>,
  *   email?: string,
  *   firstName?: string,
+ *   language?: null|\Growsurf\Campaign\Language|value-of<\Growsurf\Campaign\Language>,
  *   lastName?: string,
  *   metadata?: array<string,mixed>,
  *   notes?: string,
@@ -55,6 +57,14 @@ final class ParticipantUpdateParams implements BaseModel
 
     #[Optional]
     public ?string $firstName;
+
+    /**
+     * The language of the participant's portal and program emails. Must be one of the program's languages (see `languages` in the program options). Send the base language or `null` to use the program's base language.
+     *
+     * @var value-of<Language>|null $language
+     */
+    #[Optional(enum: Language::class, nullable: true)]
+    public ?string $language;
 
     #[Optional]
     public ?string $lastName;
@@ -119,6 +129,7 @@ final class ParticipantUpdateParams implements BaseModel
      * @param array<string,mixed>|null $metadata
      * @param ReferralStatus|value-of<ReferralStatus>|null $referralStatus
      * @param list<string>|null $vanityKeys
+     * @param Language|value-of<Language>|null $language `null` omits the field; call `withLanguage(null)` to use the program's base language
      */
     public static function with(
         string $id,
@@ -132,6 +143,7 @@ final class ParticipantUpdateParams implements BaseModel
         ?string $referredBy = null,
         ?bool $unsubscribed = null,
         ?array $vanityKeys = null,
+        Language|string|null $language = null,
     ): self {
         $self = new self;
 
@@ -140,6 +152,7 @@ final class ParticipantUpdateParams implements BaseModel
         null !== $affiliateStatus && $self['affiliateStatus'] = $affiliateStatus;
         null !== $email && $self['email'] = $email;
         null !== $firstName && $self['firstName'] = $firstName;
+        null !== $language && $self['language'] = $language;
         null !== $lastName && $self['lastName'] = $lastName;
         null !== $metadata && $self['metadata'] = $metadata;
         null !== $notes && $self['notes'] = $notes;
@@ -185,6 +198,19 @@ final class ParticipantUpdateParams implements BaseModel
     {
         $self = clone $this;
         $self['firstName'] = $firstName;
+
+        return $self;
+    }
+
+    /**
+     * The language of the participant's portal and program emails. Must be one of the program's languages (see `languages` in the program options). Send the base language or `null` to use the program's base language.
+     *
+     * @param Language|value-of<Language>|null $language
+     */
+    public function withLanguage(Language|string|null $language): self
+    {
+        $self = clone $this;
+        $self['language'] = $language;
 
         return $self;
     }

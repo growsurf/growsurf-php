@@ -63,7 +63,10 @@ final class OptionsTest extends TestCase
         }
 
         /** @var CampaignOptionsUpdateShape $body */
-        $body = ['referralCreditWindowDays' => 30];
+        $body = [
+            'referralCreditWindowDays' => 30,
+            'languages' => ['baseLanguage' => 'en', 'additionalLanguages' => ['es', 'pt-BR']],
+        ];
         $result = $this->client->campaign->options->update('id', body: $body);
 
         // @phpstan-ignore-next-line method.alreadyNarrowedType

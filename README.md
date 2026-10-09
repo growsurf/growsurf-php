@@ -168,14 +168,10 @@ $response = $client->request(
 
 ## Versioning
 
-This package follows [SemVer](https://semver.org/spec/v2.0.0.html) conventions. As the library is in initial development and has a major version of `0`, APIs may change at any time.
+This package follows [SemVer](https://semver.org/spec/v2.0.0.html) conventions. Breaking API changes use a new major version.
 
 This package considers improvements to the (non-runtime) PHPDoc type definitions to be non-breaking changes.
 
 ## Requirements
 
 PHP 8.1.0 or higher.
-
-## Contributing
-
-See [the contributing documentation](https://github.com/growsurf/growsurf-php/tree/main/CONTRIBUTING.md).

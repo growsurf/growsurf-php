@@ -22,6 +22,7 @@ use Growsurf\Core\Contracts\BaseModel;
  *   firstName?: string,
  *   ipAddress?: string,
  *   isAffiliate?: bool,
+ *   language?: \Growsurf\Campaign\Language|value-of<\Growsurf\Campaign\Language>,
  *   lastName?: string,
  *   metadata?: array<string,mixed>,
  *   mobileInstanceID?: string,
@@ -52,6 +53,14 @@ final class CampaignCreateMobileParticipantTokenParams implements BaseModel
      */
     #[Optional]
     public ?bool $isAffiliate;
+
+    /**
+     * The language of the participant's portal and program emails. Must be one of the program's languages. Applied only when this request creates the participant.
+     *
+     * @var value-of<Language>|null $language
+     */
+    #[Optional(enum: Language::class)]
+    public ?string $language;
 
     #[Optional]
     public ?string $lastName;
@@ -106,6 +115,7 @@ final class CampaignCreateMobileParticipantTokenParams implements BaseModel
      *
      * @param array<string,mixed>|null $metadata
      * @param ReferralStatus|value-of<ReferralStatus>|null $referralStatus
+     * @param Language|value-of<Language>|null $language
      */
     public static function with(
         string $email,
@@ -118,6 +128,7 @@ final class CampaignCreateMobileParticipantTokenParams implements BaseModel
         ?string $mobileInstanceID = null,
         ReferralStatus|string|null $referralStatus = null,
         ?string $referredBy = null,
+        Language|string|null $language = null,
     ): self {
         $self = new self;
 
@@ -127,6 +138,7 @@ final class CampaignCreateMobileParticipantTokenParams implements BaseModel
         null !== $firstName && $self['firstName'] = $firstName;
         null !== $ipAddress && $self['ipAddress'] = $ipAddress;
         null !== $isAffiliate && $self['isAffiliate'] = $isAffiliate;
+        null !== $language && $self['language'] = $language;
         null !== $lastName && $self['lastName'] = $lastName;
         null !== $metadata && $self['metadata'] = $metadata;
         null !== $mobileInstanceID && $self['mobileInstanceID'] = $mobileInstanceID;
@@ -175,6 +187,19 @@ final class CampaignCreateMobileParticipantTokenParams implements BaseModel
     {
         $self = clone $this;
         $self['isAffiliate'] = $isAffiliate;
+
+        return $self;
+    }
+
+    /**
+     * The language of the participant's portal and program emails. Must be one of the program's languages. Applied only when this request creates the participant.
+     *
+     * @param Language|value-of<Language> $language
+     */
+    public function withLanguage(Language|string $language): self
+    {
+        $self = clone $this;
+        $self['language'] = $language;
 
         return $self;
     }

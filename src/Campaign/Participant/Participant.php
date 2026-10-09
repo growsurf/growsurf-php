@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Growsurf\Campaign\Participant;
 
+use Growsurf\Campaign\Language;
 use Growsurf\Campaign\Participant\Participant\PayoutSettings;
 use Growsurf\Campaign\Participant\Participant\Referrer;
 use Growsurf\Core\Attributes\Optional;
@@ -40,6 +41,7 @@ use Growsurf\Core\Conversion\MapOf;
  *   isAffiliate?: bool|null,
  *   isNew?: bool|null,
  *   isWinner?: bool|null,
+ *   language?: null|Language|value-of<Language>,
  *   lastName?: string|null,
  *   leadCount?: int|null,
  *   metadata?: array<string,mixed>|null,
@@ -148,6 +150,14 @@ final class Participant implements BaseModel
 
     #[Optional]
     public ?bool $isWinner;
+
+    /**
+     * The language of the participant's portal and program emails. The program's base language unless the participant (or you) picked another of the program's languages.
+     *
+     * @var value-of<Language>|null $language
+     */
+    #[Optional(enum: Language::class)]
+    public ?string $language;
 
     #[Optional(nullable: true)]
     public ?string $lastName;
@@ -283,6 +293,7 @@ final class Participant implements BaseModel
      * @param Referrer|ReferrerShape|null $referrer
      * @param array<string,int>|null $shareCount
      * @param list<string>|null $vanityKeys
+     * @param Language|value-of<Language>|null $language
      */
     public static function with(
         string $id,
@@ -328,6 +339,7 @@ final class Participant implements BaseModel
         ?int $unreadPayoutsCount = null,
         ?bool $unsubscribed = null,
         ?array $vanityKeys = null,
+        Language|string|null $language = null,
     ): self {
         $self = new self;
 
@@ -354,6 +366,7 @@ final class Participant implements BaseModel
         null !== $isAffiliate && $self['isAffiliate'] = $isAffiliate;
         null !== $isNew && $self['isNew'] = $isNew;
         null !== $isWinner && $self['isWinner'] = $isWinner;
+        null !== $language && $self['language'] = $language;
         null !== $lastName && $self['lastName'] = $lastName;
         null !== $leadCount && $self['leadCount'] = $leadCount;
         null !== $metadata && $self['metadata'] = $metadata;
@@ -575,6 +588,19 @@ final class Participant implements BaseModel
     {
         $self = clone $this;
         $self['isWinner'] = $isWinner;
+
+        return $self;
+    }
+
+    /**
+     * The language of the participant's portal and program emails. The program's base language unless the participant (or you) picked another of the program's languages.
+     *
+     * @param Language|value-of<Language> $language
+     */
+    public function withLanguage(Language|string $language): self
+    {
+        $self = clone $this;
+        $self['language'] = $language;
 
         return $self;
     }

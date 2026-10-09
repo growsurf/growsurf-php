@@ -23,6 +23,7 @@ use Growsurf\Campaign\CampaignRetrieveActivationAnalyticsParams\CohortInterval;
 use Growsurf\Campaign\CampaignRetrieveActivationAnalyticsParams\ObservationWindowDays;
 use Growsurf\Campaign\CampaignRetrieveAnalyticsParams\Interval;
 use Growsurf\Campaign\CampaignRetrieveAnalyticsParams\Platform;
+use Growsurf\Campaign\Language;
 use Growsurf\Campaign\ParticipantCommissionList;
 use Growsurf\Campaign\ParticipantList;
 use Growsurf\Campaign\ParticipantPayoutList;
@@ -293,10 +294,13 @@ final class CampaignService implements CampaignContract
      * @param string $mobileInstanceID Optional app-install scoped identifier for native mobile anti-fraud. Recommended for mobile participant creation and mobile participant token flows. The official mobile SDKs generate this as a lowercase UUID.
      * @param ReferralStatus|value-of<ReferralStatus> $referralStatus
      * @param string $referredBy referrer participant ID or email address
+     * @param bool $isAffiliate Affiliate programs only. Controls affiliate enrollment for a new participant. `true` enrolls the participant with `affiliateStatus: APPROVED`; `false` creates a non-affiliate without `affiliateStatus`. Existing participants are returned unchanged.
+     * @param Language|value-of<Language> $language The language of the participant's portal and program emails. Must be one of the program's languages. Applied only when this request creates the participant.
      * @param RequestOpts|null $requestOptions
      *
      * @throws APIException
      */
+    // Keep requestOptions in its original positional slot for existing callers.
     public function createMobileParticipantToken(
         string $id,
         string $email,
@@ -309,6 +313,8 @@ final class CampaignService implements CampaignContract
         ReferralStatus|string|null $referralStatus = null,
         ?string $referredBy = null,
         RequestOptions|array|null $requestOptions = null,
+        ?bool $isAffiliate = null,
+        Language|string|null $language = null,
     ): CampaignNewMobileParticipantTokenResponse {
         $params = Util::removeNulls(
             [
@@ -316,6 +322,8 @@ final class CampaignService implements CampaignContract
                 'fingerprint' => $fingerprint,
                 'firstName' => $firstName,
                 'ipAddress' => $ipAddress,
+                'isAffiliate' => $isAffiliate,
+                'language' => $language,
                 'lastName' => $lastName,
                 'metadata' => $metadata,
                 'mobileInstanceID' => $mobileInstanceID,
