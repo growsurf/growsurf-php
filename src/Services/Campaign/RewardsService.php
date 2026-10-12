@@ -69,6 +69,10 @@ final class RewardsService implements RewardsContract
      * `LEAD` requires `installation.referralTrigger` to be `CUSTOM`. Omitting `event`
      * preserves the stored value. This form also distinguishes an omitted field from an
      * explicit JSON null that clears a nullable value.
+     * Changes to participant email content are checked before saving. Rejected content
+     * returns `400`; if the check is unavailable, `503` asks you to retry. Neither
+     * response saves the change. A concurrent edit can return `409`; reload the program
+     * before retrying.
      *
      * @param RequestOpts|null $requestOptions
      *
@@ -87,6 +91,7 @@ final class RewardsService implements RewardsContract
      * `LEAD` or `CONVERSION` for a `SINGLE_SIDED`, `DOUBLE_SIDED`, or `MILESTONE`
      * reward. `LEAD` requires `installation.referralTrigger` to be `CUSTOM`. Omitting
      * `event` defaults it to `CONVERSION`.
+     * A concurrent edit can return `409`; reload the program before retrying.
      *
      * @param RequestOpts|null $requestOptions
      *
@@ -104,6 +109,7 @@ final class RewardsService implements RewardsContract
      * @api
      *
      * Creates a new Campaign Reward (`CampaignReward`) with a GrowSurf-assigned ID. The reward type must be compatible with the program type (affiliate programs support only `AFFILIATE` rewards; referral programs support all other types). Enabling an active reward of a type automatically enables that reward type on the program. Use `createWithParams()` to set the Campaign Reward `event`.
+     * A concurrent edit can return `409`; reload the program before retrying.
      *
      * @param string $id path param: GrowSurf program ID
      * @param Type|value-of<Type> $type body param: The reward type. Immutable after creation.
@@ -192,6 +198,10 @@ final class RewardsService implements RewardsContract
      * @api
      *
      * Updates an existing Campaign Reward (`CampaignReward`). The reward `type` is immutable and cannot be changed. When the update replaces `metadata`, renamed keys automatically rewrite any `{{campaignReward[…]}}` references in campaign copy; removing a key that campaign copy still references returns a `409` listing the referencing fields. Use `updateWithParams()` to change the Campaign Reward `event`.
+     * Changes to participant email content are checked before saving. Rejected content
+     * returns `400`; if the check is unavailable, `503` asks you to retry. Neither
+     * response saves the change. A concurrent edit can return `409`; reload the program
+     * before retrying.
      *
      * @param string $campaignRewardID path param: Campaign Reward (`CampaignReward`) ID
      * @param string $id path param: GrowSurf program ID

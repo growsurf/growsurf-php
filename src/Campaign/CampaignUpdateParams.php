@@ -12,6 +12,10 @@ use Growsurf\Core\Contracts\BaseModel;
 
 /**
  * Updates a program's identity and lifecycle. Only the fields you send are changed. `type`, `urlId`, and `currencyISO` are immutable. Editor-tab configuration (design, emails, options, installation) is edited via the dedicated config sub-resources, not here. The program cannot be deleted via this endpoint.
+ * Changes to participant email content are checked before saving. Rejected content
+ * returns `400`; if the check is unavailable, `503` asks you to retry. Neither response
+ * saves the change. A concurrent edit can return `409`; reload the program before
+ * retrying.
  *
  * @see Growsurf\Services\CampaignService::update()
  *
