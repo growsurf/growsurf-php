@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.13.1](https://github.com/growsurf/growsurf-php/compare/v1.13.0...v1.13.1) (2026-10-14)
+
+
+### Documentation
+
+* align SDK option guidance with the REST API ([57af032](https://github.com/growsurf/growsurf-php/commit/57af0327330aad325061c07197ec920ccf838d3c))
+* document language picker flag option ([8852508](https://github.com/growsurf/growsurf-php/commit/88525089a2469e56644073f2700f02903ee213b1))
+* sync SDK comments with the REST API contract ([f0b431d](https://github.com/growsurf/growsurf-php/commit/f0b431d1fef7982f470f8d9cb01340debc5bd188))
+
 ## [1.13.0](https://github.com/growsurf/growsurf-php/compare/v1.12.0...v1.13.0) (2026-10-09)
 
 
