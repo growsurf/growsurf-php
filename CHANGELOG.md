@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.14.0](https://github.com/growsurf/growsurf-php/compare/v1.13.1...v1.14.0) (2026-10-15)
+
+
+### Features
+
+* support 25 additional program languages ([310d70e](https://github.com/growsurf/growsurf-php/commit/310d70e7b141e0c7a02bd0634b6663d59aff5053))
+* support 25 additional program languages ([ce8893b](https://github.com/growsurf/growsurf-php/commit/ce8893bb3fe8d3f5b8897e50b95fe3d0d3cd2aac))
+
 ## [1.13.1](https://github.com/growsurf/growsurf-php/compare/v1.13.0...v1.13.1) (2026-10-14)
 
 
