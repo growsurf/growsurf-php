@@ -34,4 +34,54 @@ enum Language: string
     case ZH_CN = 'zh-CN';
 
     case ID = 'id';
+
+    case DA = 'da';
+
+    case NB = 'nb';
+
+    case NN = 'nn';
+
+    case FI = 'fi';
+
+    case IS = 'is';
+
+    case CS = 'cs';
+
+    case SK = 'sk';
+
+    case HU = 'hu';
+
+    case RO = 'ro';
+
+    case HR = 'hr';
+
+    case SL = 'sl';
+
+    case ET = 'et';
+
+    case LV = 'lv';
+
+    case LT = 'lt';
+
+    case EL = 'el';
+
+    case BG = 'bg';
+
+    case UK = 'uk';
+
+    case RU = 'ru';
+
+    case PT_PT = 'pt-PT';
+
+    case CA = 'ca';
+
+    case VI = 'vi';
+
+    case MS = 'ms';
+
+    case FIL = 'fil';
+
+    case AF = 'af';
+
+    case SW = 'sw';
 }
