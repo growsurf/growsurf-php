@@ -90,6 +90,7 @@ namespace Growsurf\Campaign;
  *   revealDelaySeconds?: int,
  *   returnAfterDays?: int,
  *   isHiddenOnMobile?: bool,
+ *   clickAction?: 'WINDOW'|'PROGRAM_PAGE',
  *   pageRules?: CampaignDesignWidgetPageRulesShape,
  *   ...<string, mixed>
  * }

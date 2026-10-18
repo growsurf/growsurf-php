@@ -10,7 +10,7 @@ use Growsurf\Core\Concerns\SdkParams;
 use Growsurf\Core\Contracts\BaseModel;
 
 /**
- * Removes a participant by GrowSurf participant ID or email address.
+ * Removes participant access immediately by GrowSurf participant ID or email address. Related record cleanup completes automatically. Do not repeat a successful deletion to finish cleanup.
  *
  * @see Growsurf\Services\Campaign\ParticipantService::delete()
  *
