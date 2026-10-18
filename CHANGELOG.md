@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.15.0](https://github.com/growsurf/growsurf-php/compare/v1.14.0...v1.15.0) (2026-10-18)
+
+
+### Features
+
+* add widget clickAction to campaign design; clarify participant deletion cleanup ([811d14a](https://github.com/growsurf/growsurf-php/commit/811d14a1a338c786e01ac2dd26f0af2e93997238))
+* add widget clickAction to campaign design; clarify participant deletion cleanup ([42c755a](https://github.com/growsurf/growsurf-php/commit/42c755aa1dda044bdae65ab490ebb2f9072aaff7))
+
 ## [1.14.0](https://github.com/growsurf/growsurf-php/compare/v1.13.1...v1.14.0) (2026-10-15)
 
 
