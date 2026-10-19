@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.16.0](https://github.com/growsurf/growsurf-php/compare/v1.15.0...v1.16.0) (2026-10-19)
+
+
+### Features
+
+* support reward image icon keys ([d748e73](https://github.com/growsurf/growsurf-php/commit/d748e7388cb2ca0ea23cde1c38063d46b3fb60eb))
+* support reward image icon keys ([06e7853](https://github.com/growsurf/growsurf-php/commit/06e7853b2f37e527f445d2b1c8ad817354bb92d2))
+
 ## [1.15.0](https://github.com/growsurf/growsurf-php/compare/v1.14.0...v1.15.0) (2026-10-18)
 
 
