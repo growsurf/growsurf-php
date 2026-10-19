@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.17.0](https://github.com/growsurf/growsurf-php/compare/v1.16.1...v1.17.0) (2026-10-19)
+
+
+### Features
+
+* support resource empty-state graphics ([c789c3e](https://github.com/growsurf/growsurf-php/commit/c789c3e5d4e80473d45dd8a57452723ce6cec9f7))
+* support resource empty-state graphics ([eb50a85](https://github.com/growsurf/growsurf-php/commit/eb50a8564528aa7b162342c0029e42469de68b6f))
+
 ## [1.16.1](https://github.com/growsurf/growsurf-php/compare/v1.16.0...v1.16.1) (2026-10-19)
 
 
