@@ -9,6 +9,7 @@ use Growsurf\Campaign\CommissionStructure;
 use Growsurf\Campaign\DeleteRewardResponse;
 use Growsurf\Campaign\Reward;
 use Growsurf\Campaign\RewardCreateParams;
+use Growsurf\Campaign\RewardCreateParams\ImageIconKey;
 use Growsurf\Campaign\RewardCreateParams\LimitDuration;
 use Growsurf\Campaign\RewardCreateParams\Type;
 use Growsurf\Campaign\RewardDeleteParams;
@@ -79,6 +80,7 @@ final class RewardsRawService implements RewardsRawContract
      *   description?: string,
      *   event?: RewardEvent|value-of<RewardEvent>,
      *   imageURL?: string,
+     *   imageIconKey?: ImageIconKey|value-of<ImageIconKey>,
      *   isUnlimited?: bool,
      *   isVisible?: bool,
      *   limit?: int,
@@ -139,6 +141,7 @@ final class RewardsRawService implements RewardsRawContract
      *   description?: string,
      *   event?: RewardEvent|value-of<RewardEvent>,
      *   imageURL?: string,
+     *   imageIconKey?: RewardUpdateParams\ImageIconKey|value-of<RewardUpdateParams\ImageIconKey>,
      *   isUnlimited?: bool,
      *   isVisible?: bool,
      *   limit?: int,

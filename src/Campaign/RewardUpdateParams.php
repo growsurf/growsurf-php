@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Growsurf\Campaign;
 
+use Growsurf\Campaign\RewardUpdateParams\ImageIconKey;
 use Growsurf\Campaign\RewardUpdateParams\LimitDuration;
 use Growsurf\Core\Attributes\Optional;
 use Growsurf\Core\Attributes\Required;
@@ -31,6 +32,7 @@ use Growsurf\Core\Contracts\BaseModel;
  *   description?: string,
  *   event?: RewardEvent|value-of<RewardEvent>,
  *   imageURL?: string|null,
+ *   imageIconKey?: null|ImageIconKey|value-of<ImageIconKey>,
  *   isUnlimited?: bool,
  *   isVisible?: bool,
  *   limit?: int,
@@ -97,6 +99,14 @@ final class RewardUpdateParams implements BaseModel
      */
     #[Optional('imageUrl', nullable: true)]
     public ?string $imageURL;
+
+    /**
+     * The starter icon shown for the reward, or `null` when `imageUrl` is your own image. Participant pages draw this icon in your program's accent color. Also set `imageUrl` to the icon's image so the iOS and Android SDKs can show it. Sending `imageUrl` without `imageIconKey` clears it.
+     *
+     * @var value-of<ImageIconKey>|null $imageIconKey
+     */
+    #[Optional(enum: ImageIconKey::class, nullable: true)]
+    public ?string $imageIconKey;
 
     /**
      * Whether the reward can be earned an unlimited number of times. Defaults to `true`, except `MILESTONE` rewards, which can only be earned once.
@@ -217,6 +227,7 @@ final class RewardUpdateParams implements BaseModel
      * You must use named parameters to construct any parameters with a default value.
      *
      * @param CommissionStructure|CommissionStructureShape|null $commissionStructure
+     * @param ImageIconKey|value-of<ImageIconKey>|null $imageIconKey
      * @param LimitDuration|value-of<LimitDuration>|null $limitDuration
      * @param array<string,mixed> $metadata
      * @param RewardTaxValuation|RewardTaxValuationShape|null $referredValue
@@ -230,6 +241,7 @@ final class RewardUpdateParams implements BaseModel
         ?string $couponCode = null,
         ?string $description = null,
         ?string $imageURL = null,
+        ImageIconKey|string|null $imageIconKey = null,
         ?bool $isUnlimited = null,
         ?bool $isVisible = null,
         ?int $limit = null,
@@ -257,6 +269,7 @@ final class RewardUpdateParams implements BaseModel
         null !== $description && $self['description'] = $description;
         null !== $event && $self['event'] = $event;
         null !== $imageURL && $self['imageURL'] = $imageURL;
+        null !== $imageIconKey && $self['imageIconKey'] = $imageIconKey;
         null !== $isUnlimited && $self['isUnlimited'] = $isUnlimited;
         null !== $isVisible && $self['isVisible'] = $isVisible;
         null !== $limit && $self['limit'] = $limit;
@@ -347,6 +360,20 @@ final class RewardUpdateParams implements BaseModel
     {
         $self = clone $this;
         $self['imageURL'] = $imageURL;
+
+        return $self;
+    }
+
+    /**
+     * The starter icon shown for the reward, or `null` when `imageUrl` is your own image. Participant pages draw this icon in your program's accent color. Also set `imageUrl` to the icon's image so the iOS and Android SDKs can show it. Sending `imageUrl` without `imageIconKey` clears it.
+     *
+     * @param ImageIconKey|value-of<ImageIconKey>|null $imageIconKey
+     */
+    public function withImageIconKey(
+        ImageIconKey|string|null $imageIconKey
+    ): self {
+        $self = clone $this;
+        $self['imageIconKey'] = $imageIconKey;
 
         return $self;
     }
