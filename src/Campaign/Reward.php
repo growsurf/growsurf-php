@@ -236,11 +236,11 @@ final class Reward implements BaseModel
      * @param array<string,mixed> $metadata
      * @param Type|value-of<Type> $type
      * @param CommissionStructure|CommissionStructureShape|null $commissionStructure
-     * @param ImageIconKey|value-of<ImageIconKey>|null $imageIconKey
      * @param LimitDuration|value-of<LimitDuration>|null $limitDuration
      * @param RewardTaxValuation|RewardTaxValuationShape|null $referredValue
      * @param RewardTaxValuation|RewardTaxValuationShape|null $value
      * @param RewardEvent|value-of<RewardEvent>|null $event
+     * @param ImageIconKey|value-of<ImageIconKey>|null $imageIconKey
      */
     public static function with(
         string $id,
@@ -252,7 +252,6 @@ final class Reward implements BaseModel
         ?string $couponCode = null,
         ?string $description = null,
         ?string $imageURL = null,
-        ImageIconKey|string|null $imageIconKey = null,
         ?bool $isVisible = null,
         ?int $limit = null,
         LimitDuration|string|null $limitDuration = null,
@@ -267,6 +266,7 @@ final class Reward implements BaseModel
         ?string $title = null,
         RewardTaxValuation|array|null $value = null,
         RewardEvent|string|null $event = null,
+        ImageIconKey|string|null $imageIconKey = null,
     ): self {
         $self = new self;
 

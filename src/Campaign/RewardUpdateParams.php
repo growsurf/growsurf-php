@@ -227,12 +227,12 @@ final class RewardUpdateParams implements BaseModel
      * You must use named parameters to construct any parameters with a default value.
      *
      * @param CommissionStructure|CommissionStructureShape|null $commissionStructure
-     * @param ImageIconKey|value-of<ImageIconKey>|null $imageIconKey
      * @param LimitDuration|value-of<LimitDuration>|null $limitDuration
      * @param array<string,mixed> $metadata
      * @param RewardTaxValuation|RewardTaxValuationShape|null $referredValue
      * @param RewardTaxValuation|RewardTaxValuationShape|null $value
      * @param RewardEvent|value-of<RewardEvent>|null $event
+     * @param ImageIconKey|value-of<ImageIconKey>|null $imageIconKey
      */
     public static function with(
         string $id,
@@ -241,7 +241,6 @@ final class RewardUpdateParams implements BaseModel
         ?string $couponCode = null,
         ?string $description = null,
         ?string $imageURL = null,
-        ImageIconKey|string|null $imageIconKey = null,
         ?bool $isUnlimited = null,
         ?bool $isVisible = null,
         ?int $limit = null,
@@ -258,6 +257,7 @@ final class RewardUpdateParams implements BaseModel
         ?string $title = null,
         RewardTaxValuation|array|null $value = null,
         RewardEvent|string|null $event = null,
+        ImageIconKey|string|null $imageIconKey = null,
     ): self {
         $self = new self;
 

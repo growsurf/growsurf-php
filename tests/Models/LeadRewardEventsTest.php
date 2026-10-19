@@ -150,6 +150,7 @@ final class LeadRewardEventsTest extends TestCase
             null,
             'Reward description',
             'https://example.com/reward.png',
+            false,
         );
         $embeddedReward = EmbeddedReward::with(
             'reward-1',
@@ -161,6 +162,7 @@ final class LeadRewardEventsTest extends TestCase
             null,
             'Reward description',
             'https://example.com/reward.png',
+            false,
         );
         $create = RewardCreateParams::with(
             'SINGLE_SIDED',
@@ -169,6 +171,7 @@ final class LeadRewardEventsTest extends TestCase
             null,
             'Reward description',
             'https://example.com/reward.png',
+            false,
         );
         $update = RewardUpdateParams::with(
             'campaign-1',
@@ -177,6 +180,7 @@ final class LeadRewardEventsTest extends TestCase
             null,
             'Reward description',
             'https://example.com/reward.png',
+            false,
         );
         $commission = Commission::with(
             'commission-1',
@@ -193,6 +197,14 @@ final class LeadRewardEventsTest extends TestCase
         self::assertSame('https://example.com/reward.png', $embeddedReward->imageURL);
         self::assertSame('https://example.com/reward.png', $create->imageURL);
         self::assertSame('https://example.com/reward.png', $update->imageURL);
+        self::assertFalse($reward->isVisible);
+        self::assertFalse($embeddedReward->isVisible);
+        self::assertFalse($create->isUnlimited);
+        self::assertFalse($update->isUnlimited);
+        foreach ([$reward, $embeddedReward, $create, $update] as $model) {
+            self::assertArrayNotHasKey('imageIconKey', $model->jsonSerialize());
+            self::assertSame('GIFT_1', $model->withImageIconKey('GIFT_1')->jsonSerialize()['imageIconKey']);
+        }
         self::assertSame('referred-1', $commission->referredID);
         self::assertSame('referrer-1', $commission->referrerID);
         self::assertSame('SALE', $commission->event);
