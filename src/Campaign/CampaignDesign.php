@@ -29,7 +29,8 @@ namespace Growsurf\Campaign;
  *   copyButtonText?: string,
  *   copiedText?: string,
  *   emptyState?: string,
- *   icon?: CampaignDesignResourcesIconShape
+ *   icon?: CampaignDesignResourcesIconShape,
+ *   emptyStateGraphic?: array{type?: 'DEFAULT'|'IMAGE'|'NONE', key?: 'SOFT_DISC'|'DASHED_RING'|'GHOST_ROWS'|'CARD_STACK'|'DOT_FIELD'|'HALO', imageUrl?: string|null}
  * }
  * @phpstan-type CampaignDesignReferredExperienceShape = array{
  *   isOfferPopupEnabled?: bool,
