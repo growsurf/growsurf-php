@@ -37,7 +37,7 @@ interface RewardsContract
     /**
      * @api
      *
-     * Creates a Campaign Reward. To set the Campaign Reward `event`, use
+     * Creates a Campaign Reward. To set the Campaign Reward `event` or `imageIconKey`, use
      * `RewardsService::createWithParams()` with a `RewardCreateParams` model.
      *
      * @param string $id path param: GrowSurf program ID
@@ -95,7 +95,7 @@ interface RewardsContract
     /**
      * @api
      *
-     * Updates a Campaign Reward. To change the Campaign Reward `event`, use
+     * Updates a Campaign Reward. To change the Campaign Reward `event` or `imageIconKey`, use
      * `RewardsService::updateWithParams()` with a `RewardUpdateParams` model.
      *
      * @param string $campaignRewardID path param: Campaign Reward (`CampaignReward`) ID

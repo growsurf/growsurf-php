@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Growsurf\Campaign\Campaign;
 
+use Growsurf\Campaign\Campaign\Reward\ImageIconKey;
 use Growsurf\Campaign\Campaign\Reward\LimitDuration;
 use Growsurf\Campaign\Campaign\Reward\Type;
 use Growsurf\Campaign\CommissionStructure;
@@ -29,6 +30,7 @@ use Growsurf\Core\Contracts\BaseModel;
  *   description?: string|null,
  *   event?: RewardEvent|value-of<RewardEvent>|null,
  *   imageURL?: string|null,
+ *   imageIconKey?: null|ImageIconKey|value-of<ImageIconKey>,
  *   isVisible?: bool|null,
  *   limit?: int|null,
  *   limitDuration?: null|LimitDuration|value-of<LimitDuration>,
@@ -90,6 +92,14 @@ final class Reward implements BaseModel
 
     #[Optional('imageUrl', nullable: true)]
     public ?string $imageURL;
+
+    /**
+     * The starter icon shown for the reward, or `null` when `imageUrl` is your own image.
+     *
+     * @var value-of<ImageIconKey>|null $imageIconKey
+     */
+    #[Optional(enum: ImageIconKey::class, nullable: true)]
+    public ?string $imageIconKey;
 
     /**
      * Whether the reward is enabled. When `false`, the reward is disabled: no longer awarded (including to participants who already earned it) and hidden from participants.
@@ -171,6 +181,7 @@ final class Reward implements BaseModel
      * @param array<string,mixed> $metadata
      * @param Type|value-of<Type> $type
      * @param CommissionStructure|CommissionStructureShape|null $commissionStructure
+     * @param ImageIconKey|value-of<ImageIconKey>|null $imageIconKey
      * @param LimitDuration|value-of<LimitDuration>|null $limitDuration
      * @param RewardTaxValuation|RewardTaxValuationShape|null $referredValue
      * @param RewardTaxValuation|RewardTaxValuationShape|null $value
@@ -186,6 +197,7 @@ final class Reward implements BaseModel
         ?string $couponCode = null,
         ?string $description = null,
         ?string $imageURL = null,
+        ImageIconKey|string|null $imageIconKey = null,
         ?bool $isVisible = null,
         ?int $limit = null,
         LimitDuration|string|null $limitDuration = null,
@@ -214,6 +226,7 @@ final class Reward implements BaseModel
         null !== $description && $self['description'] = $description;
         null !== $event && $self['event'] = $event;
         null !== $imageURL && $self['imageURL'] = $imageURL;
+        null !== $imageIconKey && $self['imageIconKey'] = $imageIconKey;
         null !== $isVisible && $self['isVisible'] = $isVisible;
         null !== $limit && $self['limit'] = $limit;
         null !== $limitDuration && $self['limitDuration'] = $limitDuration;
@@ -321,6 +334,20 @@ final class Reward implements BaseModel
     {
         $self = clone $this;
         $self['imageURL'] = $imageURL;
+
+        return $self;
+    }
+
+    /**
+     * The starter icon shown for the reward, or `null` when `imageUrl` is your own image.
+     *
+     * @param ImageIconKey|value-of<ImageIconKey>|null $imageIconKey
+     */
+    public function withImageIconKey(
+        ImageIconKey|string|null $imageIconKey
+    ): self {
+        $self = clone $this;
+        $self['imageIconKey'] = $imageIconKey;
 
         return $self;
     }
