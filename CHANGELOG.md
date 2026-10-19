@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.16.1](https://github.com/growsurf/growsurf-php/compare/v1.16.0...v1.16.1) (2026-10-19)
+
+
+### Bug Fixes
+
+* preserve reward factory positional arguments ([ba6433e](https://github.com/growsurf/growsurf-php/commit/ba6433e79b41de6bbfa26834abaa757627c7468d))
+* preserve reward factory positional arguments ([65a0b49](https://github.com/growsurf/growsurf-php/commit/65a0b4957defa25afa8fdd77b044a033488186b9))
+
 ## [1.16.0](https://github.com/growsurf/growsurf-php/compare/v1.15.0...v1.16.0) (2026-10-19)
 
 
