@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.18.0](https://github.com/growsurf/growsurf-php/compare/v1.17.0...v1.18.0) (2026-10-20)
+
+
+### Features
+
+* add identified-participant login verification copy to campaign design ([710b03e](https://github.com/growsurf/growsurf-php/commit/710b03e3f43c50c5e217d94ae59c0f9f9d8fb814))
+* add identified-participant login verification copy to campaign design ([64cd486](https://github.com/growsurf/growsurf-php/commit/64cd48621df4725ec8c2afc10573066299412a72))
+
 ## [1.17.0](https://github.com/growsurf/growsurf-php/compare/v1.16.1...v1.17.0) (2026-10-19)
 
 
