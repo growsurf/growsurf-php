@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.19.0](https://github.com/growsurf/growsurf-php/compare/v1.18.0...v1.19.0) (2026-10-20)
+
+
+### Features
+
+* add hosted offer page design and redirect fields ([5ac7472](https://github.com/growsurf/growsurf-php/commit/5ac7472a4fcfbb42b3056f69ab7c566c9a9c96de))
+* add hosted offer page design and redirect fields ([3bb9dc7](https://github.com/growsurf/growsurf-php/commit/3bb9dc706a44c80b829e69ab8b2568cb3a15a5c7))
+
 ## [1.18.0](https://github.com/growsurf/growsurf-php/compare/v1.17.0...v1.18.0) (2026-10-20)
 
 
