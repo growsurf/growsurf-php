@@ -217,7 +217,7 @@ final class ParticipantRawService implements ParticipantRawContract
     /**
      * @api
      *
-     * Adds a new participant to the program. If the email already exists, the existing participant is returned unchanged. For affiliate programs, set `isAffiliate` to `true` to enroll a new participant as an approved affiliate or `false` to create a non-affiliate. If you omit `isAffiliate`, a valid `referredBy` creates a referred non-affiliate; without a valid referrer, the new participant is enrolled as an approved affiliate. You can send a valid `referredBy` with `isAffiliate: true` to keep the referral attribution and enroll the participant as an affiliate.
+     * Adds a new participant to the program. If the email already exists, the existing participant is returned unchanged. One exception: if that participant claimed an offer in the Claim Offer Popup and the signup is not complete yet, Add completes the signup with the original referrer and saves any non-blank `firstName`, `lastName`, and `metadata` you send. For affiliate programs, set `isAffiliate` to `true` to enroll a new participant as an approved affiliate or `false` to create a non-affiliate. If you omit `isAffiliate`, a valid `referredBy` creates a referred non-affiliate; without a valid referrer, the new participant is enrolled as an approved affiliate. You can send a valid `referredBy` with `isAffiliate: true` to keep the referral attribution and enroll the participant as an affiliate. A new participant with a valid `referredBy` counts as a referred signup. When the program's `referralTrigger` is `CUSTOM`, that signup can earn Lead-event rewards and commissions for the referrer, the same as a signup through the public client or mobile flow.
      *
      * @param string $id growSurf program ID
      * @param array{
@@ -231,6 +231,7 @@ final class ParticipantRawService implements ParticipantRawContract
      *   metadata?: array<string,mixed>,
      *   mobileInstanceID?: string,
      *   referralStatus?: ParticipantAddParams\ReferralStatus|value-of<ParticipantAddParams\ReferralStatus>,
+     *   referredAt?: int|null,
      *   referredBy?: string,
      * }|ParticipantAddParams $params
      * @param RequestOpts|null $requestOptions

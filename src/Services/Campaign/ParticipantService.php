@@ -205,7 +205,7 @@ final class ParticipantService implements ParticipantContract
     /**
      * @api
      *
-     * Adds a new participant to the program. If the email already exists, the existing participant is returned unchanged. For affiliate programs, set `isAffiliate` to `true` to enroll a new participant as an approved affiliate or `false` to create a non-affiliate. If you omit `isAffiliate`, a valid `referredBy` creates a referred non-affiliate; without a valid referrer, the new participant is enrolled as an approved affiliate. You can send a valid `referredBy` with `isAffiliate: true` to keep the referral attribution and enroll the participant as an affiliate.
+     * Adds a new participant to the program. If the email already exists, the existing participant is returned unchanged. One exception: if that participant claimed an offer in the Claim Offer Popup and the signup is not complete yet, Add completes the signup with the original referrer and saves any non-blank `firstName`, `lastName`, and `metadata` you send. For affiliate programs, set `isAffiliate` to `true` to enroll a new participant as an approved affiliate or `false` to create a non-affiliate. If you omit `isAffiliate`, a valid `referredBy` creates a referred non-affiliate; without a valid referrer, the new participant is enrolled as an approved affiliate. You can send a valid `referredBy` with `isAffiliate: true` to keep the referral attribution and enroll the participant as an affiliate. A new participant with a valid `referredBy` counts as a referred signup. When the program's `referralTrigger` is `CUSTOM`, that signup can earn Lead-event rewards and commissions for the referrer, the same as a signup through the public client or mobile flow.
      *
      * @param string $id growSurf program ID
      * @param bool $isAffiliate Affiliate programs only. Controls affiliate enrollment for a new participant. `true` enrolls the participant with `affiliateStatus: APPROVED`; `false` creates a non-affiliate without `affiliateStatus`. Existing participants are returned unchanged.
@@ -213,7 +213,8 @@ final class ParticipantService implements ParticipantContract
      * @param string $mobileInstanceID Optional app-install scoped identifier for native mobile anti-fraud. Recommended for mobile participant creation and mobile participant token flows. The official mobile SDKs generate this as a lowercase UUID.
      * @param ParticipantAddParams\ReferralStatus|value-of<ParticipantAddParams\ReferralStatus> $referralStatus The referral credit status. Only meaningful when `referredBy` resolves to a referrer. When omitted, it is derived from the program's referral trigger (`CREDIT_AWARDED`, `CREDIT_PENDING`, or `CREDIT_EXPIRED`); left unset when no referrer resolves.
      * @param string $referredBy referrer participant ID or email address
-     * @param Language|value-of<Language> $language The language of the participant's portal and program emails. Must be one of the program's languages. Applied only when this request creates the participant.
+     * @param Language|value-of<Language> $language The language of the participant's portal and program emails. Stored when it is one of the program's languages. A regional tag maps to its language (for example, `es-MX` is stored as `es`). Any other value is ignored and the program's base language applies. Applied only when this request creates the participant.
+     * @param int $referredAt When the participant was referred, in Unix milliseconds. Used only with a valid `referredBy`. If you omit `referralStatus`, GrowSurf compares this time with the program's referral credit window to set it. Defaults to the time of the request.
      * @param RequestOpts|null $requestOptions
      *
      * @throws APIException
@@ -233,6 +234,7 @@ final class ParticipantService implements ParticipantContract
         ?string $referredBy = null,
         RequestOptions|array|null $requestOptions = null,
         Language|string|null $language = null,
+        ?int $referredAt = null,
     ): Participant {
         $params = Util::removeNulls(
             [
@@ -246,6 +248,7 @@ final class ParticipantService implements ParticipantContract
                 'metadata' => $metadata,
                 'mobileInstanceID' => $mobileInstanceID,
                 'referralStatus' => $referralStatus,
+                'referredAt' => $referredAt,
                 'referredBy' => $referredBy,
             ],
         );
@@ -684,7 +687,7 @@ final class ParticipantService implements ParticipantContract
      * @param string $participantIDOrEmail path param: GrowSurf participant ID or unencoded participant email address (the SDK encodes it automatically)
      * @param string $id path param: GrowSurf program ID
      * @param string $body body param: HTML body for a free-form email. You can personalize it with dynamic text, inserting `{{...}}` tokens like `{{firstName}}` or `{{shareUrl}}`. See [Guide to using dynamic text in GrowSurf emails](https://support.growsurf.com/article/213-guide-to-using-dynamic-text-in-growsurf-emails).
-     * @param string $emailType body param: The program email template to trigger (template mode). Send the camelCase email-type key; the available types depend on the program type, and `isEnabled` only controls automatic sends. System/transactional types (login link, PayPal confirmation, tax) and the invite email cannot be sent. Referral programs: welcomeNonReferred, referralLinkViewedFirstTime, referralLinkUsed, referredSignup, welcomeReferred, goalAchieved, campaignEndedWinners, campaignEndedNonWinners, progressUpdateMonthly. Affiliate programs: welcomeNonReferred, referralLinkViewedFirstTime, referredSignup, commissionGenerated, commissionAdjusted, payoutPending, payoutSentSuccess, progressUpdateMonthly. `welcomeNonReferred` can only be sent to advocates or approved, enrolled affiliates in a program that has not ended.
+     * @param string $emailType body param: The program email template to trigger (template mode). Send the camelCase email-type key. The available types depend on the program type; the template's `isEnabled` setting controls automatic sends only. This endpoint can trigger any sendable template. System and transactional types (login link, payout destination confirmation, tax notifications), the invite email, and the follow-up reminder cannot be sent. Referral programs: `welcomeNonReferred`, `referralLinkViewedFirstTime`, `referralLinkUsed`, `referredSignup`, `welcomeReferred`, `offerClaimed`, `goalAchieved`, `campaignEndedWinners`, `campaignEndedNonWinners`, `progressUpdateMonthly`. Affiliate programs: `welcomeNonReferred`, `referralLinkViewedFirstTime`, `referredSignup`, `offerClaimed`, `commissionGenerated`, `commissionAdjusted`, `payoutPending`, `payoutSentSuccess`, `progressUpdateMonthly`. `welcomeNonReferred` can only be sent to advocates or approved, enrolled affiliates in a program that has not ended.
      * @param string $preheader body param: Optional preheader text for a free-form email
      * @param string $subject body param: Subject line for a free-form email. Supports dynamic text (`{{...}}` tokens), the same as the body.
      * @param RequestOpts|null $requestOptions

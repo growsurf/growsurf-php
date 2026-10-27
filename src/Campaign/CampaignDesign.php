@@ -19,16 +19,16 @@ namespace Growsurf\Campaign;
  * @phpstan-type PayoutDestinationConfirmationDesignShape = array{headline?: string|null, description?: string|null, emailLabel?: string|null, emailPlaceholder?: string|null, emailAgainLabel?: string|null, emailAgainPlaceholder?: string|null, legalNameLabel?: string|null, legalNamePlaceholder?: string|null, legalTypeLabel?: string|null, legalTypeIndividual?: string|null, legalTypeBusiness?: string|null, button?: string|null, success?: string|null, claimPending?: string|null, errorMessages?: PayoutDestinationConfirmationErrorMessagesShape}
  * @phpstan-type CampaignDesignResourcesIconShape = array{
  *   type?: 'DEFAULT'|'IMAGE'|'NONE',
- *   imageUrl?: string
+ *   imageUrl?: string|null
  * }
  * @phpstan-type CampaignDesignResourcesShape = array{
  *   isPublicDisplayed?: bool,
- *   title?: string,
- *   viewResourcesLinkText?: string,
- *   backLinkText?: string,
- *   copyButtonText?: string,
- *   copiedText?: string,
- *   emptyState?: string,
+ *   title?: string|null,
+ *   viewResourcesLinkText?: string|null,
+ *   backLinkText?: string|null,
+ *   copyButtonText?: string|null,
+ *   copiedText?: string|null,
+ *   emptyState?: string|null,
  *   icon?: CampaignDesignResourcesIconShape,
  *   emptyStateGraphic?: array{type?: 'DEFAULT'|'IMAGE'|'NONE', key?: 'SOFT_DISC'|'DASHED_RING'|'GHOST_ROWS'|'CARD_STACK'|'DOT_FIELD'|'HALO', imageUrl?: string|null}
  * }
@@ -64,6 +64,7 @@ namespace Growsurf\Campaign;
  *   headingPlacement?: 'PREPEND'|'APPEND'|'REPLACE',
  *   isHeadingStyled?: bool,
  *   isHeadingClickableToSignupUrl?: bool,
+ *   isPageTitleReplacementActive?: bool,
  *   pageTitleReplacement?: string|null,
  *   referrerNameFormat?: 'FIRST'|'FIRST_LAST_INITIAL'|'FIRST_LAST',
  *   referrerNameFallback?: string|null,

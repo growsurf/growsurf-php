@@ -52,6 +52,7 @@ use Growsurf\Core\Conversion\MapOf;
  *   paypalEmailAddress?: string|null,
  *   prevMonthlyRank?: int|null,
  *   prevMonthlyReferralCount?: int|null,
+ *   referralLeadQualifiedAt?: int|null,
  *   referrals?: list<string>|null,
  *   referralSource?: null|ReferralSource|value-of<ReferralSource>,
  *   referralStatus?: null|ReferralStatus|value-of<ReferralStatus>,
@@ -204,6 +205,12 @@ final class Participant implements BaseModel
     #[Optional]
     public ?int $prevMonthlyReferralCount;
 
+    /**
+     * When this referred signup counted as a lead for the referrer, in Unix milliseconds. Set only when the program's `referralTrigger` is `CUSTOM`. Lead-event Campaign Rewards and commissions use it.
+     */
+    #[Optional(nullable: true)]
+    public ?int $referralLeadQualifiedAt;
+
     /** @var list<string>|null $referrals */
     #[Optional(list: 'string')]
     public ?array $referrals;
@@ -340,6 +347,7 @@ final class Participant implements BaseModel
         ?bool $unsubscribed = null,
         ?array $vanityKeys = null,
         Language|string|null $language = null,
+        ?int $referralLeadQualifiedAt = null,
     ): self {
         $self = new self;
 
@@ -377,6 +385,7 @@ final class Participant implements BaseModel
         null !== $paypalEmailAddress && $self['paypalEmailAddress'] = $paypalEmailAddress;
         null !== $prevMonthlyRank && $self['prevMonthlyRank'] = $prevMonthlyRank;
         null !== $prevMonthlyReferralCount && $self['prevMonthlyReferralCount'] = $prevMonthlyReferralCount;
+        null !== $referralLeadQualifiedAt && $self['referralLeadQualifiedAt'] = $referralLeadQualifiedAt;
         null !== $referrals && $self['referrals'] = $referrals;
         null !== $referralSource && $self['referralSource'] = $referralSource;
         null !== $referralStatus && $self['referralStatus'] = $referralStatus;
@@ -702,6 +711,18 @@ final class Participant implements BaseModel
     ): self {
         $self = clone $this;
         $self['prevMonthlyReferralCount'] = $prevMonthlyReferralCount;
+
+        return $self;
+    }
+
+    /**
+     * When this referred signup counted as a lead for the referrer, in Unix milliseconds. Set only when the program's `referralTrigger` is `CUSTOM`. Lead-event Campaign Rewards and commissions use it.
+     */
+    public function withReferralLeadQualifiedAt(
+        ?int $referralLeadQualifiedAt
+    ): self {
+        $self = clone $this;
+        $self['referralLeadQualifiedAt'] = $referralLeadQualifiedAt;
 
         return $self;
     }

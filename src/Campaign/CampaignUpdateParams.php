@@ -13,15 +13,14 @@ use Growsurf\Core\Contracts\BaseModel;
 /**
  * Updates a program's identity and lifecycle. Only the fields you send are changed. `type`, `urlId`, and `currencyISO` are immutable. Editor-tab configuration (design, emails, options, installation) is edited via the dedicated config sub-resources, not here. The program cannot be deleted via this endpoint.
  * Changes to participant email content are checked before saving. Rejected content
- * returns `400`; if the check is unavailable, `503` asks you to retry. Neither response
- * saves the change. A concurrent edit can return `409`; reload the program before
- * retrying.
+ * returns `400` and is not saved. A concurrent edit can return `409`; reload the
+ * program before retrying.
  *
  * @see Growsurf\Services\CampaignService::update()
  *
  * @phpstan-type CampaignUpdateParamsShape = array{
- *   companyLogoImageURL?: string,
- *   companyName?: string,
+ *   companyLogoImageURL?: string|null,
+ *   companyName?: string|null,
  *   name?: string,
  *   status?: Status|value-of<Status>,
  * }
@@ -32,10 +31,10 @@ final class CampaignUpdateParams implements BaseModel
     use SdkModel;
     use SdkParams;
 
-    #[Optional('companyLogoImageUrl')]
+    #[Optional('companyLogoImageUrl', nullable: true)]
     public ?string $companyLogoImageURL;
 
-    #[Optional]
+    #[Optional(nullable: true)]
     public ?string $companyName;
 
     #[Optional]
@@ -77,7 +76,7 @@ final class CampaignUpdateParams implements BaseModel
         return $self;
     }
 
-    public function withCompanyLogoImageURL(string $companyLogoImageURL): self
+    public function withCompanyLogoImageURL(?string $companyLogoImageURL): self
     {
         $self = clone $this;
         $self['companyLogoImageURL'] = $companyLogoImageURL;
@@ -85,7 +84,7 @@ final class CampaignUpdateParams implements BaseModel
         return $self;
     }
 
-    public function withCompanyName(string $companyName): self
+    public function withCompanyName(?string $companyName): self
     {
         $self = clone $this;
         $self['companyName'] = $companyName;

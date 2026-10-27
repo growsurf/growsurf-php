@@ -13,7 +13,7 @@ use Growsurf\Core\Concerns\SdkParams;
 use Growsurf\Core\Contracts\BaseModel;
 
 /**
- * Adds a new participant to the program. If the email already exists, the existing participant is returned unchanged. For affiliate programs, set `isAffiliate` to `true` to enroll a new participant as an approved affiliate or `false` to create a non-affiliate. If you omit `isAffiliate`, a valid `referredBy` creates a referred non-affiliate; without a valid referrer, the new participant is enrolled as an approved affiliate. You can send a valid `referredBy` with `isAffiliate: true` to keep the referral attribution and enroll the participant as an affiliate.
+ * Adds a new participant to the program. If the email already exists, the existing participant is returned unchanged. One exception: if that participant claimed an offer in the Claim Offer Popup and the signup is not complete yet, Add completes the signup with the original referrer and saves any non-blank `firstName`, `lastName`, and `metadata` you send. For affiliate programs, set `isAffiliate` to `true` to enroll a new participant as an approved affiliate or `false` to create a non-affiliate. If you omit `isAffiliate`, a valid `referredBy` creates a referred non-affiliate; without a valid referrer, the new participant is enrolled as an approved affiliate. You can send a valid `referredBy` with `isAffiliate: true` to keep the referral attribution and enroll the participant as an affiliate. A new participant with a valid `referredBy` counts as a referred signup. When the program's `referralTrigger` is `CUSTOM`, that signup can earn Lead-event rewards and commissions for the referrer, the same as a signup through the public client or mobile flow.
  *
  * @see Growsurf\Services\Campaign\ParticipantService::add()
  *
@@ -28,6 +28,7 @@ use Growsurf\Core\Contracts\BaseModel;
  *   metadata?: array<string,mixed>,
  *   mobileInstanceID?: string,
  *   referralStatus?: \Growsurf\Campaign\Participant\ParticipantAddParams\ReferralStatus|value-of<\Growsurf\Campaign\Participant\ParticipantAddParams\ReferralStatus>,
+ *   referredAt?: int|null,
  *   referredBy?: string,
  * }
  */
@@ -56,7 +57,7 @@ final class ParticipantAddParams implements BaseModel
     public ?bool $isAffiliate;
 
     /**
-     * The language of the participant's portal and program emails. Must be one of the program's languages. Applied only when this request creates the participant.
+     * The language of the participant's portal and program emails. Stored when it is one of the program's languages. A regional tag maps to its language (for example, `es-MX` is stored as `es`). Any other value is ignored and the program's base language applies. Applied only when this request creates the participant.
      *
      * @var value-of<Language>|null $language
      */
@@ -89,6 +90,12 @@ final class ParticipantAddParams implements BaseModel
         enum: ReferralStatus::class,
     )]
     public ?string $referralStatus;
+
+    /**
+     * When the participant was referred, in Unix milliseconds. Used only with a valid `referredBy`. If you omit `referralStatus`, GrowSurf compares this time with the program's referral credit window to set it. Defaults to the time of the request.
+     */
+    #[Optional(nullable: true)]
+    public ?int $referredAt;
 
     /**
      * Referrer participant ID or email address.
@@ -136,6 +143,7 @@ final class ParticipantAddParams implements BaseModel
         ReferralStatus|string|null $referralStatus = null,
         ?string $referredBy = null,
         Language|string|null $language = null,
+        ?int $referredAt = null,
     ): self {
         $self = new self;
 
@@ -150,6 +158,7 @@ final class ParticipantAddParams implements BaseModel
         null !== $metadata && $self['metadata'] = $metadata;
         null !== $mobileInstanceID && $self['mobileInstanceID'] = $mobileInstanceID;
         null !== $referralStatus && $self['referralStatus'] = $referralStatus;
+        null !== $referredAt && $self['referredAt'] = $referredAt;
         null !== $referredBy && $self['referredBy'] = $referredBy;
 
         return $self;
@@ -199,7 +208,7 @@ final class ParticipantAddParams implements BaseModel
     }
 
     /**
-     * The language of the participant's portal and program emails. Must be one of the program's languages. Applied only when this request creates the participant.
+     * The language of the participant's portal and program emails. Stored when it is one of the program's languages. A regional tag maps to its language (for example, `es-MX` is stored as `es`). Any other value is ignored and the program's base language applies. Applied only when this request creates the participant.
      *
      * @param Language|value-of<Language> $language
      */
@@ -253,6 +262,17 @@ final class ParticipantAddParams implements BaseModel
     ): self {
         $self = clone $this;
         $self['referralStatus'] = $referralStatus;
+
+        return $self;
+    }
+
+    /**
+     * When the participant was referred, in Unix milliseconds. Used only with a valid `referredBy`. If you omit `referralStatus`, GrowSurf compares this time with the program's referral credit window to set it. Defaults to the time of the request.
+     */
+    public function withReferredAt(?int $referredAt): self
+    {
+        $self = clone $this;
+        $self['referredAt'] = $referredAt;
 
         return $self;
     }

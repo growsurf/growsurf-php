@@ -27,6 +27,7 @@ use Growsurf\Core\Contracts\BaseModel;
  *   metadata?: array<string,mixed>,
  *   mobileInstanceID?: string,
  *   referralStatus?: ReferralStatus|value-of<ReferralStatus>,
+ *   referredAt?: int|null,
  *   referredBy?: string,
  * }
  */
@@ -55,7 +56,7 @@ final class CampaignCreateMobileParticipantTokenParams implements BaseModel
     public ?bool $isAffiliate;
 
     /**
-     * The language of the participant's portal and program emails. Must be one of the program's languages. Applied only when this request creates the participant.
+     * The language of the participant's portal and program emails. Stored when it is one of the program's languages. A regional tag maps to its language (for example, `es-MX` is stored as `es`). Any other value is ignored and the program's base language applies. Applied only when this request creates the participant.
      *
      * @var value-of<Language>|null $language
      */
@@ -82,6 +83,12 @@ final class CampaignCreateMobileParticipantTokenParams implements BaseModel
     /** @var value-of<ReferralStatus>|null $referralStatus */
     #[Optional(enum: ReferralStatus::class)]
     public ?string $referralStatus;
+
+    /**
+     * When the participant was referred, in Unix milliseconds. Used only with a valid `referredBy`. If you omit `referralStatus`, GrowSurf compares this time with the program's referral credit window to set it. Defaults to the time of the request.
+     */
+    #[Optional(nullable: true)]
+    public ?int $referredAt;
 
     /**
      * Referrer participant ID or email address.
@@ -129,6 +136,7 @@ final class CampaignCreateMobileParticipantTokenParams implements BaseModel
         ReferralStatus|string|null $referralStatus = null,
         ?string $referredBy = null,
         Language|string|null $language = null,
+        ?int $referredAt = null,
     ): self {
         $self = new self;
 
@@ -143,6 +151,7 @@ final class CampaignCreateMobileParticipantTokenParams implements BaseModel
         null !== $metadata && $self['metadata'] = $metadata;
         null !== $mobileInstanceID && $self['mobileInstanceID'] = $mobileInstanceID;
         null !== $referralStatus && $self['referralStatus'] = $referralStatus;
+        null !== $referredAt && $self['referredAt'] = $referredAt;
         null !== $referredBy && $self['referredBy'] = $referredBy;
 
         return $self;
@@ -192,7 +201,7 @@ final class CampaignCreateMobileParticipantTokenParams implements BaseModel
     }
 
     /**
-     * The language of the participant's portal and program emails. Must be one of the program's languages. Applied only when this request creates the participant.
+     * The language of the participant's portal and program emails. Stored when it is one of the program's languages. A regional tag maps to its language (for example, `es-MX` is stored as `es`). Any other value is ignored and the program's base language applies. Applied only when this request creates the participant.
      *
      * @param Language|value-of<Language> $language
      */
@@ -244,6 +253,17 @@ final class CampaignCreateMobileParticipantTokenParams implements BaseModel
     ): self {
         $self = clone $this;
         $self['referralStatus'] = $referralStatus;
+
+        return $self;
+    }
+
+    /**
+     * When the participant was referred, in Unix milliseconds. Used only with a valid `referredBy`. If you omit `referralStatus`, GrowSurf compares this time with the program's referral credit window to set it. Defaults to the time of the request.
+     */
+    public function withReferredAt(?int $referredAt): self
+    {
+        $self = clone $this;
+        $self['referredAt'] = $referredAt;
 
         return $self;
     }

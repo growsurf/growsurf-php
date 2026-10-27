@@ -175,7 +175,7 @@ final class CampaignService implements CampaignContract
      *
      * @param Type|value-of<Type> $type The program type. Immutable after creation.
      * @param string $currencyISO ISO 4217 currency code. Defaults to USD. Chosen when the program is created and immutable afterward — it cannot be changed on update.
-     * @param Goal|value-of<Goal> $goal What the program is for, which seeds the share buttons and the starter rewards that suit that audience. Programs whose participants refer other businesses start with the LinkedIn share button visible; consumer, financial, education, insurance, telehealth, newsletter, and waitlist programs start with it hidden. Starter rewards arrive switched off with a placeholder name, so the program awards nothing until you set the amount and turn one on. Set only when the program is created; it is not accepted on update.
+     * @param Goal|value-of<Goal> $goal What the program is for, which seeds the share buttons and the starter rewards that suit that audience. Set it when you create the program; it is not accepted on update. Programs whose participants refer other businesses (`CUSTOMERS`, `USERS`, `B2B_SAAS_SELF_SERVICE`, `B2B_SAAS_ENTERPRISE`, `HEALTHCARE_PROVIDERS`) start with the LinkedIn share button visible. Consumer, financial, education, insurance, telehealth, newsletter, and waitlist programs (`B2C_SUBSCRIPTIONS`, `FINANCIAL_SERVICES`, `ONLINE_EDUCATION`, `INSURANCE`, `ONLINE_INSURANCE`, `TELEHEALTH`, `SUBSCRIBERS`, `WAITLIST`) start with it hidden. On a referral program, each goal also sets the rest of its share buttons to suit that audience — a telehealth program keeps the public feeds off, a consumer subscription turns Pinterest and Reddit on. An affiliate program has its own share defaults, so only the LinkedIn default above applies to one. Omit `goal` and every share button keeps its standard default. Change any of it afterward with `PATCH /campaign/{id}/design`. When you create a referral program without `rewards`, the goal also decides the starter rewards: most goals get one double-sided reward, `HEALTHCARE_PROVIDERS` gets a single-sided reward, `SUBSCRIBERS` gets a four-step milestone ladder, and `WAITLIST` gets a leaderboard. Every starter reward arrives switched off with a placeholder name, so the program awards nothing until you set the amount and turn one on. `TELEHEALTH` is for consumer telehealth and wellness subscriptions, where patients refer friends. `HEALTHCARE_PROVIDERS` is for provider networks and clinician-facing products, where practices refer peer practices. A `TELEHEALTH` program also starts with `useGrowSurfHostedLinks` on, so each referral link is a GrowSurf-hosted link; turn it off with `PATCH /campaign/{id}/installation`. It also starts with `offerPageRedirectSeconds` set to `10` and with starter offer-page content (`referredExperience.offerPageDescription` and `offerPageSteps`). Values you send in the create request are kept. `INSURANCE` replaces `ONLINE_INSURANCE`, which is still accepted and behaves identically.
      * @param string $name The program name. Defaults to a generated friendly label plus the creation date.
      * @param list<RewardCreateParams|RewardCreateParamsShape> $rewards optional inline rewards to create with the program
      * @param RequestOpts|null $requestOptions
@@ -215,9 +215,8 @@ final class CampaignService implements CampaignContract
      *
      * Updates a program's identity and lifecycle. Only the fields you send are changed. `type`, `urlId`, and `currencyISO` are immutable. Editor-tab configuration (design, emails, options, installation) is edited via the dedicated config sub-resources, not here. The program cannot be deleted via this endpoint.
      * Changes to participant email content are checked before saving. Rejected content
-     * returns `400`; if the check is unavailable, `503` asks you to retry. Neither
-     * response saves the change. A concurrent edit can return `409`; reload the program
-     * before retrying.
+     * returns `400` and is not saved. A concurrent edit can return `409`; reload the
+     * program before retrying.
      *
      * @param string $id growSurf program ID
      * @param \Growsurf\Campaign\CampaignUpdateParams\Status|value-of<\Growsurf\Campaign\CampaignUpdateParams\Status> $status The requested program status. `IN_PROGRESS` publishes or resumes the program; `COMPLETE` ends it. Any other value returns a `400`.
@@ -300,7 +299,8 @@ final class CampaignService implements CampaignContract
      * @param ReferralStatus|value-of<ReferralStatus> $referralStatus
      * @param string $referredBy referrer participant ID or email address
      * @param bool $isAffiliate Affiliate programs only. Controls affiliate enrollment for a new participant. `true` enrolls the participant with `affiliateStatus: APPROVED`; `false` creates a non-affiliate without `affiliateStatus`. Existing participants are returned unchanged.
-     * @param Language|value-of<Language> $language The language of the participant's portal and program emails. Must be one of the program's languages. Applied only when this request creates the participant.
+     * @param Language|value-of<Language> $language The language of the participant's portal and program emails. Stored when it is one of the program's languages. A regional tag maps to its language (for example, `es-MX` is stored as `es`). Any other value is ignored and the program's base language applies. Applied only when this request creates the participant.
+     * @param int $referredAt When the participant was referred, in Unix milliseconds. Used only with a valid `referredBy`. If you omit `referralStatus`, GrowSurf compares this time with the program's referral credit window to set it. Defaults to the time of the request.
      * @param RequestOpts|null $requestOptions
      *
      * @throws APIException
@@ -320,6 +320,7 @@ final class CampaignService implements CampaignContract
         RequestOptions|array|null $requestOptions = null,
         ?bool $isAffiliate = null,
         Language|string|null $language = null,
+        ?int $referredAt = null,
     ): CampaignNewMobileParticipantTokenResponse {
         $params = Util::removeNulls(
             [
@@ -333,6 +334,7 @@ final class CampaignService implements CampaignContract
                 'metadata' => $metadata,
                 'mobileInstanceID' => $mobileInstanceID,
                 'referralStatus' => $referralStatus,
+                'referredAt' => $referredAt,
                 'referredBy' => $referredBy,
             ],
         );

@@ -11,7 +11,8 @@ use Growsurf\Core\Concerns\SdkParams;
 use Growsurf\Core\Contracts\BaseModel;
 
 /**
- * Updates a webhook by id.
+ * Updates a webhook by id. A program can have only one saved Bask Health webhook across all `bask.ninja` hosts and paths, including disabled webhooks. An update that leaves more than one Bask Health webhook returns `400`.
+ * A concurrent change to webhook settings can return `409`; reload the webhooks before retrying.
  *
  * @see Growsurf\Services\Campaign\WebhooksService::update()
  *

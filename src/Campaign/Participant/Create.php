@@ -21,6 +21,7 @@ use Growsurf\Core\Contracts\BaseModel;
  *   metadata?: array<string,mixed>|null,
  *   mobileInstanceID?: string|null,
  *   referralStatus?: null|\Growsurf\Campaign\Participant\Create\ReferralStatus|value-of<\Growsurf\Campaign\Participant\Create\ReferralStatus>,
+ *   referredAt?: int|null,
  *   referredBy?: string|null,
  * }
  */
@@ -73,6 +74,12 @@ final class Create implements BaseModel
     public ?string $referralStatus;
 
     /**
+     * When the participant was referred, in Unix milliseconds. Used only with a valid `referredBy`. If you omit `referralStatus`, GrowSurf compares this time with the program's referral credit window to set it. Defaults to the time of the request.
+     */
+    #[Optional(nullable: true)]
+    public ?int $referredAt;
+
+    /**
      * Referrer participant ID or email address.
      */
     #[Optional]
@@ -116,6 +123,7 @@ final class Create implements BaseModel
         ?string $mobileInstanceID = null,
         ReferralStatus|string|null $referralStatus = null,
         ?string $referredBy = null,
+        ?int $referredAt = null,
     ): self {
         $self = new self;
 
@@ -129,6 +137,7 @@ final class Create implements BaseModel
         null !== $metadata && $self['metadata'] = $metadata;
         null !== $mobileInstanceID && $self['mobileInstanceID'] = $mobileInstanceID;
         null !== $referralStatus && $self['referralStatus'] = $referralStatus;
+        null !== $referredAt && $self['referredAt'] = $referredAt;
         null !== $referredBy && $self['referredBy'] = $referredBy;
 
         return $self;
@@ -219,6 +228,17 @@ final class Create implements BaseModel
     ): self {
         $self = clone $this;
         $self['referralStatus'] = $referralStatus;
+
+        return $self;
+    }
+
+    /**
+     * When the participant was referred, in Unix milliseconds. Used only with a valid `referredBy`. If you omit `referralStatus`, GrowSurf compares this time with the program's referral credit window to set it. Defaults to the time of the request.
+     */
+    public function withReferredAt(?int $referredAt): self
+    {
+        $self = clone $this;
+        $self['referredAt'] = $referredAt;
 
         return $self;
     }

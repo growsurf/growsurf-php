@@ -71,9 +71,8 @@ final class RewardsService implements RewardsContract
      * preserves the stored value. This form also distinguishes an omitted field from an
      * explicit JSON null that clears a nullable value.
      * Changes to participant email content are checked before saving. Rejected content
-     * returns `400`; if the check is unavailable, `503` asks you to retry. Neither
-     * response saves the change. A concurrent edit can return `409`; reload the program
-     * before retrying.
+     * returns `400` and is not saved. A concurrent edit can return `409`; reload the
+     * program before retrying.
      *
      * @param RequestOpts|null $requestOptions
      *
@@ -200,9 +199,8 @@ final class RewardsService implements RewardsContract
      *
      * Updates an existing Campaign Reward (`CampaignReward`). The reward `type` is immutable and cannot be changed. When the update replaces `metadata`, renamed keys automatically rewrite any `{{campaignReward[…]}}` references in campaign copy; removing a key that campaign copy still references returns a `409` listing the referencing fields. Use `updateWithParams()` to change the Campaign Reward `event` or `imageIconKey`.
      * Changes to participant email content are checked before saving. Rejected content
-     * returns `400`; if the check is unavailable, `503` asks you to retry. Neither
-     * response saves the change. A concurrent edit can return `409`; reload the program
-     * before retrying.
+     * returns `400` and is not saved. A concurrent edit can return `409`; reload the
+     * program before retrying.
      *
      * @param string $campaignRewardID path param: Campaign Reward (`CampaignReward`) ID
      * @param string $id path param: GrowSurf program ID
