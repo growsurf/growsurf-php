@@ -130,6 +130,7 @@ namespace Growsurf\Campaign;
  * @phpstan-type CampaignDesignThemeShape = array{referredExperienceOfferPopup?: array{color?: string|null, backgroundColor?: string|null, ...<string, mixed>}, widget?: array{color?: string|null, backgroundColor?: string|null, borderRadius?: string|null, ...<string, mixed>}, ...<string, mixed>}
  * @phpstan-type CampaignDesignShape = array{
  *   participantAvatarStyle?: 'CHARACTERS'|'INITIALS'|'ANIMALS'|'GRADIENT',
+ *   visualStyle?: 'GLOW'|'CLEAN'|'FLAT'|'ROUND',
  *   window?: array<string, mixed>,
  *   header?: array<string, mixed>,
  *   stats?: array<string, mixed>,

@@ -12,7 +12,7 @@ use Growsurf\RequestOptions;
 use Growsurf\ServiceContracts\Campaign\DesignRawContract;
 
 /**
- * Campaign design (`CampaignDesign`) configuration — the dashboard Program Editor's **Design** tab, including Resources presentation, `participantAvatarStyle` (`CHARACTERS`, `INITIALS`, `ANIMALS`, or `GRADIENT`) and the Claim Offer Popup.
+ * Campaign design (`CampaignDesign`) configuration — the dashboard Program Editor's **Design** tab, including Resources presentation, `participantAvatarStyle` (`CHARACTERS`, `INITIALS`, `ANIMALS`, or `GRADIENT`), `visualStyle` (`GLOW`, `CLEAN`, `FLAT`, or `ROUND`) and the Claim Offer Popup.
  *
  * @phpstan-import-type RequestOpts from \Growsurf\RequestOptions
  * @phpstan-import-type CampaignDesignShape from \Growsurf\Campaign\CampaignDesign
@@ -29,7 +29,7 @@ final class DesignRawService implements DesignRawContract
     /**
      * @api
      *
-     * Retrieves a program's configured design fields: the dashboard Program Editor's **Design** tab plus the payout-destination confirmation page copy configured from payout integration cards. This includes the GrowSurf window layout, header, share channels and invites, signup form, portal and landing pages, theme styling, and referral or affiliate summary and status sections. The available fields depend on the program type. `participantAvatarStyle` is `CHARACTERS`, `INITIALS`, `ANIMALS`, or `GRADIENT`; missing or unknown values mean `INITIALS`. `payoutDestinationConfirmation` is omitted when no confirmation fields are stored. Stored `null` fields are returned as `null`; omitted and `null` fields use localized defaults.
+     * Retrieves a program's configured design fields: the dashboard Program Editor's **Design** tab plus the payout-destination confirmation page copy configured from payout integration cards. This includes the GrowSurf window layout, header, share channels and invites, signup form, portal and landing pages, theme styling, and referral or affiliate summary and status sections. The available fields depend on the program type. `participantAvatarStyle` is `CHARACTERS`, `INITIALS`, `ANIMALS`, or `GRADIENT`; missing or unknown values mean `INITIALS`. `visualStyle` is `GLOW`, `CLEAN`, `FLAT`, or `ROUND`, and is omitted when the program has no saved Style. `payoutDestinationConfirmation` is omitted when no confirmation fields are stored. Stored `null` fields are returned as `null`; omitted and `null` fields use localized defaults.
      *
      * @param string $id growSurf program ID
      * @param RequestOpts|null $requestOptions
