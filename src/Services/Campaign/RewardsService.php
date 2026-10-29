@@ -123,6 +123,14 @@ final class RewardsService implements RewardsContract
      * @param int $limit body param: The number of times a participant can earn the reward (overridden by `isUnlimited`)
      * @param LimitDuration|value-of<LimitDuration> $limitDuration body param: The window over which `limit` applies
      * @param array<string,mixed> $metadata body param: Custom key/value metadata (single-level; values are stored as strings)
+     *
+     * For `DOUBLE_SIDED` rewards in referral programs, `rewardAmount` is the
+     * referrer’s amount and `referredRewardAmount` is the friend’s amount. If
+     * `referredRewardAmount` is absent, both use `rewardAmount`. New or changed positive numeric
+     * amounts must use whole units for currencies without decimals, such as JPY, and no more than
+     * two decimal places for other currencies, including USD and KWD. Excess precision is rejected
+     * rather than rounded, including when you clone a program. Existing unchanged amounts and
+     * earned rewards keep their saved values.
      * @param string|null $nextMilestonePrefix body param: Text shown before a participant's referral count in milestone progress copy (e.g. "You are only"). Applies to `MILESTONE` rewards.
      * @param string|null $nextMilestoneSuffix body param: Text shown after a participant's referral count in milestone progress copy (e.g. "referrals away from your next reward!"). Applies to `MILESTONE` rewards.
      * @param int $numberOfWinners body param: The maximum number of winners. Only applies to `LEADERBOARD` rewards. When `limitDuration` is `PER_MONTH`, this many top referrers win each month; otherwise this many win in total. Defaults to `3` when omitted.
@@ -214,6 +222,14 @@ final class RewardsService implements RewardsContract
      * @param int $limit body param: The number of times a participant can earn the reward (overridden by `isUnlimited`)
      * @param RewardUpdateParams\LimitDuration|value-of<RewardUpdateParams\LimitDuration> $limitDuration body param: The window over which `limit` applies
      * @param array<string,mixed> $metadata body param: Custom key/value metadata (single-level; values are stored as strings)
+     *
+     * For `DOUBLE_SIDED` rewards in referral programs, `rewardAmount` is the
+     * referrer’s amount and `referredRewardAmount` is the friend’s amount. If
+     * `referredRewardAmount` is absent, both use `rewardAmount`. New or changed positive numeric
+     * amounts must use whole units for currencies without decimals, such as JPY, and no more than
+     * two decimal places for other currencies, including USD and KWD. Excess precision is rejected
+     * rather than rounded, including when you clone a program. Existing unchanged amounts and
+     * earned rewards keep their saved values.
      * @param string|null $nextMilestonePrefix body param: Text shown before a participant's referral count in milestone progress copy (e.g. "You are only"). Applies to `MILESTONE` rewards.
      * @param string|null $nextMilestoneSuffix body param: Text shown after a participant's referral count in milestone progress copy (e.g. "referrals away from your next reward!"). Applies to `MILESTONE` rewards.
      * @param int $numberOfWinners body param: The maximum number of winners. Only applies to `LEADERBOARD` rewards. When `limitDuration` is `PER_MONTH`, this many top referrers win each month; otherwise this many win in total. Defaults to `3` when omitted.
