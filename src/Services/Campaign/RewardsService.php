@@ -122,15 +122,16 @@ final class RewardsService implements RewardsContract
      * @param bool $isVisible body param: Whether the reward is enabled. When `false`, the reward is disabled: no longer awarded (including to participants who already earned it) and hidden from participants.
      * @param int $limit body param: The number of times a participant can earn the reward (overridden by `isUnlimited`)
      * @param LimitDuration|value-of<LimitDuration> $limitDuration body param: The window over which `limit` applies
-     * @param array<string,mixed> $metadata body param: Custom key/value metadata (single-level; values are stored as strings)
+     * @param array<string,mixed> $metadata body param: Custom key/value metadata (single-level; values keep the type you send). Each value must be a string, number, or boolean of up to 500 characters. Each key must have 1 to 40 characters once camelCased, and two keys that camelCase to the same key are rejected. Up to 50 keys. An entry that breaks these rules returns `400`.
      *
-     * For `DOUBLE_SIDED` rewards in referral programs, `rewardAmount` is the
-     * referrer’s amount and `referredRewardAmount` is the friend’s amount. If
-     * `referredRewardAmount` is absent, both use `rewardAmount`. New or changed positive numeric
-     * amounts must use whole units for currencies without decimals, such as JPY, and no more than
-     * two decimal places for other currencies, including USD and KWD. Excess precision is rejected
-     * rather than rounded, including when you clone a program. Existing unchanged amounts and
-     * earned rewards keep their saved values.
+     * For `DOUBLE_SIDED` rewards in referral programs, `rewardAmount` is the referrer’s amount and
+     * `referredRewardAmount` is the friend’s amount. If `referredRewardAmount` is absent, the
+     * friend also uses `rewardAmount`, unless the friend’s `referralDescription` is a percent or
+     * free offer, which stays amount-free. New or changed positive numeric amounts must use whole
+     * units for currencies without decimals, such as JPY, and no more than two decimal places for
+     * other currencies, including USD and KWD. Excess precision is rejected rather than rounded,
+     * including when you clone a program. Existing unchanged amounts and earned rewards keep their
+     * saved values.
      * @param string|null $nextMilestonePrefix body param: Text shown before a participant's referral count in milestone progress copy (e.g. "You are only"). Applies to `MILESTONE` rewards.
      * @param string|null $nextMilestoneSuffix body param: Text shown after a participant's referral count in milestone progress copy (e.g. "referrals away from your next reward!"). Applies to `MILESTONE` rewards.
      * @param int $numberOfWinners body param: The maximum number of winners. Only applies to `LEADERBOARD` rewards. When `limitDuration` is `PER_MONTH`, this many top referrers win each month; otherwise this many win in total. Defaults to `3` when omitted.
@@ -221,15 +222,16 @@ final class RewardsService implements RewardsContract
      * @param bool $isVisible body param: Whether the reward is enabled. When `false`, the reward is disabled: no longer awarded (including to participants who already earned it) and hidden from participants.
      * @param int $limit body param: The number of times a participant can earn the reward (overridden by `isUnlimited`)
      * @param RewardUpdateParams\LimitDuration|value-of<RewardUpdateParams\LimitDuration> $limitDuration body param: The window over which `limit` applies
-     * @param array<string,mixed> $metadata body param: Custom key/value metadata (single-level; values are stored as strings)
+     * @param array<string,mixed> $metadata body param: Custom key/value metadata (single-level; values keep the type you send). Each value must be a string, number, or boolean of up to 500 characters. Each key must have 1 to 40 characters once camelCased, and two keys that camelCase to the same key are rejected. Up to 50 keys. An entry that breaks these rules returns `400`.
      *
-     * For `DOUBLE_SIDED` rewards in referral programs, `rewardAmount` is the
-     * referrer’s amount and `referredRewardAmount` is the friend’s amount. If
-     * `referredRewardAmount` is absent, both use `rewardAmount`. New or changed positive numeric
-     * amounts must use whole units for currencies without decimals, such as JPY, and no more than
-     * two decimal places for other currencies, including USD and KWD. Excess precision is rejected
-     * rather than rounded, including when you clone a program. Existing unchanged amounts and
-     * earned rewards keep their saved values.
+     * For `DOUBLE_SIDED` rewards in referral programs, `rewardAmount` is the referrer’s amount and
+     * `referredRewardAmount` is the friend’s amount. If `referredRewardAmount` is absent, the
+     * friend also uses `rewardAmount`, unless the friend’s `referralDescription` is a percent or
+     * free offer, which stays amount-free. New or changed positive numeric amounts must use whole
+     * units for currencies without decimals, such as JPY, and no more than two decimal places for
+     * other currencies, including USD and KWD. Excess precision is rejected rather than rounded,
+     * including when you clone a program. Existing unchanged amounts and earned rewards keep their
+     * saved values.
      * @param string|null $nextMilestonePrefix body param: Text shown before a participant's referral count in milestone progress copy (e.g. "You are only"). Applies to `MILESTONE` rewards.
      * @param string|null $nextMilestoneSuffix body param: Text shown after a participant's referral count in milestone progress copy (e.g. "referrals away from your next reward!"). Applies to `MILESTONE` rewards.
      * @param int $numberOfWinners body param: The maximum number of winners. Only applies to `LEADERBOARD` rewards. When `limitDuration` is `PER_MONTH`, this many top referrers win each month; otherwise this many win in total. Defaults to `3` when omitted.

@@ -16,8 +16,10 @@ use Growsurf\Campaign\Participant\ParticipantListActivityLogsResponse;
 use Growsurf\Campaign\Participant\ParticipantListCommissionsParams\Status;
 use Growsurf\Campaign\Participant\ParticipantListReferralsParams\SortBy;
 use Growsurf\Campaign\Participant\ParticipantListRewardsResponse;
+use Growsurf\Campaign\Participant\ParticipantRecordTransactionParams;
 use Growsurf\Campaign\Participant\ParticipantRecordTransactionResponse\UnionMember0;
 use Growsurf\Campaign\Participant\ParticipantRecordTransactionResponse\UnionMember1;
+use Growsurf\Campaign\Participant\ParticipantRefundTransactionParams;
 use Growsurf\Campaign\Participant\ParticipantRefundTransactionParams\AmendmentType;
 use Growsurf\Campaign\Participant\ParticipantRefundTransactionResponse;
 use Growsurf\Campaign\Participant\ParticipantRequestPayoutDestinationConfirmationParams\Provider;
@@ -438,7 +440,7 @@ final class ParticipantService implements ParticipantContract
      * @param list<array<string,mixed>> $totalTaxAmounts Body param
      * @param list<array<string,mixed>> $totalTaxes Body param
      * @param string $transactionID Body param
-     * @param string $paymentProvider Connected provider: `stripe`, `chargebee` or `recurly`. Requires `transactionId` and `testMode`.
+     * @param ParticipantRecordTransactionParams\PaymentProvider|value-of<ParticipantRecordTransactionParams\PaymentProvider> $paymentProvider Connected provider: `stripe`, `chargebee` or `recurly`. Requires `transactionId` and `testMode`.
      * @param bool $testMode `true` for test or `false` for live. Requires `paymentProvider`.
      * @param RequestOpts|null $requestOptions
      *
@@ -470,7 +472,7 @@ final class ParticipantService implements ParticipantContract
         ?array $totalTaxAmounts = null,
         ?array $totalTaxes = null,
         ?string $transactionID = null,
-        ?string $paymentProvider = null,
+        ParticipantRecordTransactionParams\PaymentProvider|string|null $paymentProvider = null,
         ?bool $testMode = null,
         RequestOptions|array|null $requestOptions = null,
     ): UnionMember0|UnionMember1 {
@@ -533,7 +535,7 @@ final class ParticipantService implements ParticipantContract
      * @param string $refundID body param: Stable per-refund identifier. Recommended for partial refunds so repeated calls stay idempotent.
      * @param string $refundStatus body param: Refund status. Send "canceled" with a lowered amountRefunded to restore a previously reduced commission.
      * @param string $transactionID Body param
-     * @param string $paymentProvider Connected provider: `stripe`, `chargebee` or `recurly`. Requires `transactionId` and `testMode`.
+     * @param ParticipantRefundTransactionParams\PaymentProvider|value-of<ParticipantRefundTransactionParams\PaymentProvider> $paymentProvider Connected provider: `stripe`, `chargebee` or `recurly`. Requires `transactionId` and `testMode`.
      * @param bool $testMode `true` for test or `false` for live. Requires `paymentProvider`.
      * @param RequestOpts|null $requestOptions
      *
@@ -557,7 +559,7 @@ final class ParticipantService implements ParticipantContract
         ?string $refundID = null,
         ?string $refundStatus = null,
         ?string $transactionID = null,
-        ?string $paymentProvider = null,
+        ParticipantRefundTransactionParams\PaymentProvider|string|null $paymentProvider = null,
         ?bool $testMode = null,
         RequestOptions|array|null $requestOptions = null,
         ?bool $refundHistoryComplete = null,

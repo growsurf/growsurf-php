@@ -61,6 +61,7 @@ final class WebhooksRawService implements WebhooksRawContract
      * @api
      *
      * Adds a webhook to the program. A program can have only one saved Bask Health webhook across all `bask.ninja` hosts and paths, including disabled webhooks. A second Bask Health webhook returns `400`.
+     * A program can have up to 5 webhooks, counting the primary webhook slot, so you can create up to 4. Creating another returns `400`.
      * A concurrent change to webhook settings can return `409`; reload the webhooks before retrying.
      *
      * @param string $id growSurf program ID

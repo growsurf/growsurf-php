@@ -459,7 +459,7 @@ final class ParticipantRawService implements ParticipantRawContract
      *   totalTaxAmounts?: list<array<string,mixed>>,
      *   totalTaxes?: list<array<string,mixed>>,
      *   transactionID?: string,
-     *   paymentProvider?: string,
+     *   paymentProvider?: ParticipantRecordTransactionParams\PaymentProvider|value-of<ParticipantRecordTransactionParams\PaymentProvider>,
      *   testMode?: bool,
      * }|ParticipantRecordTransactionParams $params
      * @param RequestOpts|null $requestOptions
@@ -515,7 +515,7 @@ final class ParticipantRawService implements ParticipantRawContract
      *   refundID?: string,
      *   refundStatus?: string,
      *   transactionID?: string,
-     *   paymentProvider?: string,
+     *   paymentProvider?: ParticipantRefundTransactionParams\PaymentProvider|value-of<ParticipantRefundTransactionParams\PaymentProvider>,
      *   testMode?: bool,
      * }|ParticipantRefundTransactionParams $params
      * @param RequestOpts|null $requestOptions

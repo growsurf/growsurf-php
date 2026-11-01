@@ -15,11 +15,5 @@ enum SortBy: string
 
     case EMAIL = 'email';
 
-    case FIRST_NAME = 'firstName';
-
-    case LAST_NAME = 'lastName';
-
-    case REFERRAL_STATUS = 'referralStatus';
-
     case REFERRAL_TRIGGERED_AT = 'referralTriggeredAt';
 }

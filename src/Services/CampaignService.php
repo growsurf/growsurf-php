@@ -36,6 +36,7 @@ use Growsurf\Core\Util;
 use Growsurf\RequestOptions;
 use Growsurf\ServiceContracts\CampaignContract;
 use Growsurf\Services\Campaign\CommissionService;
+use Growsurf\Services\Campaign\CustomDomainService;
 use Growsurf\Services\Campaign\DesignService;
 use Growsurf\Services\Campaign\EmailsService;
 use Growsurf\Services\Campaign\InstallationService;
@@ -89,6 +90,11 @@ final class CampaignService implements CampaignContract
     /**
      * @api
      */
+    public CustomDomainService $customDomain;
+
+    /**
+     * @api
+     */
     public EmailsService $emails;
 
     /**
@@ -123,6 +129,7 @@ final class CampaignService implements CampaignContract
         $this->rewards = new RewardsService($client);
         $this->resources = new ProgramResourcesService($client);
         $this->design = new DesignService($client);
+        $this->customDomain = new CustomDomainService($client);
         $this->emails = new EmailsService($client);
         $this->options = new OptionsService($client);
         $this->installation = new InstallationService($client);

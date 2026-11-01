@@ -20,6 +20,8 @@ use Growsurf\Core\Contracts\BaseModel;
  *   updatedAt: int,
  *   firstName?: string|null,
  *   lastName?: string|null,
+ *   referralCreditExpiredAt?: int|null,
+ *   referralTriggeredAt?: int|null,
  * }
  */
 final class Referral implements BaseModel
@@ -51,6 +53,18 @@ final class Referral implements BaseModel
 
     #[Optional(nullable: true)]
     public ?string $lastName;
+
+    /**
+     * When the referrer's credit for this referral expired, as a Unix timestamp in milliseconds. `null` when the credit has not expired.
+     */
+    #[Optional(nullable: true)]
+    public ?int $referralCreditExpiredAt;
+
+    /**
+     * When the referral was triggered, as a Unix timestamp in milliseconds. `null` until the referral is triggered, and for invites.
+     */
+    #[Optional(nullable: true)]
+    public ?int $referralTriggeredAt;
 
     /**
      * `new Referral()` is missing required properties by the API.
@@ -100,6 +114,8 @@ final class Referral implements BaseModel
         int $updatedAt,
         ?string $firstName = null,
         ?string $lastName = null,
+        ?int $referralCreditExpiredAt = null,
+        ?int $referralTriggeredAt = null,
     ): self {
         $self = new self;
 
@@ -112,6 +128,8 @@ final class Referral implements BaseModel
 
         null !== $firstName && $self['firstName'] = $firstName;
         null !== $lastName && $self['lastName'] = $lastName;
+        null !== $referralCreditExpiredAt && $self['referralCreditExpiredAt'] = $referralCreditExpiredAt;
+        null !== $referralTriggeredAt && $self['referralTriggeredAt'] = $referralTriggeredAt;
 
         return $self;
     }
@@ -180,6 +198,29 @@ final class Referral implements BaseModel
     {
         $self = clone $this;
         $self['lastName'] = $lastName;
+
+        return $self;
+    }
+
+    /**
+     * When the referrer's credit for this referral expired, as a Unix timestamp in milliseconds. `null` when the credit has not expired.
+     */
+    public function withReferralCreditExpiredAt(
+        ?int $referralCreditExpiredAt
+    ): self {
+        $self = clone $this;
+        $self['referralCreditExpiredAt'] = $referralCreditExpiredAt;
+
+        return $self;
+    }
+
+    /**
+     * When the referral was triggered, as a Unix timestamp in milliseconds. `null` until the referral is triggered, and for invites.
+     */
+    public function withReferralTriggeredAt(?int $referralTriggeredAt): self
+    {
+        $self = clone $this;
+        $self['referralTriggeredAt'] = $referralTriggeredAt;
 
         return $self;
     }
