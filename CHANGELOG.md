@@ -1,5 +1,22 @@
 # Changelog
 
+## [1.20.0](https://github.com/growsurf/growsurf-php/compare/v1.19.0...v1.20.0) (2026-11-03)
+
+
+### Features
+
+* add Tint and Glass program styles ([cb9fdcf](https://github.com/growsurf/growsurf-php/commit/cb9fdcf6a3e6fb3f44c54190bbc24b9dbcef909f))
+* **api:** add languages.flagCountries to Campaign Options ([08a7850](https://github.com/growsurf/growsurf-php/commit/08a785022578a1b17ea69f6729416ce4c4ccb12f))
+* **api:** sync REST v2 contract changes ([f983735](https://github.com/growsurf/growsurf-php/commit/f983735aebf51706ac8e5d98ed37d286ffb29e1f))
+* expose documented error-body fields and sync campaign and participant models ([5a41dd9](https://github.com/growsurf/growsurf-php/commit/5a41dd92a5b7e2012c10556c462e79293d711d64))
+* expose program visual style in campaign design ([a06a1e4](https://github.com/growsurf/growsurf-php/commit/a06a1e464d15cb843cd460a5d9e93d2f974653f7))
+
+
+### Documentation
+
+* clarify Add Participant claim-offer wording and page title defaults ([5cfe24f](https://github.com/growsurf/growsurf-php/commit/5cfe24f1416e93da1100465483c361fb6aa023fb))
+* clarify referral reward metadata amounts ([191ac30](https://github.com/growsurf/growsurf-php/commit/191ac3098fef2e492303fb792843183700af6f85))
+
 ## [1.19.0](https://github.com/growsurf/growsurf-php/compare/v1.18.0...v1.19.0) (2026-10-20)
 
 
