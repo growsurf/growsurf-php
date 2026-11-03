@@ -12,7 +12,7 @@ use Growsurf\RequestOptions;
 use Growsurf\ServiceContracts\Campaign\DesignRawContract;
 
 /**
- * Campaign design (`CampaignDesign`) configuration — the dashboard Program Editor's **Design** tab, including Resources presentation, `participantAvatarStyle` (`CHARACTERS`, `INITIALS`, `ANIMALS`, or `GRADIENT`) and the Claim Offer Popup.
+ * Campaign design (`CampaignDesign`) configuration — the dashboard Program Editor's **Design** tab, including Resources presentation, `participantAvatarStyle` (`CHARACTERS`, `INITIALS`, `ANIMALS`, or `GRADIENT`), `visualStyle` (`GLOW`, `CLEAN`, `FLAT`, `ROUND`, `TINT`, or `GLASS`) and the Claim Offer Popup.
  *
  * @phpstan-import-type RequestOpts from \Growsurf\RequestOptions
  * @phpstan-import-type CampaignDesignShape from \Growsurf\Campaign\CampaignDesign
@@ -29,7 +29,7 @@ final class DesignRawService implements DesignRawContract
     /**
      * @api
      *
-     * Retrieves a program's configured design fields: the dashboard Program Editor's **Design** tab plus the payout-destination confirmation page copy configured from payout integration cards. This includes the GrowSurf window layout, header, share channels and invites, signup form, portal and landing pages, theme styling, and referral or affiliate summary and status sections. The available fields depend on the program type. `participantAvatarStyle` is `CHARACTERS`, `INITIALS`, `ANIMALS`, or `GRADIENT`; missing or unknown values mean `INITIALS`. `payoutDestinationConfirmation` is omitted when no confirmation fields are stored. Stored `null` fields are returned as `null`; omitted and `null` fields use localized defaults.
+     * Retrieves a program's configured design fields: the dashboard Program Editor's **Design** tab plus the payout-destination confirmation page copy configured from payout integration cards. This includes the GrowSurf window layout, header, share channels and invites, signup form, portal and landing pages, theme styling, and referral or affiliate summary and status sections. The available fields depend on the program type. `participantAvatarStyle` is `CHARACTERS`, `INITIALS`, `ANIMALS`, or `GRADIENT`; missing or unknown values mean `INITIALS`. `visualStyle` is `GLOW`, `CLEAN`, `FLAT`, `ROUND`, `TINT`, or `GLASS`, and is omitted when the program has no saved Style. `payoutDestinationConfirmation` is omitted when no confirmation fields are stored. Stored `null` fields are returned as `null`; omitted and `null` fields use localized defaults.
      *
      * @param string $id growSurf program ID
      * @param RequestOpts|null $requestOptions
@@ -60,9 +60,8 @@ final class DesignRawService implements DesignRawContract
      * Unknown fields, fields not available for the program type, and invalid values return a
      * `400`. Landing-page custom code and JavaScript are not editable via the API.
      * Changes to participant email content are checked before saving. Rejected content
-     * returns `400`; if the check is unavailable, `503` asks you to retry. Neither
-     * response saves the change. A concurrent edit can return `409`; reload the program
-     * before retrying.
+     * returns `400` and is not saved. A concurrent edit can return `409`; reload the
+     * program before retrying.
      *
      * @param string $id growSurf program ID
      * @param CampaignDesignUpdateShape $body partial `CampaignDesign`; see `CampaignDesign::resources`

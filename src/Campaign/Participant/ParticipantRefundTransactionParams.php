@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Growsurf\Campaign\Participant;
 
 use Growsurf\Campaign\Participant\ParticipantRefundTransactionParams\AmendmentType;
+use Growsurf\Campaign\Participant\ParticipantRefundTransactionParams\PaymentProvider;
 use Growsurf\Core\Attributes\Optional;
 use Growsurf\Core\Attributes\Required;
 use Growsurf\Core\Concerns\SdkModel;
@@ -34,7 +35,7 @@ use Growsurf\Core\Contracts\BaseModel;
  *   refundID?: string,
  *   refundStatus?: string,
  *   transactionID?: string,
- *   paymentProvider?: string,
+ *   paymentProvider?: null|PaymentProvider|value-of<PaymentProvider>,
  *   testMode?: bool,
  * }
  */
@@ -120,8 +121,12 @@ final class ParticipantRefundTransactionParams implements BaseModel
     #[Optional('transactionId')]
     public ?string $transactionID;
 
-    /** Connected provider: `stripe`, `chargebee` or `recurly`. Requires `transactionId` and `testMode`. */
-    #[Optional]
+    /**
+     * Connected provider: `stripe`, `chargebee` or `recurly`. Requires `transactionId` and `testMode`.
+     *
+     * @var value-of<PaymentProvider>|null $paymentProvider
+     */
+    #[Optional(enum: PaymentProvider::class)]
     public ?string $paymentProvider;
 
     /** `true` for test or `false` for live. Requires `paymentProvider`. */
@@ -153,6 +158,7 @@ final class ParticipantRefundTransactionParams implements BaseModel
      * You must use named parameters to construct any parameters with a default value.
      *
      * @param AmendmentType|value-of<AmendmentType>|null $amendmentType
+     * @param PaymentProvider|value-of<PaymentProvider>|null $paymentProvider
      */
     public static function with(
         string $id,
@@ -171,7 +177,7 @@ final class ParticipantRefundTransactionParams implements BaseModel
         ?string $refundID = null,
         ?string $refundStatus = null,
         ?string $transactionID = null,
-        ?string $paymentProvider = null,
+        PaymentProvider|string|null $paymentProvider = null,
         ?bool $testMode = null,
         ?bool $refundHistoryComplete = null,
     ): self {
@@ -345,8 +351,12 @@ final class ParticipantRefundTransactionParams implements BaseModel
         return $self;
     }
 
-    public function withPaymentProvider(string $paymentProvider): self
-    {
+    /**
+     * @param PaymentProvider|value-of<PaymentProvider> $paymentProvider
+     */
+    public function withPaymentProvider(
+        PaymentProvider|string $paymentProvider
+    ): self {
         $self = clone $this;
         $self['paymentProvider'] = $paymentProvider;
 

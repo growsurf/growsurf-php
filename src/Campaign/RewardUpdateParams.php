@@ -15,9 +15,8 @@ use Growsurf\Core\Contracts\BaseModel;
 /**
  * Updates an existing Campaign Reward (`CampaignReward`). The reward `type` is immutable and cannot be changed. When the update replaces `metadata`, renamed keys automatically rewrite any `{{campaignReward[…]}}` references in campaign copy; removing a key that campaign copy still references returns a `409` listing the referencing fields.
  * Changes to participant email content are checked before saving. Rejected content
- * returns `400`; if the check is unavailable, `503` asks you to retry. Neither response
- * saves the change. A concurrent edit can return `409`; reload the program before
- * retrying.
+ * returns `400` and is not saved. A concurrent edit can return `409`; reload the
+ * program before retrying.
  *
  * @see Growsurf\Services\Campaign\RewardsService::updateWithParams()
  *
@@ -135,7 +134,17 @@ final class RewardUpdateParams implements BaseModel
     public ?string $limitDuration;
 
     /**
-     * Custom key/value metadata (single-level; values are stored as strings).
+     * Custom key/value metadata (single-level; values keep the type you send).
+     * Each value must be a string, number, or boolean of up to 500 characters. Each key must have 1 to 40 characters once camelCased, and two keys that camelCase to the same key are rejected. Up to 50 keys. An entry that breaks these rules returns `400`.
+     *
+     * For `DOUBLE_SIDED` rewards in referral programs, `rewardAmount` is the referrer’s amount and
+     * `referredRewardAmount` is the friend’s amount. If `referredRewardAmount` is absent, the
+     * friend also uses `rewardAmount`, unless the friend’s `referralDescription` is a percent or
+     * free offer, which stays amount-free. New or changed positive numeric amounts must use whole
+     * units for currencies without decimals, such as JPY, and no more than two decimal places for
+     * other currencies, including USD and KWD. Excess precision is rejected rather than rounded,
+     * including when you clone a program. Existing unchanged amounts and earned rewards keep their
+     * saved values.
      *
      * @var array<string,mixed>|null $metadata
      */
@@ -425,7 +434,17 @@ final class RewardUpdateParams implements BaseModel
     }
 
     /**
-     * Custom key/value metadata (single-level; values are stored as strings).
+     * Custom key/value metadata (single-level; values keep the type you send).
+     * Each value must be a string, number, or boolean of up to 500 characters. Each key must have 1 to 40 characters once camelCased, and two keys that camelCase to the same key are rejected. Up to 50 keys. An entry that breaks these rules returns `400`.
+     *
+     * For `DOUBLE_SIDED` rewards in referral programs, `rewardAmount` is the referrer’s amount and
+     * `referredRewardAmount` is the friend’s amount. If `referredRewardAmount` is absent, the
+     * friend also uses `rewardAmount`, unless the friend’s `referralDescription` is a percent or
+     * free offer, which stays amount-free. New or changed positive numeric amounts must use whole
+     * units for currencies without decimals, such as JPY, and no more than two decimal places for
+     * other currencies, including USD and KWD. Excess precision is rejected rather than rounded,
+     * including when you clone a program. Existing unchanged amounts and earned rewards keep their
+     * saved values.
      *
      * @param array<string,mixed> $metadata
      */

@@ -118,8 +118,8 @@ final class CampaignRawService implements CampaignRawContract
      *
      * @param array{
      *   type: Type|value-of<Type>,
-     *   companyLogoImageURL?: string,
-     *   companyName?: string,
+     *   companyLogoImageURL?: string|null,
+     *   companyName?: string|null,
      *   currencyISO?: string,
      *   goal?: Goal|value-of<Goal>,
      *   name?: string,
@@ -155,14 +155,13 @@ final class CampaignRawService implements CampaignRawContract
      *
      * Updates a program's identity and lifecycle. Only the fields you send are changed. `type`, `urlId`, and `currencyISO` are immutable. Editor-tab configuration (design, emails, options, installation) is edited via the dedicated config sub-resources, not here. The program cannot be deleted via this endpoint.
      * Changes to participant email content are checked before saving. Rejected content
-     * returns `400`; if the check is unavailable, `503` asks you to retry. Neither
-     * response saves the change. A concurrent edit can return `409`; reload the program
-     * before retrying.
+     * returns `400` and is not saved. A concurrent edit can return `409`; reload the
+     * program before retrying.
      *
      * @param string $id growSurf program ID
      * @param array{
-     *   companyLogoImageURL?: string,
-     *   companyName?: string,
+     *   companyLogoImageURL?: string|null,
+     *   companyName?: string|null,
      *   name?: string,
      *   status?: CampaignUpdateParams\Status|value-of<CampaignUpdateParams\Status>,
      * }|CampaignUpdateParams $params
@@ -260,6 +259,7 @@ final class CampaignRawService implements CampaignRawContract
      *   metadata?: array<string,mixed>,
      *   mobileInstanceID?: string,
      *   referralStatus?: ReferralStatus|value-of<ReferralStatus>,
+     *   referredAt?: int|null,
      *   referredBy?: string,
      * }|CampaignCreateMobileParticipantTokenParams $params
      * @param RequestOpts|null $requestOptions

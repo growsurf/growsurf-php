@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Growsurf\Campaign\Participant;
 
+use Growsurf\Campaign\Participant\ParticipantRecordTransactionParams\PaymentProvider;
 use Growsurf\Core\Attributes\Optional;
 use Growsurf\Core\Attributes\Required;
 use Growsurf\Core\Concerns\SdkModel;
@@ -41,7 +42,7 @@ use Growsurf\Core\Conversion\MapOf;
  *   totalTaxAmounts?: list<array<string,mixed>>,
  *   totalTaxes?: list<array<string,mixed>>,
  *   transactionID?: string,
- *   paymentProvider?: string,
+ *   paymentProvider?: null|PaymentProvider|value-of<PaymentProvider>,
  *   testMode?: bool,
  * }
  */
@@ -125,8 +126,12 @@ final class ParticipantRecordTransactionParams implements BaseModel
     #[Optional('transactionId')]
     public ?string $transactionID;
 
-    /** Connected provider: `stripe`, `chargebee` or `recurly`. Requires `transactionId` and `testMode`. */
-    #[Optional]
+    /**
+     * Connected provider: `stripe`, `chargebee` or `recurly`. Requires `transactionId` and `testMode`.
+     *
+     * @var value-of<PaymentProvider>|null $paymentProvider
+     */
+    #[Optional(enum: PaymentProvider::class)]
     public ?string $paymentProvider;
 
     /** `true` for test or `false` for live. Requires `paymentProvider`. */
@@ -164,6 +169,7 @@ final class ParticipantRecordTransactionParams implements BaseModel
      *
      * @param list<array<string,mixed>>|null $totalTaxAmounts
      * @param list<array<string,mixed>>|null $totalTaxes
+     * @param PaymentProvider|value-of<PaymentProvider>|null $paymentProvider
      */
     public static function with(
         string $id,
@@ -190,7 +196,7 @@ final class ParticipantRecordTransactionParams implements BaseModel
         ?array $totalTaxAmounts = null,
         ?array $totalTaxes = null,
         ?string $transactionID = null,
-        ?string $paymentProvider = null,
+        PaymentProvider|string|null $paymentProvider = null,
         ?bool $testMode = null,
     ): self {
         $self = new self;
@@ -418,8 +424,12 @@ final class ParticipantRecordTransactionParams implements BaseModel
         return $self;
     }
 
-    public function withPaymentProvider(string $paymentProvider): self
-    {
+    /**
+     * @param PaymentProvider|value-of<PaymentProvider> $paymentProvider
+     */
+    public function withPaymentProvider(
+        PaymentProvider|string $paymentProvider
+    ): self {
         $self = clone $this;
         $self['paymentProvider'] = $paymentProvider;
 

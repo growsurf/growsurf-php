@@ -11,7 +11,9 @@ use Growsurf\Core\Concerns\SdkParams;
 use Growsurf\Core\Contracts\BaseModel;
 
 /**
- * Adds a webhook to the program.
+ * Adds a webhook to the program. A program can have only one saved Bask Health webhook across all `bask.ninja` hosts and paths, including disabled webhooks. A second Bask Health webhook returns `400`.
+ * A program can have up to 5 webhooks, counting the primary webhook slot, so you can create up to 4. Creating another returns `400`.
+ * A concurrent change to webhook settings can return `409`; reload the webhooks before retrying.
  *
  * @see Growsurf\Services\Campaign\WebhooksService::create()
  *
@@ -35,7 +37,7 @@ final class WebhookCreateParams implements BaseModel
     public string $payloadURL;
 
     /**
-     * The events this webhook is subscribed to. When omitted, the webhook is subscribed to no events.
+     * The events this webhook is subscribed to. When omitted, the webhook is subscribed to every event its program type offers, like a webhook added in the dashboard: referral programs offer `PARTICIPANT_REACHED_A_GOAL`, `NEW_PARTICIPANT_ADDED`, `PARTICIPANT_FRAUD_STATUS_UPDATED`, and `CAMPAIGN_ENDED`; affiliate programs offer `NEW_COMMISSION_ADDED`, `COMMISSION_ADJUSTED`, `NEW_PAYOUT_ISSUED`, `NEW_PARTICIPANT_ADDED`, `PARTICIPANT_FRAUD_STATUS_UPDATED`, and `CAMPAIGN_ENDED`. Send `[]` to subscribe to no events. An event the program type does not offer returns `400`.
      *
      * @var list<value-of<WebhookEvent>>|null $events
      */
@@ -106,7 +108,7 @@ final class WebhookCreateParams implements BaseModel
     }
 
     /**
-     * The events this webhook is subscribed to. When omitted, the webhook is subscribed to no events.
+     * The events this webhook is subscribed to. When omitted, the webhook is subscribed to every event its program type offers, like a webhook added in the dashboard: referral programs offer `PARTICIPANT_REACHED_A_GOAL`, `NEW_PARTICIPANT_ADDED`, `PARTICIPANT_FRAUD_STATUS_UPDATED`, and `CAMPAIGN_ENDED`; affiliate programs offer `NEW_COMMISSION_ADDED`, `COMMISSION_ADJUSTED`, `NEW_PAYOUT_ISSUED`, `NEW_PARTICIPANT_ADDED`, `PARTICIPANT_FRAUD_STATUS_UPDATED`, and `CAMPAIGN_ENDED`. Send `[]` to subscribe to no events. An event the program type does not offer returns `400`.
      *
      * @param list<WebhookEvent|value-of<WebhookEvent>> $events
      */

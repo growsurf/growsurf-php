@@ -4,18 +4,36 @@ declare(strict_types=1);
 
 namespace Growsurf\Campaign\Participant\Participant;
 
+use Growsurf\Campaign\Language;
 use Growsurf\Campaign\Participant\FraudRiskLevel;
+use Growsurf\Campaign\Participant\ParticipantReward;
 use Growsurf\Campaign\Participant\ReferralSource;
 use Growsurf\Campaign\Participant\ReferralStatus;
 use Growsurf\Core\Attributes\Optional;
+use Growsurf\Core\Attributes\Required;
 use Growsurf\Core\Concerns\SdkModel;
 use Growsurf\Core\Contracts\BaseModel;
+use Growsurf\Core\Conversion\MapOf;
 
 /**
+ * The participant's referrer. It has the same fields as a `Participant`. Its own `referrer` is always `null`.
+ *
+ * @phpstan-import-type ParticipantRewardShape from \Growsurf\Campaign\Participant\ParticipantReward
+ * @phpstan-import-type PayoutSettingsShape from \Growsurf\Campaign\Participant\Participant\PayoutSettings
+ *
  * @phpstan-type ReferrerShape = array{
- *   id?: string|null,
+ *   id: string,
+ *   email: string,
+ *   monthlyRank: int,
+ *   monthlyReferralCount: int,
+ *   rank: int,
+ *   referralCount: int,
+ *   rewards: list<ParticipantReward|ParticipantRewardShape>,
+ *   shareURL?: string|null,
+ *   affiliateEnrollmentSource?: string|null,
+ *   affiliateStatus?: string|null,
+ *   allMatchingFraudsters?: list<array<string,mixed>>|null,
  *   createdAt?: int|null,
- *   email?: string|null,
  *   fingerprint?: string|null,
  *   firstName?: string|null,
  *   fraudReasonCode?: string|null,
@@ -23,24 +41,31 @@ use Growsurf\Core\Contracts\BaseModel;
  *   impressionCount?: int|null,
  *   inviteCount?: int|null,
  *   ipAddress?: string|null,
+ *   isAffiliate?: bool|null,
+ *   isNew?: bool|null,
  *   isWinner?: bool|null,
+ *   language?: null|Language|value-of<Language>,
  *   lastName?: string|null,
  *   leadCount?: int|null,
  *   metadata?: array<string,mixed>|null,
- *   monthlyRank?: int|null,
- *   monthlyReferralCount?: int|null,
+ *   mobileInstanceID?: string|null,
  *   monthlyReferrals?: list<string>|null,
+ *   notes?: string|null,
+ *   payoutSettings?: null|PayoutSettings|PayoutSettingsShape,
+ *   paypalEmailAddress?: string|null,
  *   prevMonthlyRank?: int|null,
  *   prevMonthlyReferralCount?: int|null,
- *   rank?: int|null,
- *   referralCount?: int|null,
+ *   referralLeadQualifiedAt?: int|null,
  *   referrals?: list<string>|null,
  *   referralSource?: null|ReferralSource|value-of<ReferralSource>,
  *   referralStatus?: null|ReferralStatus|value-of<ReferralStatus>,
+ *   referredBy?: string|null,
  *   shareCount?: array<string,int>|null,
- *   shareURL?: string|null,
  *   uniqueImpressionCount?: int|null,
+ *   unreadCommissionsCount?: int|null,
+ *   unreadPayoutsCount?: int|null,
  *   unsubscribed?: bool|null,
+ *   vanityKeys?: list<string>|null,
  * }
  */
 final class Referrer implements BaseModel
@@ -48,14 +73,52 @@ final class Referrer implements BaseModel
     /** @use SdkModel<ReferrerShape> */
     use SdkModel;
 
-    #[Optional]
-    public ?string $id;
+    #[Required]
+    public string $id;
+
+    #[Required]
+    public string $email;
+
+    #[Required]
+    public int $monthlyRank;
+
+    #[Required]
+    public int $monthlyReferralCount;
+
+    #[Required]
+    public int $rank;
+
+    #[Required]
+    public int $referralCount;
+
+    /** @var list<ParticipantReward> $rewards */
+    #[Required(list: ParticipantReward::class)]
+    public array $rewards;
+
+    /**
+     * The unique share URL of the participant. Omitted for affiliate program participants who are not approved affiliates.
+     */
+    #[Optional('shareUrl')]
+    public ?string $shareURL;
+
+    /**
+     * Affiliate programs only. How the affiliate enrolled (`OPEN_ENROLLMENT`, `APPLICATION`, `PARTICIPANT_AUTH`, `INVITE`, `REST_API`, `CSV`, or `DASHBOARD`). `null` when not recorded.
+     */
+    #[Optional(nullable: true)]
+    public ?string $affiliateEnrollmentSource;
+
+    /**
+     * Affiliate programs only. The enrolled affiliate's status (`APPROVED`, `SUSPENDED`, or `BANNED`). `null` for participants who are not affiliates.
+     */
+    #[Optional(nullable: true)]
+    public ?string $affiliateStatus;
+
+    /** @var list<array<string,mixed>>|null $allMatchingFraudsters */
+    #[Optional(list: new MapOf('mixed'))]
+    public ?array $allMatchingFraudsters;
 
     #[Optional]
     public ?int $createdAt;
-
-    #[Optional]
-    public ?string $email;
 
     #[Optional(nullable: true)]
     public ?string $fingerprint;
@@ -79,8 +142,25 @@ final class Referrer implements BaseModel
     #[Optional(nullable: true)]
     public ?string $ipAddress;
 
+    /**
+     * Affiliate programs only. Whether this participant is an enrolled affiliate. A referred customer who has not joined the program is `false`.
+     */
+    #[Optional]
+    public ?bool $isAffiliate;
+
+    #[Optional]
+    public ?bool $isNew;
+
     #[Optional]
     public ?bool $isWinner;
+
+    /**
+     * The language of the participant's portal and program emails. The program's base language unless the participant (or you) picked another of the program's languages.
+     *
+     * @var value-of<Language>|null $language
+     */
+    #[Optional(enum: Language::class)]
+    public ?string $language;
 
     #[Optional(nullable: true)]
     public ?string $lastName;
@@ -99,15 +179,27 @@ final class Referrer implements BaseModel
     #[Optional(map: 'mixed')]
     public ?array $metadata;
 
-    #[Optional]
-    public ?int $monthlyRank;
-
-    #[Optional]
-    public ?int $monthlyReferralCount;
+    /**
+     * App-install scoped mobile identifier used for anti-fraud matching when provided by native mobile apps. The official mobile SDKs generate this as a lowercase UUID. Not stored when strict GDPR/CCPA mode is enabled.
+     */
+    #[Optional('mobileInstanceId', nullable: true)]
+    public ?string $mobileInstanceID;
 
     /** @var list<string>|null $monthlyReferrals */
     #[Optional(list: 'string')]
     public ?array $monthlyReferrals;
+
+    #[Optional(nullable: true)]
+    public ?string $notes;
+
+    /**
+     * Payout-related actions the participant must complete before a payout can be released (e.g. configuring a payout destination or submitting a W-9/W-8 tax form). Always present; the requiredActions array is empty when no action is required.
+     */
+    #[Optional]
+    public ?PayoutSettings $payoutSettings;
+
+    #[Optional]
+    public ?string $paypalEmailAddress;
 
     #[Optional]
     public ?int $prevMonthlyRank;
@@ -115,11 +207,11 @@ final class Referrer implements BaseModel
     #[Optional]
     public ?int $prevMonthlyReferralCount;
 
-    #[Optional]
-    public ?int $rank;
-
-    #[Optional]
-    public ?int $referralCount;
+    /**
+     * When this referred signup counted as a lead for the referrer, in Unix milliseconds. Set only when the program's `referralTrigger` is `CUSTOM`. Lead-event Campaign Rewards and commissions use it.
+     */
+    #[Optional(nullable: true)]
+    public ?int $referralLeadQualifiedAt;
 
     /** @var list<string>|null $referrals */
     #[Optional(list: 'string')]
@@ -133,19 +225,58 @@ final class Referrer implements BaseModel
     #[Optional(enum: ReferralStatus::class)]
     public ?string $referralStatus;
 
+    #[Optional]
+    public ?string $referredBy;
+
     /** @var array<string,int>|null $shareCount */
     #[Optional(map: 'int')]
     public ?array $shareCount;
-
-    #[Optional('shareUrl')]
-    public ?string $shareURL;
 
     #[Optional]
     public ?int $uniqueImpressionCount;
 
     #[Optional]
+    public ?int $unreadCommissionsCount;
+
+    #[Optional]
+    public ?int $unreadPayoutsCount;
+
+    #[Optional]
     public ?bool $unsubscribed;
 
+    /** @var list<string>|null $vanityKeys */
+    #[Optional(list: 'string')]
+    public ?array $vanityKeys;
+
+    /**
+     * `new Referrer()` is missing required properties by the API.
+     *
+     * To enforce required parameters use
+     * ```
+     * Referrer::with(
+     *   id: ...,
+     *   email: ...,
+     *   monthlyRank: ...,
+     *   monthlyReferralCount: ...,
+     *   rank: ...,
+     *   referralCount: ...,
+     *   rewards: ...,
+     * )
+     * ```
+     *
+     * Otherwise ensure the following setters are called
+     *
+     * ```
+     * (new Referrer)
+     *   ->withID(...)
+     *   ->withEmail(...)
+     *   ->withMonthlyRank(...)
+     *   ->withMonthlyReferralCount(...)
+     *   ->withRank(...)
+     *   ->withReferralCount(...)
+     *   ->withRewards(...)
+     * ```
+     */
     public function __construct()
     {
         $this->initialize();
@@ -156,18 +287,32 @@ final class Referrer implements BaseModel
      *
      * You must use named parameters to construct any parameters with a default value.
      *
+     * @param list<ParticipantReward|ParticipantRewardShape> $rewards
+     * @param list<array<string,mixed>>|null $allMatchingFraudsters
      * @param FraudRiskLevel|value-of<FraudRiskLevel>|null $fraudRiskLevel
      * @param array<string,mixed>|null $metadata
      * @param list<string>|null $monthlyReferrals
+     * @param PayoutSettings|PayoutSettingsShape|null $payoutSettings
      * @param list<string>|null $referrals
      * @param ReferralSource|value-of<ReferralSource>|null $referralSource
      * @param ReferralStatus|value-of<ReferralStatus>|null $referralStatus
      * @param array<string,int>|null $shareCount
+     * @param list<string>|null $vanityKeys
+     * @param Language|value-of<Language>|null $language
      */
     public static function with(
-        ?string $id = null,
+        string $id,
+        string $email,
+        int $monthlyRank,
+        int $monthlyReferralCount,
+        int $rank,
+        int $referralCount,
+        array $rewards,
+        ?string $shareURL = null,
+        ?string $affiliateEnrollmentSource = null,
+        ?string $affiliateStatus = null,
+        ?array $allMatchingFraudsters = null,
         ?int $createdAt = null,
-        ?string $email = null,
         ?string $fingerprint = null,
         ?string $firstName = null,
         ?string $fraudReasonCode = null,
@@ -175,30 +320,47 @@ final class Referrer implements BaseModel
         ?int $impressionCount = null,
         ?int $inviteCount = null,
         ?string $ipAddress = null,
+        ?bool $isAffiliate = null,
+        ?bool $isNew = null,
         ?bool $isWinner = null,
         ?string $lastName = null,
         ?int $leadCount = null,
         ?array $metadata = null,
-        ?int $monthlyRank = null,
-        ?int $monthlyReferralCount = null,
+        ?string $mobileInstanceID = null,
         ?array $monthlyReferrals = null,
+        ?string $notes = null,
+        PayoutSettings|array|null $payoutSettings = null,
+        ?string $paypalEmailAddress = null,
         ?int $prevMonthlyRank = null,
         ?int $prevMonthlyReferralCount = null,
-        ?int $rank = null,
-        ?int $referralCount = null,
         ?array $referrals = null,
         ReferralSource|string|null $referralSource = null,
         ReferralStatus|string|null $referralStatus = null,
+        ?string $referredBy = null,
         ?array $shareCount = null,
-        ?string $shareURL = null,
         ?int $uniqueImpressionCount = null,
+        ?int $unreadCommissionsCount = null,
+        ?int $unreadPayoutsCount = null,
         ?bool $unsubscribed = null,
+        ?array $vanityKeys = null,
+        Language|string|null $language = null,
+        ?int $referralLeadQualifiedAt = null,
     ): self {
         $self = new self;
 
-        null !== $id && $self['id'] = $id;
+        $self['id'] = $id;
+        $self['email'] = $email;
+        $self['monthlyRank'] = $monthlyRank;
+        $self['monthlyReferralCount'] = $monthlyReferralCount;
+        $self['rank'] = $rank;
+        $self['referralCount'] = $referralCount;
+        $self['rewards'] = $rewards;
+
+        null !== $shareURL && $self['shareURL'] = $shareURL;
+        null !== $affiliateEnrollmentSource && $self['affiliateEnrollmentSource'] = $affiliateEnrollmentSource;
+        null !== $affiliateStatus && $self['affiliateStatus'] = $affiliateStatus;
+        null !== $allMatchingFraudsters && $self['allMatchingFraudsters'] = $allMatchingFraudsters;
         null !== $createdAt && $self['createdAt'] = $createdAt;
-        null !== $email && $self['email'] = $email;
         null !== $fingerprint && $self['fingerprint'] = $fingerprint;
         null !== $firstName && $self['firstName'] = $firstName;
         null !== $fraudReasonCode && $self['fraudReasonCode'] = $fraudReasonCode;
@@ -206,24 +368,31 @@ final class Referrer implements BaseModel
         null !== $impressionCount && $self['impressionCount'] = $impressionCount;
         null !== $inviteCount && $self['inviteCount'] = $inviteCount;
         null !== $ipAddress && $self['ipAddress'] = $ipAddress;
+        null !== $isAffiliate && $self['isAffiliate'] = $isAffiliate;
+        null !== $isNew && $self['isNew'] = $isNew;
         null !== $isWinner && $self['isWinner'] = $isWinner;
+        null !== $language && $self['language'] = $language;
         null !== $lastName && $self['lastName'] = $lastName;
         null !== $leadCount && $self['leadCount'] = $leadCount;
         null !== $metadata && $self['metadata'] = $metadata;
-        null !== $monthlyRank && $self['monthlyRank'] = $monthlyRank;
-        null !== $monthlyReferralCount && $self['monthlyReferralCount'] = $monthlyReferralCount;
+        null !== $mobileInstanceID && $self['mobileInstanceID'] = $mobileInstanceID;
         null !== $monthlyReferrals && $self['monthlyReferrals'] = $monthlyReferrals;
+        null !== $notes && $self['notes'] = $notes;
+        null !== $payoutSettings && $self['payoutSettings'] = $payoutSettings;
+        null !== $paypalEmailAddress && $self['paypalEmailAddress'] = $paypalEmailAddress;
         null !== $prevMonthlyRank && $self['prevMonthlyRank'] = $prevMonthlyRank;
         null !== $prevMonthlyReferralCount && $self['prevMonthlyReferralCount'] = $prevMonthlyReferralCount;
-        null !== $rank && $self['rank'] = $rank;
-        null !== $referralCount && $self['referralCount'] = $referralCount;
+        null !== $referralLeadQualifiedAt && $self['referralLeadQualifiedAt'] = $referralLeadQualifiedAt;
         null !== $referrals && $self['referrals'] = $referrals;
         null !== $referralSource && $self['referralSource'] = $referralSource;
         null !== $referralStatus && $self['referralStatus'] = $referralStatus;
+        null !== $referredBy && $self['referredBy'] = $referredBy;
         null !== $shareCount && $self['shareCount'] = $shareCount;
-        null !== $shareURL && $self['shareURL'] = $shareURL;
         null !== $uniqueImpressionCount && $self['uniqueImpressionCount'] = $uniqueImpressionCount;
+        null !== $unreadCommissionsCount && $self['unreadCommissionsCount'] = $unreadCommissionsCount;
+        null !== $unreadPayoutsCount && $self['unreadPayoutsCount'] = $unreadPayoutsCount;
         null !== $unsubscribed && $self['unsubscribed'] = $unsubscribed;
+        null !== $vanityKeys && $self['vanityKeys'] = $vanityKeys;
 
         return $self;
     }
@@ -236,18 +405,107 @@ final class Referrer implements BaseModel
         return $self;
     }
 
-    public function withCreatedAt(int $createdAt): self
-    {
-        $self = clone $this;
-        $self['createdAt'] = $createdAt;
-
-        return $self;
-    }
-
     public function withEmail(string $email): self
     {
         $self = clone $this;
         $self['email'] = $email;
+
+        return $self;
+    }
+
+    public function withMonthlyRank(int $monthlyRank): self
+    {
+        $self = clone $this;
+        $self['monthlyRank'] = $monthlyRank;
+
+        return $self;
+    }
+
+    public function withMonthlyReferralCount(int $monthlyReferralCount): self
+    {
+        $self = clone $this;
+        $self['monthlyReferralCount'] = $monthlyReferralCount;
+
+        return $self;
+    }
+
+    public function withRank(int $rank): self
+    {
+        $self = clone $this;
+        $self['rank'] = $rank;
+
+        return $self;
+    }
+
+    public function withReferralCount(int $referralCount): self
+    {
+        $self = clone $this;
+        $self['referralCount'] = $referralCount;
+
+        return $self;
+    }
+
+    /**
+     * @param list<ParticipantReward|ParticipantRewardShape> $rewards
+     */
+    public function withRewards(array $rewards): self
+    {
+        $self = clone $this;
+        $self['rewards'] = $rewards;
+
+        return $self;
+    }
+
+    /**
+     * The unique share URL of the participant. Omitted for affiliate program participants who are not approved affiliates.
+     */
+    public function withShareURL(string $shareURL): self
+    {
+        $self = clone $this;
+        $self['shareURL'] = $shareURL;
+
+        return $self;
+    }
+
+    /**
+     * Affiliate programs only. How the affiliate enrolled (`OPEN_ENROLLMENT`, `APPLICATION`, `PARTICIPANT_AUTH`, `INVITE`, `REST_API`, `CSV`, or `DASHBOARD`). `null` when not recorded.
+     */
+    public function withAffiliateEnrollmentSource(
+        ?string $affiliateEnrollmentSource
+    ): self {
+        $self = clone $this;
+        $self['affiliateEnrollmentSource'] = $affiliateEnrollmentSource;
+
+        return $self;
+    }
+
+    /**
+     * Affiliate programs only. The enrolled affiliate's status (`APPROVED`, `SUSPENDED`, or `BANNED`). `null` for participants who are not affiliates.
+     */
+    public function withAffiliateStatus(?string $affiliateStatus): self
+    {
+        $self = clone $this;
+        $self['affiliateStatus'] = $affiliateStatus;
+
+        return $self;
+    }
+
+    /**
+     * @param list<array<string,mixed>> $allMatchingFraudsters
+     */
+    public function withAllMatchingFraudsters(
+        array $allMatchingFraudsters
+    ): self {
+        $self = clone $this;
+        $self['allMatchingFraudsters'] = $allMatchingFraudsters;
+
+        return $self;
+    }
+
+    public function withCreatedAt(int $createdAt): self
+    {
+        $self = clone $this;
+        $self['createdAt'] = $createdAt;
 
         return $self;
     }
@@ -312,10 +570,42 @@ final class Referrer implements BaseModel
         return $self;
     }
 
+    /**
+     * Affiliate programs only. Whether this participant is an enrolled affiliate. A referred customer who has not joined the program is `false`.
+     */
+    public function withIsAffiliate(bool $isAffiliate): self
+    {
+        $self = clone $this;
+        $self['isAffiliate'] = $isAffiliate;
+
+        return $self;
+    }
+
+    public function withIsNew(bool $isNew): self
+    {
+        $self = clone $this;
+        $self['isNew'] = $isNew;
+
+        return $self;
+    }
+
     public function withIsWinner(bool $isWinner): self
     {
         $self = clone $this;
         $self['isWinner'] = $isWinner;
+
+        return $self;
+    }
+
+    /**
+     * The language of the participant's portal and program emails. The program's base language unless the participant (or you) picked another of the program's languages.
+     *
+     * @param Language|value-of<Language> $language
+     */
+    public function withLanguage(Language|string $language): self
+    {
+        $self = clone $this;
+        $self['language'] = $language;
 
         return $self;
     }
@@ -352,18 +642,13 @@ final class Referrer implements BaseModel
         return $self;
     }
 
-    public function withMonthlyRank(int $monthlyRank): self
+    /**
+     * App-install scoped mobile identifier used for anti-fraud matching when provided by native mobile apps. The official mobile SDKs generate this as a lowercase UUID. Not stored when strict GDPR/CCPA mode is enabled.
+     */
+    public function withMobileInstanceID(?string $mobileInstanceID): self
     {
         $self = clone $this;
-        $self['monthlyRank'] = $monthlyRank;
-
-        return $self;
-    }
-
-    public function withMonthlyReferralCount(int $monthlyReferralCount): self
-    {
-        $self = clone $this;
-        $self['monthlyReferralCount'] = $monthlyReferralCount;
+        $self['mobileInstanceID'] = $mobileInstanceID;
 
         return $self;
     }
@@ -375,6 +660,36 @@ final class Referrer implements BaseModel
     {
         $self = clone $this;
         $self['monthlyReferrals'] = $monthlyReferrals;
+
+        return $self;
+    }
+
+    public function withNotes(?string $notes): self
+    {
+        $self = clone $this;
+        $self['notes'] = $notes;
+
+        return $self;
+    }
+
+    /**
+     * Payout-related actions the participant must complete before a payout can be released (e.g. configuring a payout destination or submitting a W-9/W-8 tax form). Always present; the requiredActions array is empty when no action is required.
+     *
+     * @param PayoutSettings|PayoutSettingsShape $payoutSettings
+     */
+    public function withPayoutSettings(
+        PayoutSettings|array $payoutSettings
+    ): self {
+        $self = clone $this;
+        $self['payoutSettings'] = $payoutSettings;
+
+        return $self;
+    }
+
+    public function withPaypalEmailAddress(string $paypalEmailAddress): self
+    {
+        $self = clone $this;
+        $self['paypalEmailAddress'] = $paypalEmailAddress;
 
         return $self;
     }
@@ -396,18 +711,14 @@ final class Referrer implements BaseModel
         return $self;
     }
 
-    public function withRank(int $rank): self
-    {
+    /**
+     * When this referred signup counted as a lead for the referrer, in Unix milliseconds. Set only when the program's `referralTrigger` is `CUSTOM`. Lead-event Campaign Rewards and commissions use it.
+     */
+    public function withReferralLeadQualifiedAt(
+        ?int $referralLeadQualifiedAt
+    ): self {
         $self = clone $this;
-        $self['rank'] = $rank;
-
-        return $self;
-    }
-
-    public function withReferralCount(int $referralCount): self
-    {
-        $self = clone $this;
-        $self['referralCount'] = $referralCount;
+        $self['referralLeadQualifiedAt'] = $referralLeadQualifiedAt;
 
         return $self;
     }
@@ -447,6 +758,14 @@ final class Referrer implements BaseModel
         return $self;
     }
 
+    public function withReferredBy(string $referredBy): self
+    {
+        $self = clone $this;
+        $self['referredBy'] = $referredBy;
+
+        return $self;
+    }
+
     /**
      * @param array<string,int> $shareCount
      */
@@ -454,14 +773,6 @@ final class Referrer implements BaseModel
     {
         $self = clone $this;
         $self['shareCount'] = $shareCount;
-
-        return $self;
-    }
-
-    public function withShareURL(string $shareURL): self
-    {
-        $self = clone $this;
-        $self['shareURL'] = $shareURL;
 
         return $self;
     }
@@ -474,10 +785,38 @@ final class Referrer implements BaseModel
         return $self;
     }
 
+    public function withUnreadCommissionsCount(
+        int $unreadCommissionsCount
+    ): self {
+        $self = clone $this;
+        $self['unreadCommissionsCount'] = $unreadCommissionsCount;
+
+        return $self;
+    }
+
+    public function withUnreadPayoutsCount(int $unreadPayoutsCount): self
+    {
+        $self = clone $this;
+        $self['unreadPayoutsCount'] = $unreadPayoutsCount;
+
+        return $self;
+    }
+
     public function withUnsubscribed(bool $unsubscribed): self
     {
         $self = clone $this;
         $self['unsubscribed'] = $unsubscribed;
+
+        return $self;
+    }
+
+    /**
+     * @param list<string> $vanityKeys
+     */
+    public function withVanityKeys(array $vanityKeys): self
+    {
+        $self = clone $this;
+        $self['vanityKeys'] = $vanityKeys;
 
         return $self;
     }

@@ -128,9 +128,8 @@ final class RewardsRawService implements RewardsRawContract
      *
      * Updates an existing Campaign Reward (`CampaignReward`). The reward `type` is immutable and cannot be changed. For `SINGLE_SIDED`, `DOUBLE_SIDED`, and `MILESTONE` Campaign Rewards, `event` accepts `LEAD` or `CONVERSION`. `LEAD` requires `installation.referralTrigger` to be `CUSTOM`. Omitting `event` preserves the stored value. When the update replaces `metadata`, renamed keys automatically rewrite any `{{campaignReward[…]}}` references in campaign copy; removing a key that campaign copy still references returns a `409` listing the referencing fields.
      * Changes to participant email content are checked before saving. Rejected content
-     * returns `400`; if the check is unavailable, `503` asks you to retry. Neither
-     * response saves the change. A concurrent edit can return `409`; reload the program
-     * before retrying.
+     * returns `400` and is not saved. A concurrent edit can return `409`; reload the
+     * program before retrying.
      *
      * @param string $campaignRewardID path param: Campaign Reward (`CampaignReward`) ID
      * @param array{

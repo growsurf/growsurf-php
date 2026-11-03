@@ -39,6 +39,11 @@ final class CommissionStructure implements BaseModel
     /** @use SdkModel<CommissionStructureShape> */
     use SdkModel;
 
+    /**
+     * Fixed commission amount in the currency's smallest denomination, used when
+     * `type` is `FIXED`. The maximum is `100000000` (1,000,000.00) for USD, EUR,
+     * and GBP. `null` for percentage-based commissions.
+     */
     #[Optional(nullable: true)]
     public ?int $amount;
 
@@ -169,6 +174,11 @@ final class CommissionStructure implements BaseModel
         return $self;
     }
 
+    /**
+     * Fixed commission amount in the currency's smallest denomination, used when
+     * `type` is `FIXED`. The maximum is `100000000` (1,000,000.00) for USD, EUR,
+     * and GBP. `null` for percentage-based commissions.
+     */
     public function withAmount(?int $amount): self
     {
         $self = clone $this;
