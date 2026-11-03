@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.21.0](https://github.com/growsurf/growsurf-php/compare/v1.20.0...v1.21.0) (2026-11-03)
+
+
+### Features
+
+* remove account create method (endpoint retired) ([cb76981](https://github.com/growsurf/growsurf-php/commit/cb7698136ba4314c53c1c4b3975b5e8bb457f355))
+* remove account create method (endpoint retired) ([67e98da](https://github.com/growsurf/growsurf-php/commit/67e98dae5098fbd5444e05b17e9eebe73ea73475))
+
 ## [1.20.0](https://github.com/growsurf/growsurf-php/compare/v1.19.0...v1.20.0) (2026-11-03)
 
 
