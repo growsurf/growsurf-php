@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\Services;
 
-use Growsurf\Account\CreateAccountResponse;
 use Growsurf\Client as GrowsurfClient;
 use Growsurf\Core\Util;
 use Growsurf\Team\Team;
@@ -69,14 +68,12 @@ final class TeamContractTest extends TestCase
     }
 
     #[Test]
-    public function testSafeTeamAndOnboardingModels(): void
+    public function testSafeTeamModel(): void
     {
         $teamProperties = array_keys(get_class_vars(Team::class));
-        $onboardingProperties = array_keys(get_class_vars(CreateAccountResponse::class));
 
         $this->assertNotContains('id', $teamProperties);
         $this->assertNotContains('email', $teamProperties);
-        $this->assertNotContains('id', $onboardingProperties);
     }
 
     /**

@@ -7,7 +7,6 @@ namespace Growsurf;
 use Growsurf\Core\BaseClient;
 use Growsurf\Core\Implementation\StreamingHttpClient;
 use Growsurf\Core\Util;
-use Growsurf\Services\AccountService;
 use Growsurf\Services\CampaignService;
 use Growsurf\Services\TeamService;
 use Http\Discovery\Psr17FactoryDiscovery;
@@ -25,11 +24,6 @@ class Client extends BaseClient
      * @api
      */
     public CampaignService $campaign;
-
-    /**
-     * @api
-     */
-    public AccountService $account;
 
     /**
      * @api
@@ -96,7 +90,6 @@ class Client extends BaseClient
         );
 
         $this->campaign = new CampaignService($this);
-        $this->account = new AccountService($this);
         $this->team = new TeamService($this);
     }
 
