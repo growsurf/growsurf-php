@@ -57,7 +57,7 @@ final class ParticipantAddParams implements BaseModel
     public ?bool $isAffiliate;
 
     /**
-     * The language of the participant's portal and program emails. Stored when it is one of the program's languages. A regional tag maps to its language (for example, `es-MX` is stored as `es`). Any other value is ignored and the program's base language applies. Applied only when this request creates the participant.
+     * The language of the participant's portal and program emails. Stored when it is one of the program's languages. A regional tag maps to its language (for example, `fr-BE` is stored as `fr`). Any other value is ignored and the program's base language applies. Applied only when this request creates the participant.
      *
      * @var value-of<Language>|null $language
      */
@@ -208,7 +208,7 @@ final class ParticipantAddParams implements BaseModel
     }
 
     /**
-     * The language of the participant's portal and program emails. Stored when it is one of the program's languages. A regional tag maps to its language (for example, `es-MX` is stored as `es`). Any other value is ignored and the program's base language applies. Applied only when this request creates the participant.
+     * The language of the participant's portal and program emails. Stored when it is one of the program's languages. A regional tag maps to its language (for example, `fr-BE` is stored as `fr`). Any other value is ignored and the program's base language applies. Applied only when this request creates the participant.
      *
      * @param Language|value-of<Language> $language
      */

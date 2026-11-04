@@ -84,4 +84,8 @@ enum Language: string
     case AF = 'af';
 
     case SW = 'sw';
+
+    case ZH_TW = 'zh-TW';
+
+    case ES_419 = 'es-419';
 }

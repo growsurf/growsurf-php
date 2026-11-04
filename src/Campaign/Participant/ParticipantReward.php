@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Growsurf\Campaign\Participant;
 
 use Growsurf\Campaign\CommissionStructure;
+use Growsurf\Campaign\Participant\ParticipantReward\AmountSource;
 use Growsurf\Campaign\Participant\ParticipantReward\Status;
 use Growsurf\Core\Attributes\Optional;
 use Growsurf\Core\Attributes\Required;
@@ -19,6 +20,7 @@ use Growsurf\Core\Contracts\BaseModel;
  *   rewardID: string,
  *   status: Status|value-of<Status>,
  *   amount?: float|int|null,
+ *   amountSource?: null|AmountSource|value-of<AmountSource>,
  *   approved?: bool|null,
  *   approvedAt?: int|null,
  *   commissionStructure?: null|CommissionStructure|CommissionStructureShape,
@@ -27,6 +29,7 @@ use Growsurf\Core\Contracts\BaseModel;
  *   isAvailable?: bool|null,
  *   isFulfilled?: bool|null,
  *   isReferrer?: bool|null,
+ *   percentOff?: float|int|null,
  *   referredID?: string|null,
  *   referrerID?: string|null,
  *   unread?: bool|null,
@@ -48,10 +51,18 @@ final class ParticipantReward implements BaseModel
     public string $status;
 
     /**
-     * What this reward delivered, in major units, when the reward records a delivered amount.
+     * What the reward is worth in major units of `currencyISO`, from the provider's saved record or the amount saved when it was earned. `null` for a percent-off coupon or when no amount is available.
      */
     #[Optional(nullable: true)]
     public float|int|null $amount;
+
+    /**
+     * Where `amount` or `percentOff` comes from. `null` when both are `null`.
+     *
+     * @var value-of<AmountSource>|null $amountSource
+     */
+    #[Optional(enum: AmountSource::class, nullable: true)]
+    public ?string $amountSource;
 
     #[Optional]
     public ?bool $approved;
@@ -79,6 +90,12 @@ final class ParticipantReward implements BaseModel
 
     #[Optional]
     public ?bool $isReferrer;
+
+    /**
+     * Discount of a percent-off coupon (`20` = 20% off). `null` for every other reward.
+     */
+    #[Optional(nullable: true)]
+    public float|int|null $percentOff;
 
     #[Optional('referredId')]
     public ?string $referredID;
@@ -115,6 +132,7 @@ final class ParticipantReward implements BaseModel
      *
      * @param Status|value-of<Status> $status
      * @param CommissionStructure|CommissionStructureShape|null $commissionStructure
+     * @param AmountSource|value-of<AmountSource>|null $amountSource
      */
     public static function with(
         string $id,
@@ -132,6 +150,8 @@ final class ParticipantReward implements BaseModel
         ?bool $unread = null,
         float|int|null $amount = null,
         ?string $currencyISO = null,
+        float|int|null $percentOff = null,
+        AmountSource|string|null $amountSource = null,
     ): self {
         $self = new self;
 
@@ -151,6 +171,8 @@ final class ParticipantReward implements BaseModel
         null !== $unread && $self['unread'] = $unread;
         null !== $amount && $self['amount'] = $amount;
         null !== $currencyISO && $self['currencyISO'] = $currencyISO;
+        null !== $percentOff && $self['percentOff'] = $percentOff;
+        null !== $amountSource && $self['amountSource'] = $amountSource;
 
         return $self;
     }
@@ -183,12 +205,25 @@ final class ParticipantReward implements BaseModel
     }
 
     /**
-     * What this reward delivered, in major units, when the reward records a delivered amount.
+     * What the reward is worth in major units of `currencyISO`, from the provider's saved record or the amount saved when it was earned. `null` for a percent-off coupon or when no amount is available.
      */
     public function withAmount(float|int|null $amount): self
     {
         $self = clone $this;
         $self['amount'] = $amount;
+
+        return $self;
+    }
+
+    /**
+     * Where `amount` or `percentOff` comes from. `null` when both are `null`.
+     *
+     * @param AmountSource|value-of<AmountSource>|null $amountSource
+     */
+    public function withAmountSource(AmountSource|string|null $amountSource): self
+    {
+        $self = clone $this;
+        $self['amountSource'] = $amountSource;
 
         return $self;
     }
@@ -260,6 +295,17 @@ final class ParticipantReward implements BaseModel
     {
         $self = clone $this;
         $self['isReferrer'] = $isReferrer;
+
+        return $self;
+    }
+
+    /**
+     * Discount of a percent-off coupon (`20` = 20% off). `null` for every other reward.
+     */
+    public function withPercentOff(float|int|null $percentOff): self
+    {
+        $self = clone $this;
+        $self['percentOff'] = $percentOff;
 
         return $self;
     }
