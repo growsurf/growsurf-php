@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.22.0](https://github.com/growsurf/growsurf-php/compare/v1.21.0...v1.22.0) (2026-11-04)
+
+
+### Features
+
+* add reward amountSource and percentOff, and zh-TW and es-419 languages ([de3a1ff](https://github.com/growsurf/growsurf-php/commit/de3a1fffd28b3cc3c5b8106c1cf3f38d32d52ce4))
+* add reward amountSource and percentOff, and zh-TW and es-419 languages ([f9a5a63](https://github.com/growsurf/growsurf-php/commit/f9a5a63acb90b7f037c9c8c7581da97715b68d5c))
+
 ## [1.21.0](https://github.com/growsurf/growsurf-php/compare/v1.20.0...v1.21.0) (2026-11-03)
 
 

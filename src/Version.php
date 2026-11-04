@@ -5,5 +5,5 @@ declare(strict_types=1);
 namespace Growsurf;
 
 // x-release-please-start-version
-const VERSION = '1.21.0';
+const VERSION = '1.22.0';
 // x-release-please-end
