@@ -139,7 +139,7 @@ interface CampaignContract
      * @param ReferralStatus|value-of<ReferralStatus> $referralStatus
      * @param string $referredBy referrer participant ID or email address
      * @param bool $isAffiliate Affiliate programs only. Controls affiliate enrollment for a new participant. `true` enrolls the participant with `affiliateStatus: APPROVED`; `false` creates a non-affiliate without `affiliateStatus`. Existing participants are returned unchanged.
-     * @param Language|value-of<Language> $language The language of the participant's portal and program emails. Stored when it is one of the program's languages. A regional tag maps to its language (for example, `es-MX` is stored as `es`). Any other value is ignored and the program's base language applies. Applied only when this request creates the participant.
+     * @param Language|value-of<Language> $language The language of the participant's portal and program emails. Stored when it is one of the program's languages. A regional tag maps to its language (for example, `fr-BE` is stored as `fr`). Any other value is ignored and the program's base language applies. Applied only when this request creates the participant.
      * @param int $referredAt When the participant was referred, in Unix milliseconds. Used only with a valid `referredBy`. If you omit `referralStatus`, GrowSurf compares this time with the program's referral credit window to set it. Defaults to the time of the request.
      * @param RequestOpts|null $requestOptions
      *
