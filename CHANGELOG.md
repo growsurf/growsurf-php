@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.23.0](https://github.com/growsurf/growsurf-php/compare/v1.22.0...v1.23.0) (2026-11-08)
+
+
+### Features
+
+* type web referral tracking guide selection ([63e657c](https://github.com/growsurf/growsurf-php/commit/63e657cf007ac75036f5cabfff5f32bcb01e2ccf))
+
+
+### Bug Fixes
+
+* **deps:** patch Symfony filesystem and HTTP client advisories ([158827b](https://github.com/growsurf/growsurf-php/commit/158827b1ee855ab159c6c1cad5dc8ae9b74271c6))
+
 ## [1.22.0](https://github.com/growsurf/growsurf-php/compare/v1.21.0...v1.22.0) (2026-11-04)
 
 
