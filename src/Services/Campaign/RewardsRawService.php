@@ -41,11 +41,14 @@ final class RewardsRawService implements RewardsRawContract
      * @api
      *
      * Retrieves configured Campaign Rewards, including switched-off rewards and rewards
-     * whose group is not selected. Deleted rewards are excluded. The campaign response's
+     * whose reward type is not selected. Deleted rewards are excluded. The campaign response's
      * embedded `rewards` array includes only enabled, visible rewards. A reward can be earned only
-     * when it also appears in the campaign response's embedded `rewards` array.
+     * when it also appears in the campaign response's embedded `rewards` array. The list includes
+     * every group's rewards. Each reward's `groupId` names its group (`null` is Default). Pass
+     * `groupId` to return one group's rewards.
      *
      * @param string $id growSurf program ID
+     * @param string|null $groupID Return only this group's rewards (`grp_…`). To get Default's rewards, omit `groupId` and keep the rewards whose `groupId` is `null`. An ID that is not a group in this program returns `404`.
      * @param RequestOpts|null $requestOptions
      *
      * @return BaseResponse<CampaignRewardListResponse>
@@ -54,12 +57,14 @@ final class RewardsRawService implements RewardsRawContract
      */
     public function list(
         string $id,
-        RequestOptions|array|null $requestOptions = null
+        RequestOptions|array|null $requestOptions = null,
+        ?string $groupID = null,
     ): BaseResponse {
         // @phpstan-ignore-next-line return.type
         return $this->client->request(
             method: 'get',
             path: ['campaign/%1$s/reward-configs', $id],
+            query: null === $groupID ? [] : ['groupId' => $groupID],
             options: $requestOptions,
             convert: CampaignRewardListResponse::class,
         );

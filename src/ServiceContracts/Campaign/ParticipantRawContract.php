@@ -8,6 +8,8 @@ use Growsurf\Campaign\Participant\Participant;
 use Growsurf\Campaign\Participant\ParticipantAddParams;
 use Growsurf\Campaign\Participant\ParticipantBulkDeleteParams;
 use Growsurf\Campaign\Participant\ParticipantBulkDeleteResponse;
+use Growsurf\Campaign\Participant\ParticipantBulkMoveParams;
+use Growsurf\Campaign\Participant\ParticipantBulkMoveResponse;
 use Growsurf\Campaign\Participant\ParticipantCancelDelayedReferralParams;
 use Growsurf\Campaign\Participant\ParticipantDeleteParams;
 use Growsurf\Campaign\Participant\ParticipantDeleteResponse;
@@ -114,6 +116,23 @@ interface ParticipantRawContract
     public function bulkDelete(
         string $id,
         array|ParticipantBulkDeleteParams $params,
+        RequestOptions|array|null $requestOptions = null,
+    ): BaseResponse;
+
+    /**
+     * @api
+     *
+     * @param string $id growSurf program ID
+     * @param array<string,mixed>|ParticipantBulkMoveParams $params
+     * @param RequestOpts|null $requestOptions
+     *
+     * @return BaseResponse<ParticipantBulkMoveResponse>
+     *
+     * @throws APIException
+     */
+    public function bulkMove(
+        string $id,
+        array|ParticipantBulkMoveParams $params,
         RequestOptions|array|null $requestOptions = null,
     ): BaseResponse;
 

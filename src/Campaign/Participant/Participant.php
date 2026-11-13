@@ -7,6 +7,7 @@ namespace Growsurf\Campaign\Participant;
 use Growsurf\Campaign\Language;
 use Growsurf\Campaign\Participant\Participant\PayoutSettings;
 use Growsurf\Campaign\Participant\Participant\Referrer;
+use Growsurf\Campaign\RewardGroupSource;
 use Growsurf\Core\Attributes\Optional;
 use Growsurf\Core\Attributes\Required;
 use Growsurf\Core\Concerns\SdkModel;
@@ -35,6 +36,8 @@ use Growsurf\Core\Conversion\MapOf;
  *   firstName?: string|null,
  *   fraudReasonCode?: string|null,
  *   fraudRiskLevel?: null|FraudRiskLevel|value-of<FraudRiskLevel>,
+ *   groupID?: string|null,
+ *   groupSource?: null|RewardGroupSource|value-of<RewardGroupSource>,
  *   impressionCount?: int|null,
  *   inviteCount?: int|null,
  *   ipAddress?: string|null,
@@ -130,6 +133,20 @@ final class Participant implements BaseModel
     /** @var value-of<FraudRiskLevel>|null $fraudRiskLevel */
     #[Optional(enum: FraudRiskLevel::class)]
     public ?string $fraudRiskLevel;
+
+    /**
+     * The participant's group (`grp_…`), or `null` for Default. Their new referrals earn this group's rewards.
+     */
+    #[Optional('groupId', nullable: true)]
+    public ?string $groupID;
+
+    /**
+     * How the participant got into their group. `null` when no group placement was ever made.
+     *
+     * @var value-of<RewardGroupSource>|null $groupSource
+     */
+    #[Optional(enum: RewardGroupSource::class, nullable: true)]
+    public ?string $groupSource;
 
     #[Optional]
     public ?int $impressionCount;
@@ -301,6 +318,7 @@ final class Participant implements BaseModel
      * @param array<string,int>|null $shareCount
      * @param list<string>|null $vanityKeys
      * @param Language|value-of<Language>|null $language
+     * @param RewardGroupSource|value-of<RewardGroupSource>|null $groupSource
      */
     public static function with(
         string $id,
@@ -348,6 +366,8 @@ final class Participant implements BaseModel
         ?array $vanityKeys = null,
         Language|string|null $language = null,
         ?int $referralLeadQualifiedAt = null,
+        ?string $groupID = null,
+        RewardGroupSource|string|null $groupSource = null,
     ): self {
         $self = new self;
 
@@ -397,6 +417,8 @@ final class Participant implements BaseModel
         null !== $unreadPayoutsCount && $self['unreadPayoutsCount'] = $unreadPayoutsCount;
         null !== $unsubscribed && $self['unsubscribed'] = $unsubscribed;
         null !== $vanityKeys && $self['vanityKeys'] = $vanityKeys;
+        null !== $groupID && $self['groupID'] = $groupID;
+        null !== $groupSource && $self['groupSource'] = $groupSource;
 
         return $self;
     }
@@ -832,6 +854,30 @@ final class Participant implements BaseModel
     {
         $self = clone $this;
         $self['vanityKeys'] = $vanityKeys;
+
+        return $self;
+    }
+
+    /**
+     * The participant's group (`grp_…`), or `null` for Default. Their new referrals earn this group's rewards.
+     */
+    public function withGroupID(?string $groupID): self
+    {
+        $self = clone $this;
+        $self['groupID'] = $groupID;
+
+        return $self;
+    }
+
+    /**
+     * How the participant got into their group. `null` when no group placement was ever made.
+     *
+     * @param RewardGroupSource|value-of<RewardGroupSource>|null $groupSource
+     */
+    public function withGroupSource(RewardGroupSource|string|null $groupSource): self
+    {
+        $self = clone $this;
+        $self['groupSource'] = $groupSource;
 
         return $self;
     }

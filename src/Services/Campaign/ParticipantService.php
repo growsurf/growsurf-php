@@ -8,6 +8,8 @@ use Growsurf\Campaign\Language;
 use Growsurf\Campaign\Participant\Participant;
 use Growsurf\Campaign\Participant\ParticipantAddParams;
 use Growsurf\Campaign\Participant\ParticipantBulkDeleteResponse;
+use Growsurf\Campaign\Participant\ParticipantBulkMoveParams;
+use Growsurf\Campaign\Participant\ParticipantBulkMoveResponse;
 use Growsurf\Campaign\Participant\ParticipantDeleteResponse;
 use Growsurf\Campaign\Participant\ParticipantEmailResponse;
 use Growsurf\Campaign\Participant\ParticipantGetAnalyticsResponse;
@@ -84,7 +86,7 @@ final class ParticipantService implements ParticipantContract
     /**
      * @api
      *
-     * Updates a participant by GrowSurf participant ID or email address. For affiliate programs, set `affiliateStatus` to `APPROVED`, `SUSPENDED`, or `BANNED`. `APPROVED` enrolls the participant as an affiliate. `SUSPENDED` and `BANNED` require an existing affiliate. This endpoint does not accept `isAffiliate`, and affiliate enrollment cannot be removed through REST. Use `updateWithParams()` to set or clear the participant `language`.
+     * Updates a participant by GrowSurf participant ID or email address. For affiliate programs, set `affiliateStatus` to `APPROVED`, `SUSPENDED`, or `BANNED`. `APPROVED` enrolls the participant as an affiliate. `SUSPENDED` and `BANNED` require an existing affiliate. This endpoint does not accept `isAffiliate`, and affiliate enrollment cannot be removed through REST. Use `updateWithParams()` to set or clear the participant `language` or `groupId`.
      *
      * @param string $participantIDOrEmail path param: GrowSurf participant ID or unencoded participant email address (the SDK encodes it automatically)
      * @param string $id path param: GrowSurf program ID
@@ -207,6 +209,30 @@ final class ParticipantService implements ParticipantContract
     /**
      * @api
      *
+     * Moves a list of participants to a group, or to Default with `groupId: null`. Each entry in `participants` is a GrowSurf participant ID or an email address (mixed lists are allowed). Up to `200` entries per request. The response reports a per-row `status` for every submitted entry, so a `200` can include rows that were `NOT_FOUND`. All found participants move together: if the move fails, no one moves. A move is a manual placement, so the group's email and domain rules do not override it later, and it removes the participant from any other group's `PARTICIPANT` rules. A move applies to new referrals only. Rewards already earned keep their amounts. An ID that is not a group in this program returns `400`.
+     *
+     * @param string $id growSurf program ID
+     * @param list<string> $participants GrowSurf participant IDs and/or email addresses to move. Mixed entries are allowed. 1 to 200 entries.
+     * @param string|null $groupID The group to move them to (`grp_…`), or `null` for Default. Required; `null` is sent as JSON `null`.
+     * @param RequestOpts|null $requestOptions
+     *
+     * @throws APIException
+     */
+    public function bulkMove(
+        string $id,
+        array $participants,
+        ?string $groupID,
+        RequestOptions|array|null $requestOptions = null,
+    ): ParticipantBulkMoveResponse {
+        // groupId is required by the API, so null (Default) is sent explicitly, not dropped.
+        $params = ParticipantBulkMoveParams::with(participants: $participants, groupID: $groupID);
+
+        return $this->raw->bulkMove($id, params: $params, requestOptions: $requestOptions)->parse();
+    }
+
+    /**
+     * @api
+     *
      * Adds a new participant to the program. If the email already exists, the existing participant is returned unchanged. One exception: if that participant claimed an offer in the Claim Offer Popup and the signup is not complete yet, this call completes the signup with the original referrer and saves any non-blank `firstName`, `lastName`, and `metadata` you send. For affiliate programs, set `isAffiliate` to `true` to enroll a new participant as an approved affiliate or `false` to create a non-affiliate. If you omit `isAffiliate`, a valid `referredBy` creates a referred non-affiliate; without a valid referrer, the new participant is enrolled as an approved affiliate. You can send a valid `referredBy` with `isAffiliate: true` to keep the referral attribution and enroll the participant as an affiliate. A new participant with a valid `referredBy` counts as a referred signup. When the program's `referralTrigger` is `CUSTOM`, that signup can earn Lead-event rewards and commissions for the referrer, the same as a signup through the public client or mobile flow.
      *
      * @param string $id growSurf program ID
@@ -217,6 +243,7 @@ final class ParticipantService implements ParticipantContract
      * @param string $referredBy referrer participant ID or email address
      * @param Language|value-of<Language> $language The language of the participant's portal and program emails. Stored when it is one of the program's languages. A regional tag maps to its language (for example, `fr-BE` is stored as `fr`). Any other value is ignored and the program's base language applies. Applied only when this request creates the participant.
      * @param int $referredAt When the participant was referred, in Unix milliseconds. Used only with a valid `referredBy`. If you omit `referralStatus`, GrowSurf compares this time with the program's referral credit window to set it. Defaults to the time of the request.
+     * @param string|null $groupID Places the new participant in this group (`grp_…`). This is a manual placement, so the groups' email and domain rules do not apply to them. Applied only when this request creates the participant. `null` omits the field; use `addWithParams()` to place the participant in Default explicitly.
      * @param RequestOpts|null $requestOptions
      *
      * @throws APIException
@@ -237,12 +264,14 @@ final class ParticipantService implements ParticipantContract
         RequestOptions|array|null $requestOptions = null,
         Language|string|null $language = null,
         ?int $referredAt = null,
+        ?string $groupID = null,
     ): Participant {
         $params = Util::removeNulls(
             [
                 'email' => $email,
                 'fingerprint' => $fingerprint,
                 'firstName' => $firstName,
+                'groupID' => $groupID,
                 'ipAddress' => $ipAddress,
                 'isAffiliate' => $isAffiliate,
                 'language' => $language,
@@ -259,6 +288,21 @@ final class ParticipantService implements ParticipantContract
         $response = $this->raw->add($id, params: $params, requestOptions: $requestOptions);
 
         return $response->parse();
+    }
+
+    /**
+     * Adds a participant from a parameter model. Use this form to place the new participant in Default explicitly with `withGroupID(null)`; that is a manual placement, so the groups' email and domain rules do not apply.
+     *
+     * @param RequestOpts|null $requestOptions
+     *
+     * @throws APIException
+     */
+    public function addWithParams(
+        string $id,
+        ParticipantAddParams $params,
+        RequestOptions|array|null $requestOptions = null,
+    ): Participant {
+        return $this->raw->add($id, $params, $requestOptions)->parse();
     }
 
     /**

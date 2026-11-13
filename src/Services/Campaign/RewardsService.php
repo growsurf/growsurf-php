@@ -45,28 +45,32 @@ final class RewardsService implements RewardsContract
      * @api
      *
      * Retrieves configured Campaign Rewards, including switched-off rewards and rewards
-     * whose group is not selected. Deleted rewards are excluded. The campaign response's
+     * whose reward type is not selected. Deleted rewards are excluded. The campaign response's
      * embedded `rewards` array includes only enabled, visible rewards. A reward can be earned only
-     * when it also appears in the campaign response's embedded `rewards` array.
+     * when it also appears in the campaign response's embedded `rewards` array. The list includes
+     * every group's rewards. Each reward's `groupId` names its group (`null` is Default). Pass
+     * `groupId` to return one group's rewards.
      *
      * @param string $id growSurf program ID
+     * @param string|null $groupID Return only this group's rewards (`grp_…`). To get Default's rewards, omit `groupId` and keep the rewards whose `groupId` is `null`. An ID that is not a group in this program returns `404`.
      * @param RequestOpts|null $requestOptions
      *
      * @throws APIException
      */
     public function list(
         string $id,
-        RequestOptions|array|null $requestOptions = null
+        RequestOptions|array|null $requestOptions = null,
+        ?string $groupID = null,
     ): CampaignRewardListResponse {
         // @phpstan-ignore-next-line argument.type
-        $response = $this->raw->list($id, requestOptions: $requestOptions);
+        $response = $this->raw->list($id, requestOptions: $requestOptions, groupID: $groupID);
 
         return $response->parse();
     }
 
     /**
-     * Updates a Campaign Reward from a parameter model. Use this form to set `event` or
-     * `imageIconKey`.
+     * Updates a Campaign Reward from a parameter model. Use this form to set `event`,
+     * `imageIconKey`, or `groupId`.
      * `LEAD` requires `installation.referralTrigger` to be `CUSTOM`. Omitting `event`
      * preserves the stored value. This form also distinguishes an omitted field from an
      * explicit JSON null that clears a nullable value.
@@ -90,7 +94,7 @@ final class RewardsService implements RewardsContract
      * Creates a Campaign Reward from a parameter model. Use this form to set `event` to
      * `LEAD` or `CONVERSION` for a `SINGLE_SIDED`, `DOUBLE_SIDED`, or `MILESTONE`
      * reward. `LEAD` requires `installation.referralTrigger` to be `CUSTOM`. Omitting
-     * `event` defaults it to `CONVERSION`. Also use this form to set `imageIconKey`.
+     * `event` defaults it to `CONVERSION`. Also use this form to set `imageIconKey` or `groupId`.
      * A concurrent edit can return `409`; reload the program before retrying.
      *
      * @param RequestOpts|null $requestOptions
@@ -108,7 +112,7 @@ final class RewardsService implements RewardsContract
     /**
      * @api
      *
-     * Creates a new Campaign Reward (`CampaignReward`) with a GrowSurf-assigned ID. The reward type must be compatible with the program type (affiliate programs support only `AFFILIATE` rewards; referral programs support all other types). Enabling an active reward of a type automatically enables that reward type on the program. Use `createWithParams()` to set the Campaign Reward `event` or `imageIconKey`.
+     * Creates a new Campaign Reward (`CampaignReward`) with a GrowSurf-assigned ID. The reward type must be compatible with the program type (affiliate programs support only `AFFILIATE` rewards; referral programs support all other types). Enabling an active reward of a type automatically enables that reward type on the program. Use `createWithParams()` to set the Campaign Reward `event`, `imageIconKey`, or `groupId`.
      * A concurrent edit can return `409`; reload the program before retrying.
      *
      * @param string $id path param: GrowSurf program ID
@@ -206,7 +210,7 @@ final class RewardsService implements RewardsContract
     /**
      * @api
      *
-     * Updates an existing Campaign Reward (`CampaignReward`). The reward `type` is immutable and cannot be changed. When the update replaces `metadata`, renamed keys automatically rewrite any `{{campaignReward[…]}}` references in campaign copy; removing a key that campaign copy still references returns a `409` listing the referencing fields. Use `updateWithParams()` to change the Campaign Reward `event` or `imageIconKey`.
+     * Updates an existing Campaign Reward (`CampaignReward`). The reward `type` is immutable and cannot be changed. When the update replaces `metadata`, renamed keys automatically rewrite any `{{campaignReward[…]}}` references in campaign copy; removing a key that campaign copy still references returns a `409` listing the referencing fields. Use `updateWithParams()` to change the Campaign Reward `event`, `imageIconKey`, or `groupId`.
      * Changes to participant email content are checked before saving. Rejected content
      * returns `400` and is not saved. A concurrent edit can return `409`; reload the
      * program before retrying.

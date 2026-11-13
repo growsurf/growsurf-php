@@ -26,12 +26,14 @@ interface RewardsContract
      *
      * @param string $id growSurf program ID
      * @param RequestOpts|null $requestOptions
+     * @param string|null $groupID Return only this group's rewards (`grp_…`). To get Default's rewards, omit `groupId` and keep the rewards whose `groupId` is `null`. An ID that is not a group in this program returns `404`.
      *
      * @throws APIException
      */
     public function list(
         string $id,
-        RequestOptions|array|null $requestOptions = null
+        RequestOptions|array|null $requestOptions = null,
+        ?string $groupID = null,
     ): CampaignRewardListResponse;
 
     /**

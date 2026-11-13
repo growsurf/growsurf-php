@@ -26,6 +26,7 @@ use Growsurf\Core\Contracts\BaseModel;
  *   commissionStructure?: null|CommissionStructure|CommissionStructureShape,
  *   currencyISO?: string|null,
  *   fulfilledAt?: int|null,
+ *   groupID?: string|null,
  *   isAvailable?: bool|null,
  *   isFulfilled?: bool|null,
  *   isReferrer?: bool|null,
@@ -49,6 +50,12 @@ final class ParticipantReward implements BaseModel
     /** @var value-of<Status> $status */
     #[Required(enum: Status::class)]
     public string $status;
+
+    /**
+     * The group whose reward this is (`grp_…`), saved when it was earned. `null` for Default and for rewards earned before groups existed.
+     */
+    #[Optional('groupId', nullable: true)]
+    public ?string $groupID;
 
     /**
      * What the reward is worth in major units of `currencyISO`, from the provider's saved record or the amount saved when it was earned. `null` for a percent-off coupon or when no amount is available.
@@ -152,6 +159,7 @@ final class ParticipantReward implements BaseModel
         ?string $currencyISO = null,
         float|int|null $percentOff = null,
         AmountSource|string|null $amountSource = null,
+        ?string $groupID = null,
     ): self {
         $self = new self;
 
@@ -173,6 +181,7 @@ final class ParticipantReward implements BaseModel
         null !== $currencyISO && $self['currencyISO'] = $currencyISO;
         null !== $percentOff && $self['percentOff'] = $percentOff;
         null !== $amountSource && $self['amountSource'] = $amountSource;
+        null !== $groupID && $self['groupID'] = $groupID;
 
         return $self;
     }
@@ -330,6 +339,17 @@ final class ParticipantReward implements BaseModel
     {
         $self = clone $this;
         $self['unread'] = $unread;
+
+        return $self;
+    }
+
+    /**
+     * The group whose reward this is (`grp_…`), saved when it was earned. `null` for Default and for rewards earned before groups existed.
+     */
+    public function withGroupID(?string $groupID): self
+    {
+        $self = clone $this;
+        $self['groupID'] = $groupID;
 
         return $self;
     }

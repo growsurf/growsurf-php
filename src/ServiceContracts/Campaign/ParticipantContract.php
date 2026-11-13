@@ -7,6 +7,7 @@ namespace Growsurf\ServiceContracts\Campaign;
 use Growsurf\Campaign\Language;
 use Growsurf\Campaign\Participant\Participant;
 use Growsurf\Campaign\Participant\ParticipantBulkDeleteResponse;
+use Growsurf\Campaign\Participant\ParticipantBulkMoveResponse;
 use Growsurf\Campaign\Participant\ParticipantDeleteResponse;
 use Growsurf\Campaign\Participant\ParticipantEmailResponse;
 use Growsurf\Campaign\Participant\ParticipantGetAnalyticsResponse;
@@ -142,6 +143,23 @@ interface ParticipantContract
      * @api
      *
      * @param string $id growSurf program ID
+     * @param list<string> $participants GrowSurf participant IDs and/or email addresses to move. Mixed entries are allowed.
+     * @param string|null $groupID the group to move them to (`grp_…`), or `null` for Default
+     * @param RequestOpts|null $requestOptions
+     *
+     * @throws APIException
+     */
+    public function bulkMove(
+        string $id,
+        array $participants,
+        ?string $groupID,
+        RequestOptions|array|null $requestOptions = null,
+    ): ParticipantBulkMoveResponse;
+
+    /**
+     * @api
+     *
+     * @param string $id growSurf program ID
      * @param bool $isAffiliate Affiliate programs only. Controls affiliate enrollment for a new participant. `true` enrolls the participant with `affiliateStatus: APPROVED`; `false` creates a non-affiliate without `affiliateStatus`. Existing participants are returned unchanged.
      * @param array<string,mixed> $metadata shallow custom metadata object
      * @param string $mobileInstanceID Optional app-install scoped identifier for native mobile anti-fraud. Recommended for mobile participant creation and mobile participant token flows. The official mobile SDKs generate this as a lowercase UUID.
@@ -149,6 +167,7 @@ interface ParticipantContract
      * @param string $referredBy referrer participant ID or email address
      * @param Language|value-of<Language> $language The language of the participant's portal and program emails. Stored when it is one of the program's languages. A regional tag maps to its language (for example, `fr-BE` is stored as `fr`). Any other value is ignored and the program's base language applies. Applied only when this request creates the participant.
      * @param int $referredAt When the participant was referred, in Unix milliseconds. Used only with a valid `referredBy`. If you omit `referralStatus`, GrowSurf compares this time with the program's referral credit window to set it. Defaults to the time of the request.
+     * @param string|null $groupID Places the new participant in this group (`grp_…`). This is a manual placement, so the groups' email and domain rules do not apply to them. Applied only when this request creates the participant. `null` omits the field; use `addWithParams()` to place the participant in Default explicitly.
      * @param RequestOpts|null $requestOptions
      *
      * @throws APIException
@@ -169,6 +188,7 @@ interface ParticipantContract
         RequestOptions|array|null $requestOptions = null,
         Language|string|null $language = null,
         ?int $referredAt = null,
+        ?string $groupID = null,
     ): Participant;
 
     /**
