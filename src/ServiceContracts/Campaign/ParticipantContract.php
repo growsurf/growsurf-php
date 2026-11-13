@@ -357,7 +357,7 @@ interface ParticipantContract
      * @param string $id path param: GrowSurf program ID
      * @param AmendmentType|value-of<AmendmentType> $amendmentType body param: REFUND covers full refunds, partial refunds, and refund cancellations; CHARGEBACK is always a full reversal
      * @param int $amount body param: Original sale gross (minor units). Optional — the value stored when the transaction was recorded is used when available; only needed for partial refunds of older records.
-     * @param int $amountRefunded body param: Cumulative amount refunded so far, in the currency's minor unit. Omit for a full refund. For a partial refund send the running total, not the per-refund delta.
+     * @param int $amountRefunded body param: Cumulative amount refunded so far, in the currency's minor unit. Omit for a full refund. For a partial refund send the running total, not the per-refund delta. Required when `refundStatus` is `canceled`: send the total that stays refunded after the cancellation (`0` when none remain).
      * @param string $chargeID Body param
      * @param string $currency body param: 3-letter ISO currency. Optional — resolved from the original commission when available.
      * @param string $description Body param
@@ -368,7 +368,7 @@ interface ParticipantContract
      * @param string $paymentIntentID Body param
      * @param int $refundAmount body param: Positive amount for this individual refund, no greater than the sale amount, in minor units. Record it with `refundId` on each original refund to support cancellation and out-of-order amendments. A cancellation may omit an already recorded amount. Missing or conflicting refund history returns `409` without applying the cancellation. Newly observed higher cumulative refunds and incomplete coverage are retained for reconciliation.
      * @param string $refundID body param: Stable per-refund identifier. Recommended for partial refunds so repeated calls stay idempotent.
-     * @param string $refundStatus body param: Refund status. Send "canceled" with a lowered amountRefunded to restore a previously reduced commission.
+     * @param string $refundStatus body param: Refund status. Send "canceled" with the original refundId to cancel that refund.
      * @param string $transactionID Body param
      * @param ParticipantRefundTransactionParams\PaymentProvider|value-of<ParticipantRefundTransactionParams\PaymentProvider> $paymentProvider Connected provider: `stripe`, `chargebee` or `recurly`. Requires `transactionId` and `testMode`.
      * @param bool $testMode `true` for test or `false` for live. Requires `paymentProvider`.
@@ -407,7 +407,6 @@ interface ParticipantContract
      * @param string $id path param: GrowSurf program ID
      * @param list<string> $emailAddresses Body param
      * @param string $messageText Body param
-     * @param string $subjectText Body param
      * @param RequestOpts|null $requestOptions
      *
      * @throws APIException
@@ -417,7 +416,6 @@ interface ParticipantContract
         string $id,
         array $emailAddresses,
         string $messageText,
-        string $subjectText,
         RequestOptions|array|null $requestOptions = null,
     ): ParticipantSendInvitesResponse;
 
@@ -426,7 +424,7 @@ interface ParticipantContract
      *
      * @param string $participantIDOrEmail path param: GrowSurf participant ID or unencoded participant email address (the SDK encodes it automatically)
      * @param string $id path param: GrowSurf program ID
-     * @param int $delayInDays Body param: Number of whole days to hold referral credit before it is awarded. Useful for honoring a refund window before crediting a referrer. Omit this field to award credit immediately. The credit is awarded automatically once the delay elapses, and can be cancelled before then with the Cancel delayed referral trigger request.
+     * @param int $delayInDays Body param: Number of whole days to hold referral credit before it is awarded. Useful for honoring a refund window before crediting a referrer. Omit this field to award credit immediately. The credit is awarded automatically once the delay elapses, and can be cancelled before then with the Cancel delayed referral trigger request. From `0` to `90`; `0` awards credit immediately.
      * @param RequestOpts|null $requestOptions
      *
      * @throws APIException
@@ -458,7 +456,7 @@ interface ParticipantContract
      *
      * @param string $participantIDOrEmail path param: GrowSurf participant ID or unencoded participant email address (the SDK encodes it automatically)
      * @param string $id path param: GrowSurf program ID
-     * @param string $body body param: HTML body for a free-form email. You can personalize it with dynamic text, inserting `{{...}}` tokens like `{{firstName}}` or `{{shareUrl}}`. See [Guide to using dynamic text in GrowSurf emails](https://support.growsurf.com/article/213-guide-to-using-dynamic-text-in-growsurf-emails).
+     * @param string $body body param: HTML body for a free-form email. When `settings.design.layoutMode` is `INLINE`, include `{{emailFooter}}` in the body; `{{emailHeader}}` is optional. You can personalize it with dynamic text, inserting `{{...}}` tokens like `{{firstName}}` or `{{shareUrl}}`. See [Guide to using dynamic text in GrowSurf emails](https://support.growsurf.com/article/213-guide-to-using-dynamic-text-in-growsurf-emails).
      * @param string $emailType body param: The program email template to trigger (template mode). Send the camelCase email-type key. The available types depend on the program type; the template's `isEnabled` setting controls automatic sends only. This endpoint can trigger any sendable template. System and transactional types (login link, payout destination confirmation, tax notifications), the invite email, and the follow-up reminder cannot be sent. Referral programs: `welcomeNonReferred`, `referralLinkViewedFirstTime`, `referralLinkUsed`, `referredSignup`, `welcomeReferred`, `offerClaimed`, `goalAchieved`, `campaignEndedWinners`, `campaignEndedNonWinners`, `progressUpdateMonthly`. Affiliate programs: `welcomeNonReferred`, `referralLinkViewedFirstTime`, `referredSignup`, `offerClaimed`, `commissionGenerated`, `commissionAdjusted`, `payoutPending`, `payoutSentSuccess`, `progressUpdateMonthly`. `welcomeNonReferred` can only be sent to advocates or approved, enrolled affiliates in a program that has not ended.
      * @param string $preheader body param: Optional preheader text for a free-form email
      * @param string $subject body param: Subject line for a free-form email. Supports dynamic text (`{{...}}` tokens), the same as the body.

@@ -10,7 +10,7 @@ use Growsurf\Core\Concerns\SdkParams;
 use Growsurf\Core\Contracts\BaseModel;
 
 /**
- * Sends email invites on behalf of a participant to a list of email addresses. Sending invites via the API requires a **verified custom email domain** on the program; the request fails until one is verified.
+ * Sends email invites on behalf of a participant to a list of email addresses. Sending invites via the API requires a **verified custom email domain** on the program. Until one is verified, it returns `success: false`.
  *
  * @see Growsurf\Services\Campaign\ParticipantService::sendInvites()
  *
@@ -18,7 +18,6 @@ use Growsurf\Core\Contracts\BaseModel;
  *   id: string,
  *   emailAddresses: list<string>,
  *   messageText: string,
- *   subjectText: string,
  * }
  */
 final class ParticipantSendInvitesParams implements BaseModel
@@ -37,16 +36,13 @@ final class ParticipantSendInvitesParams implements BaseModel
     #[Required]
     public string $messageText;
 
-    #[Required]
-    public string $subjectText;
-
     /**
      * `new ParticipantSendInvitesParams()` is missing required properties by the API.
      *
      * To enforce required parameters use
      * ```
      * ParticipantSendInvitesParams::with(
-     *   id: ..., emailAddresses: ..., messageText: ..., subjectText: ...
+     *   id: ..., emailAddresses: ..., messageText: ...
      * )
      * ```
      *
@@ -57,7 +53,6 @@ final class ParticipantSendInvitesParams implements BaseModel
      *   ->withID(...)
      *   ->withEmailAddresses(...)
      *   ->withMessageText(...)
-     *   ->withSubjectText(...)
      * ```
      */
     public function __construct()
@@ -75,15 +70,13 @@ final class ParticipantSendInvitesParams implements BaseModel
     public static function with(
         string $id,
         array $emailAddresses,
-        string $messageText,
-        string $subjectText
+        string $messageText
     ): self {
         $self = new self;
 
         $self['id'] = $id;
         $self['emailAddresses'] = $emailAddresses;
         $self['messageText'] = $messageText;
-        $self['subjectText'] = $subjectText;
 
         return $self;
     }
@@ -111,14 +104,6 @@ final class ParticipantSendInvitesParams implements BaseModel
     {
         $self = clone $this;
         $self['messageText'] = $messageText;
-
-        return $self;
-    }
-
-    public function withSubjectText(string $subjectText): self
-    {
-        $self = clone $this;
-        $self['subjectText'] = $subjectText;
 
         return $self;
     }

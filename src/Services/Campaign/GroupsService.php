@@ -52,7 +52,7 @@ final class GroupsService
     /**
      * @api
      *
-     * Creates a group with a copy of each active Default reward, except Leaderboard rewards, which stay program-wide. The copies have new IDs and this group's `groupId`; change them with Update a campaign reward. `rules` place participants in the group: `EMAIL` matches an exact email, `DOMAIN` matches a company domain (public email domains such as gmail.com are refused), and `PARTICIPANT` moves an existing participant in now. Each email and domain can be in one group only. Email and domain rules place new signups and affiliate approvals only; they do not move existing participants. When more than one way matches, a move (a `PARTICIPANT` rule, Update participant, or bulk move) wins, then the group's signup link, then `EMAIL`, then `DOMAIN`, then Default.
+     * Creates a group with a copy of each active Default reward, except Leaderboard rewards, which stay program-wide. The copies have new IDs and this group's `groupId`; change them with Update a campaign reward. `rules` place participants in the group: `EMAIL` matches an exact email, `DOMAIN` matches a company domain (public email domains such as gmail.com are refused), and `PARTICIPANT` moves an existing participant in now. Each email and domain can be in one group only. Email and domain rules place new signups and affiliate approvals only; they do not move existing participants. When more than one way matches, a move (a `PARTICIPANT` rule, Update participant, or bulk move) wins, then the group's signup link, then `EMAIL`, then `DOMAIN`, then Default. Group names must be unique in the program, ignoring case. A name that another group uses returns `409`, and "Default" returns `400`.
      *
      * @param string $id GrowSurf program ID
      * @param string $name The group name (internal only, never shown to participants). 1 to 100 characters.
@@ -90,7 +90,7 @@ final class GroupsService
     /**
      * @api
      *
-     * Renames, reorders, or changes the rules of a group. Sending `rules` replaces the whole list. An added `PARTICIPANT` rule moves that participant in now; a removed one moves them back to Default if they are still in this group. Email and domain rule changes move no one. To change the group's rewards, update its Campaign Rewards.
+     * Renames, reorders, or changes the rules of a group. Sending `rules` replaces the whole list. An added `PARTICIPANT` rule moves that participant in now; a removed one moves them back to Default if they are still in this group. Email and domain rule changes move no one. To change the group's rewards, update its Campaign Rewards. Group names must be unique in the program, ignoring case. A name that another group uses returns `409`, and "Default" returns `400`.
      *
      * @param string $groupID The group ID (`grp_…`)
      * @param string $id GrowSurf program ID

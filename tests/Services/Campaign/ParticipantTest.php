@@ -483,7 +483,6 @@ final class ParticipantTest extends TestCase
             id: 'id',
             emailAddresses: ['erlich@aviato.com'],
             messageText: '{{referrerFirstName}} invited you with {{referrerShareUrl}}.',
-            subjectText: 'Join me on Pied Piper',
         );
 
         // @phpstan-ignore-next-line method.alreadyNarrowedType
@@ -502,7 +501,6 @@ final class ParticipantTest extends TestCase
             id: 'id',
             emailAddresses: ['erlich@aviato.com'],
             messageText: '{{referrerFirstName}} invited you with {{referrerShareUrl}}.',
-            subjectText: 'Join me on Pied Piper',
         );
 
         // @phpstan-ignore-next-line method.alreadyNarrowedType

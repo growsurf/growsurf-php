@@ -33,7 +33,7 @@ final class ParticipantEmailParams implements BaseModel
     public string $id;
 
     /**
-     * HTML body for a free-form email. You can personalize it with dynamic text, inserting `{{...}}` tokens like `{{firstName}}` or `{{shareUrl}}`. See [Guide to using dynamic text in GrowSurf emails](https://support.growsurf.com/article/213-guide-to-using-dynamic-text-in-growsurf-emails).
+     * HTML body for a free-form email. When `settings.design.layoutMode` is `INLINE`, include `{{emailFooter}}` in the body; `{{emailHeader}}` is optional. You can personalize it with dynamic text, inserting `{{...}}` tokens like `{{firstName}}` or `{{shareUrl}}`. See [Guide to using dynamic text in GrowSurf emails](https://support.growsurf.com/article/213-guide-to-using-dynamic-text-in-growsurf-emails).
      */
     #[Optional]
     public ?string $body;
@@ -108,7 +108,7 @@ final class ParticipantEmailParams implements BaseModel
     }
 
     /**
-     * HTML body for a free-form email. You can personalize it with dynamic text, inserting `{{...}}` tokens like `{{firstName}}` or `{{shareUrl}}`. See [Guide to using dynamic text in GrowSurf emails](https://support.growsurf.com/article/213-guide-to-using-dynamic-text-in-growsurf-emails).
+     * HTML body for a free-form email. When `settings.design.layoutMode` is `INLINE`, include `{{emailFooter}}` in the body; `{{emailHeader}}` is optional. You can personalize it with dynamic text, inserting `{{...}}` tokens like `{{firstName}}` or `{{shareUrl}}`. See [Guide to using dynamic text in GrowSurf emails](https://support.growsurf.com/article/213-guide-to-using-dynamic-text-in-growsurf-emails).
      */
     public function withBody(string $body): self
     {

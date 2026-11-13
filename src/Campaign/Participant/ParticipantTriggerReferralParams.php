@@ -29,7 +29,7 @@ final class ParticipantTriggerReferralParams implements BaseModel
     public string $id;
 
     /**
-     * Number of whole days to hold referral credit before it is awarded. Useful for honoring a refund window before crediting a referrer. Omit this field to award credit immediately. The credit is awarded automatically once the delay elapses, and can be cancelled before then with the Cancel delayed referral trigger request.
+     * Number of whole days to hold referral credit before it is awarded. Useful for honoring a refund window before crediting a referrer. Omit this field to award credit immediately. The credit is awarded automatically once the delay elapses, and can be cancelled before then with the Cancel delayed referral trigger request. From `0` to `90`; `0` awards credit immediately.
      */
     #[Optional]
     public ?int $delayInDays;
@@ -78,7 +78,7 @@ final class ParticipantTriggerReferralParams implements BaseModel
     }
 
     /**
-     * Number of whole days to hold referral credit before it is awarded. Useful for honoring a refund window before crediting a referrer. Omit this field to award credit immediately. The credit is awarded automatically once the delay elapses, and can be cancelled before then with the Cancel delayed referral trigger request.
+     * Number of whole days to hold referral credit before it is awarded. Useful for honoring a refund window before crediting a referrer. Omit this field to award credit immediately. The credit is awarded automatically once the delay elapses, and can be cancelled before then with the Cancel delayed referral trigger request. From `0` to `90`; `0` awards credit immediately.
      */
     public function withDelayInDays(int $delayInDays): self
     {
