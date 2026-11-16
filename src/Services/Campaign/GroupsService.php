@@ -52,11 +52,11 @@ final class GroupsService
     /**
      * @api
      *
-     * Creates a group with a copy of each active Default reward, except Leaderboard rewards, which stay program-wide. The copies have new IDs and this group's `groupId`; change them with Update a campaign reward. `rules` place participants in the group: `EMAIL` matches an exact email, `DOMAIN` matches a company domain (public email domains such as gmail.com are refused), and `PARTICIPANT` moves an existing participant in now. Each email and domain can be in one group only. Email and domain rules place new signups and affiliate approvals only; they do not move existing participants. When more than one way matches, a move (a `PARTICIPANT` rule, Update participant, or bulk move) wins, then the group's signup link, then `EMAIL`, then `DOMAIN`, then Default. Group names must be unique in the program, ignoring case. A name that another group uses returns `409`, and "Default" returns `400`.
+     * Creates an empty group. Add Campaign Rewards with its `groupId` before adding participants or rules. Omit `rules` or send an empty array; nonempty rules return `400`. Group names must be unique, ignoring case. Duplicate names return `409`; "Default" returns `400`.
      *
      * @param string $id GrowSurf program ID
      * @param string $name The group name (internal only, never shown to participants). 1 to 100 characters.
-     * @param list<RewardGroupRule|RewardGroupRuleShape>|null $rules The rules that place participants in this group. Each email and domain can be in one group only. Up to 500.
+     * @param list<RewardGroupRule|RewardGroupRuleShape>|null $rules Omit or send an empty array. Add rules after configuring a reward.
      * @param RequestOpts|null $requestOptions
      *
      * @throws APIException

@@ -48,7 +48,7 @@ final class RewardGroup implements BaseModel
     #[Required(list: RewardGroupRule::class)]
     public array $rules;
 
-    /** The code for this group's signup link. A participant who signs up through the link joins this group. */
+    /** The group's signup link code. Joining requires verified identity matching the group's email or domain rules; the code alone grants no access. */
     #[Required]
     public string $signupCode;
 
