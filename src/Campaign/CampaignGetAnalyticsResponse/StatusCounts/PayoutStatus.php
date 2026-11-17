@@ -14,6 +14,7 @@ use Growsurf\Core\Contracts\BaseModel;
  * @phpstan-import-type PayoutStatusMetricShape from \Growsurf\Campaign\CampaignGetAnalyticsResponse\StatusCounts\PayoutStatusMetric
  *
  * @phpstan-type PayoutStatusShape = array{
+ *   attention?: null|PayoutStatusMetric|PayoutStatusMetricShape,
  *   failed?: null|PayoutStatusMetric|PayoutStatusMetricShape,
  *   issued?: null|PayoutStatusMetric|PayoutStatusMetricShape,
  *   queued?: null|PayoutStatusMetric|PayoutStatusMetricShape,
@@ -25,6 +26,12 @@ final class PayoutStatus implements BaseModel
 {
     /** @use SdkModel<PayoutStatusShape> */
     use SdkModel;
+
+    /**
+     * Queued or issued Wise payouts that are paused until a refund is confirmed.
+     */
+    #[Optional]
+    public ?PayoutStatusMetric $attention;
 
     #[Optional]
     public ?PayoutStatusMetric $failed;
@@ -51,6 +58,7 @@ final class PayoutStatus implements BaseModel
      *
      * You must use named parameters to construct any parameters with a default value.
      *
+     * @param PayoutStatusMetric|PayoutStatusMetricShape|null $attention
      * @param PayoutStatusMetric|PayoutStatusMetricShape|null $failed
      * @param PayoutStatusMetric|PayoutStatusMetricShape|null $issued
      * @param PayoutStatusMetric|PayoutStatusMetricShape|null $queued
@@ -58,6 +66,7 @@ final class PayoutStatus implements BaseModel
      * @param PayoutStatusMetric|PayoutStatusMetricShape|null $upcoming
      */
     public static function with(
+        PayoutStatusMetric|array|null $attention = null,
         PayoutStatusMetric|array|null $failed = null,
         PayoutStatusMetric|array|null $issued = null,
         PayoutStatusMetric|array|null $queued = null,
@@ -66,11 +75,25 @@ final class PayoutStatus implements BaseModel
     ): self {
         $self = new self;
 
+        null !== $attention && $self['attention'] = $attention;
         null !== $failed && $self['failed'] = $failed;
         null !== $issued && $self['issued'] = $issued;
         null !== $queued && $self['queued'] = $queued;
         null !== $reversed && $self['reversed'] = $reversed;
         null !== $upcoming && $self['upcoming'] = $upcoming;
+
+        return $self;
+    }
+
+    /**
+     * Queued or issued Wise payouts that are paused until a refund is confirmed.
+     *
+     * @param PayoutStatusMetric|PayoutStatusMetricShape $attention
+     */
+    public function withAttention(PayoutStatusMetric|array $attention): self
+    {
+        $self = clone $this;
+        $self['attention'] = $attention;
 
         return $self;
     }
