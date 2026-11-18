@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.24.0](https://github.com/growsurf/growsurf-php/compare/v1.23.0...v1.24.0) (2026-11-18)
+
+
+### Features
+
+* add reward groups and participant bulk move ([90775c8](https://github.com/growsurf/growsurf-php/commit/90775c86b919eda36ef23c4753305d52523708cf))
+* **api:** add payout attention and invite message; align group wording ([4c16cc8](https://github.com/growsurf/growsurf-php/commit/4c16cc8721091141656657af051f0dd6e52f82a4))
+* **api:** sync REST v2 docs and types ([083c8d5](https://github.com/growsurf/growsurf-php/commit/083c8d52c2d2c2a895bd406b463dfc9057d08bee))
+
+
+### Documentation
+
+* align group creation and webhook event contracts ([7115923](https://github.com/growsurf/growsurf-php/commit/711592330ecd4fcd4f15237ff45350e5a03ebf36))
+
 ## [1.23.0](https://github.com/growsurf/growsurf-php/compare/v1.22.0...v1.23.0) (2026-11-08)
 
 
