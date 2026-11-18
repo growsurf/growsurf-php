@@ -368,7 +368,10 @@ final class CampaignRawService implements CampaignRawContract
      *
      * @param string $id growSurf program ID
      * @param array{
-     *   limit?: int, metadata?: array<string,string>, nextID?: string
+     *   limit?: int,
+     *   metadata?: array<string,string>,
+     *   nextID?: string,
+     *   groupID?: string,
      * }|CampaignListParticipantsParams $params
      * @param RequestOpts|null $requestOptions
      *

@@ -21,6 +21,7 @@ use Growsurf\Core\Contracts\BaseModel;
  *   email: string,
  *   fingerprint?: string,
  *   firstName?: string,
+ *   groupID?: string|null,
  *   ipAddress?: string,
  *   isAffiliate?: bool,
  *   language?: \Growsurf\Campaign\Language|value-of<\Growsurf\Campaign\Language>,
@@ -46,6 +47,12 @@ final class ParticipantAddParams implements BaseModel
 
     #[Optional]
     public ?string $firstName;
+
+    /**
+     * Places the new participant in this group (`grp_…`), or in Default with `null`. This is a manual placement, so the groups' email and domain rules do not apply to them. Applied only when this request creates the participant; to move an existing participant, use Update participant. An ID that is not a group in this program returns `400` and adds no one.
+     */
+    #[Optional('groupId', nullable: true)]
+    public ?string $groupID;
 
     #[Optional]
     public ?string $ipAddress;
@@ -130,6 +137,7 @@ final class ParticipantAddParams implements BaseModel
      * @param array<string,mixed>|null $metadata
      * @param ReferralStatus|value-of<ReferralStatus>|null $referralStatus
      * @param Language|value-of<Language>|null $language
+     * @param string|null $groupID `null` omits the field; call `withGroupID(null)` to send `null` and place the participant in Default
      */
     public static function with(
         string $email,
@@ -144,6 +152,7 @@ final class ParticipantAddParams implements BaseModel
         ?string $referredBy = null,
         Language|string|null $language = null,
         ?int $referredAt = null,
+        ?string $groupID = null,
     ): self {
         $self = new self;
 
@@ -160,6 +169,7 @@ final class ParticipantAddParams implements BaseModel
         null !== $referralStatus && $self['referralStatus'] = $referralStatus;
         null !== $referredAt && $self['referredAt'] = $referredAt;
         null !== $referredBy && $self['referredBy'] = $referredBy;
+        null !== $groupID && $self['groupID'] = $groupID;
 
         return $self;
     }
@@ -284,6 +294,17 @@ final class ParticipantAddParams implements BaseModel
     {
         $self = clone $this;
         $self['referredBy'] = $referredBy;
+
+        return $self;
+    }
+
+    /**
+     * Places the new participant in this group (`grp_…`), or in Default with `null`. This is a manual placement, so the groups' email and domain rules do not apply to them. Applied only when this request creates the participant; to move an existing participant, use Update participant. An ID that is not a group in this program returns `400` and adds no one.
+     */
+    public function withGroupID(?string $groupID): self
+    {
+        $self = clone $this;
+        $self['groupID'] = $groupID;
 
         return $self;
     }

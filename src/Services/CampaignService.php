@@ -39,6 +39,7 @@ use Growsurf\Services\Campaign\CommissionService;
 use Growsurf\Services\Campaign\CustomDomainService;
 use Growsurf\Services\Campaign\DesignService;
 use Growsurf\Services\Campaign\EmailsService;
+use Growsurf\Services\Campaign\GroupsService;
 use Growsurf\Services\Campaign\InstallationService;
 use Growsurf\Services\Campaign\IntegrationsService;
 use Growsurf\Services\Campaign\OptionsService;
@@ -81,6 +82,9 @@ final class CampaignService implements CampaignContract
 
     /** @api */
     public ProgramResourcesService $resources;
+
+    /** @api */
+    public GroupsService $groups;
 
     /**
      * @api
@@ -128,6 +132,7 @@ final class CampaignService implements CampaignContract
         $this->commission = new CommissionService($client);
         $this->rewards = new RewardsService($client);
         $this->resources = new ProgramResourcesService($client);
+        $this->groups = new GroupsService($client);
         $this->design = new DesignService($client);
         $this->customDomain = new CustomDomainService($client);
         $this->emails = new EmailsService($client);
@@ -429,6 +434,7 @@ final class CampaignService implements CampaignContract
      * @param array<string,string> $metadata return only participants whose metadata matches every given key and value exactly. Send each pair as `metadata[key]=value`. Up to 3 keys per request. Values compare as strings, which is how metadata is stored
      * @param string $nextID ID to start the next paged result set with
      * @param RequestOpts|null $requestOptions
+     * @param string|null $groupID Return only this group's members (`grp_…`). Works alone or with `metadata`. Default has no ID, so it cannot be named here. An ID that is not a group in this program returns `404`.
      *
      * @throws APIException
      */
@@ -438,9 +444,10 @@ final class CampaignService implements CampaignContract
         ?array $metadata = null,
         ?string $nextID = null,
         RequestOptions|array|null $requestOptions = null,
+        ?string $groupID = null,
     ): ParticipantList {
         $params = Util::removeNulls(
-            ['limit' => $limit, 'metadata' => $metadata, 'nextID' => $nextID]
+            ['limit' => $limit, 'metadata' => $metadata, 'nextID' => $nextID, 'groupID' => $groupID]
         );
 
         // @phpstan-ignore-next-line argument.type

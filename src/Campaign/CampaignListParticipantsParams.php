@@ -15,7 +15,10 @@ use Growsurf\Core\Contracts\BaseModel;
  * @see Growsurf\Services\CampaignService::listParticipants()
  *
  * @phpstan-type CampaignListParticipantsParamsShape = array{
- *   limit?: int|null, metadata?: array<string,string>|null, nextID?: string|null
+ *   limit?: int|null,
+ *   metadata?: array<string,string>|null,
+ *   nextID?: string|null,
+ *   groupID?: string|null,
  * }
  */
 final class CampaignListParticipantsParams implements BaseModel
@@ -44,6 +47,12 @@ final class CampaignListParticipantsParams implements BaseModel
     #[Optional]
     public ?string $nextID;
 
+    /**
+     * Return only this group's members (`grp_…`). Works alone or with `metadata`. Default has no ID, so it cannot be named here. An ID that is not a group in this program returns `404`.
+     */
+    #[Optional('groupId')]
+    public ?string $groupID;
+
     public function __construct()
     {
         $this->initialize();
@@ -60,12 +69,14 @@ final class CampaignListParticipantsParams implements BaseModel
         ?int $limit = null,
         ?array $metadata = null,
         ?string $nextID = null,
+        ?string $groupID = null,
     ): self {
         $self = new self;
 
         null !== $limit && $self['limit'] = $limit;
         null !== $metadata && $self['metadata'] = $metadata;
         null !== $nextID && $self['nextID'] = $nextID;
+        null !== $groupID && $self['groupID'] = $groupID;
 
         return $self;
     }
@@ -101,6 +112,17 @@ final class CampaignListParticipantsParams implements BaseModel
     {
         $self = clone $this;
         $self['nextID'] = $nextID;
+
+        return $self;
+    }
+
+    /**
+     * Return only this group's members (`grp_…`). Works alone or with `metadata`. Default has no ID, so it cannot be named here. An ID that is not a group in this program returns `404`.
+     */
+    public function withGroupID(string $groupID): self
+    {
+        $self = clone $this;
+        $self['groupID'] = $groupID;
 
         return $self;
     }

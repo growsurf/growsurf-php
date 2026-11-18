@@ -29,6 +29,7 @@ use Growsurf\Core\Contracts\BaseModel;
  *   description?: string|null,
  *   event?: RewardEvent|value-of<RewardEvent>|null,
  *   imageURL?: string|null,
+ *   groupID?: string|null,
  *   imageIconKey?: null|ImageIconKey|value-of<ImageIconKey>,
  *   isVisible?: bool|null,
  *   limit?: int|null,
@@ -116,6 +117,12 @@ final class Reward implements BaseModel
      */
     #[Optional('imageUrl', nullable: true)]
     public ?string $imageURL;
+
+    /**
+     * The group this reward belongs to (`grp_…`), or `null` for Default. A participant earns only their own group's rewards.
+     */
+    #[Optional('groupId', nullable: true)]
+    public ?string $groupID;
 
     /**
      * The starter icon shown for the reward, or `null` when `imageUrl` is your own image.
@@ -267,6 +274,7 @@ final class Reward implements BaseModel
         RewardTaxValuation|array|null $value = null,
         RewardEvent|string|null $event = null,
         ImageIconKey|string|null $imageIconKey = null,
+        ?string $groupID = null,
     ): self {
         $self = new self;
 
@@ -295,6 +303,8 @@ final class Reward implements BaseModel
         null !== $referredValue && $self['referredValue'] = $referredValue;
         null !== $title && $self['title'] = $title;
         null !== $value && $self['value'] = $value;
+
+        null !== $groupID && $self['groupID'] = $groupID;
 
         return $self;
     }
@@ -569,6 +579,17 @@ final class Reward implements BaseModel
     {
         $self = clone $this;
         $self['value'] = $value;
+
+        return $self;
+    }
+
+    /**
+     * The group this reward belongs to (`grp_…`), or `null` for Default. A participant earns only their own group's rewards.
+     */
+    public function withGroupID(?string $groupID): self
+    {
+        $self = clone $this;
+        $self['groupID'] = $groupID;
 
         return $self;
     }

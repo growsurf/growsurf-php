@@ -28,7 +28,7 @@ final class WebhookTestResponse implements BaseModel
     public bool $success;
 
     /**
-     * The mock event payload that was sent.
+     * The mock event payload that was sent. `id` is the event ID.
      *
      * @var array<string,mixed>|null $payload
      */
@@ -89,7 +89,7 @@ final class WebhookTestResponse implements BaseModel
     }
 
     /**
-     * The mock event payload that was sent.
+     * The mock event payload that was sent. `id` is the event ID.
      *
      * @param array<string,mixed> $payload
      */

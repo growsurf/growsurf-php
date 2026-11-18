@@ -31,6 +31,7 @@ use Growsurf\Core\Contracts\BaseModel;
  *   description?: string,
  *   event?: RewardEvent|value-of<RewardEvent>,
  *   imageURL?: string|null,
+ *   groupID?: string|null,
  *   imageIconKey?: null|ImageIconKey|value-of<ImageIconKey>,
  *   isUnlimited?: bool,
  *   isVisible?: bool,
@@ -98,6 +99,12 @@ final class RewardUpdateParams implements BaseModel
      */
     #[Optional('imageUrl', nullable: true)]
     public ?string $imageURL;
+
+    /**
+     * The group this reward belongs to (`grp_…`), or `null` for Default. A participant earns only their own group's rewards. `LEADERBOARD` rewards apply to the whole program and cannot be in a group. An ID that is not a group in this program returns `400`.
+     */
+    #[Optional('groupId', nullable: true)]
+    public ?string $groupID;
 
     /**
      * The starter icon shown for the reward, or `null` when `imageUrl` is your own image. Participant pages draw this icon in your program's accent color. Also set `imageUrl` to the icon's image so the iOS and Android SDKs can show it. Sending `imageUrl` without `imageIconKey` clears it.
@@ -242,6 +249,7 @@ final class RewardUpdateParams implements BaseModel
      * @param RewardTaxValuation|RewardTaxValuationShape|null $value
      * @param RewardEvent|value-of<RewardEvent>|null $event
      * @param ImageIconKey|value-of<ImageIconKey>|null $imageIconKey
+     * @param string|null $groupID `null` omits the field; call `withGroupID(null)` to send `null` and move the reward to Default
      */
     public static function with(
         string $id,
@@ -267,6 +275,7 @@ final class RewardUpdateParams implements BaseModel
         RewardTaxValuation|array|null $value = null,
         RewardEvent|string|null $event = null,
         ImageIconKey|string|null $imageIconKey = null,
+        ?string $groupID = null,
     ): self {
         $self = new self;
 
@@ -294,6 +303,7 @@ final class RewardUpdateParams implements BaseModel
         null !== $referredValue && $self['referredValue'] = $referredValue;
         null !== $title && $self['title'] = $title;
         null !== $value && $self['value'] = $value;
+        null !== $groupID && $self['groupID'] = $groupID;
 
         return $self;
     }
@@ -567,6 +577,17 @@ final class RewardUpdateParams implements BaseModel
     {
         $self = clone $this;
         $self['value'] = $value;
+
+        return $self;
+    }
+
+    /**
+     * The group this reward belongs to (`grp_…`), or `null` for Default. A participant earns only their own group's rewards. `LEADERBOARD` rewards apply to the whole program and cannot be in a group. An ID that is not a group in this program returns `400`.
+     */
+    public function withGroupID(?string $groupID): self
+    {
+        $self = clone $this;
+        $self['groupID'] = $groupID;
 
         return $self;
     }

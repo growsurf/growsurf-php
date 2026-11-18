@@ -29,7 +29,7 @@ final class ParticipantRequestPayoutDestinationConfirmationParams implements Bas
     public string $id;
 
     /**
-     * The payout provider the participant should confirm a destination for.
+     * The payout provider the participant should confirm a destination for. `VENMO` uses a confirmed email and is available only when connected PayPal Payouts and payout-email confirmation are enabled in a USD program. Venmo recipients must be in the United States.
      *
      * @var value-of<Provider> $provider
      */
@@ -85,7 +85,7 @@ final class ParticipantRequestPayoutDestinationConfirmationParams implements Bas
     }
 
     /**
-     * The payout provider the participant should confirm a destination for.
+     * The payout provider the participant should confirm a destination for. `VENMO` uses a confirmed email and is available only when connected PayPal Payouts and payout-email confirmation are enabled in a USD program. Venmo recipients must be in the United States.
      *
      * @param Provider|value-of<Provider> $provider
      */

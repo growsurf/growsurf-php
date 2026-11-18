@@ -211,6 +211,7 @@ interface CampaignContract
      * @param array<string,string> $metadata return only participants whose metadata matches every given key and value exactly. Send each pair as `metadata[key]=value`. Up to 3 keys per request. Values compare as strings, which is how metadata is stored
      * @param string $nextID ID to start the next paged result set with
      * @param RequestOpts|null $requestOptions
+     * @param string|null $groupID Return only this group's members (`grp_…`). Works alone or with `metadata`. Default has no ID, so it cannot be named here. An ID that is not a group in this program returns `404`.
      *
      * @throws APIException
      */
@@ -220,6 +221,7 @@ interface CampaignContract
         ?array $metadata = null,
         ?string $nextID = null,
         RequestOptions|array|null $requestOptions = null,
+        ?string $groupID = null,
     ): ParticipantList;
 
     /**

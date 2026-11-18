@@ -9,6 +9,8 @@ use Growsurf\Campaign\Participant\Participant;
 use Growsurf\Campaign\Participant\ParticipantAddParams;
 use Growsurf\Campaign\Participant\ParticipantBulkDeleteParams;
 use Growsurf\Campaign\Participant\ParticipantBulkDeleteResponse;
+use Growsurf\Campaign\Participant\ParticipantBulkMoveParams;
+use Growsurf\Campaign\Participant\ParticipantBulkMoveResponse;
 use Growsurf\Campaign\Participant\ParticipantCancelDelayedReferralParams;
 use Growsurf\Campaign\Participant\ParticipantDeleteParams;
 use Growsurf\Campaign\Participant\ParticipantDeleteResponse;
@@ -150,7 +152,7 @@ final class ParticipantRawService implements ParticipantRawContract
     /**
      * @api
      *
-     * Removes participant access immediately by GrowSurf participant ID or email address. Related record cleanup completes automatically. Do not repeat a successful deletion to finish cleanup.
+     * Removes participant access immediately by GrowSurf participant ID or email address. Related record cleanup completes automatically. Do not repeat a successful deletion to finish cleanup. A `202` response includes pending analytics erasure details.
      *
      * @param string $participantIDOrEmail growSurf participant ID or unencoded participant email address (the SDK encodes it automatically)
      * @param array{id: string}|ParticipantDeleteParams $params
@@ -184,7 +186,7 @@ final class ParticipantRawService implements ParticipantRawContract
     /**
      * @api
      *
-     * Deletes a list of participants from a program in one request. Each entry in `participants` is a GrowSurf participant ID or an email address (mixed lists are allowed). Up to `200` entries per request — chunk larger lists across multiple calls. The response reports a per-row `status` for every submitted entry, so a `200` can include rows that were `NOT_FOUND` or failed. Deletion is permanent. Successful rows lose participant access immediately; related record cleanup completes automatically, subject to required financial record retention.
+     * Deletes a list of participants from a program in one request. Each entry in `participants` is a GrowSurf participant ID or an email address (mixed lists are allowed). Up to `200` entries per request — chunk larger lists across multiple calls. The response reports a per-row `status` for every submitted entry, so a `200` can include rows that were `NOT_FOUND` or failed. Deletion is permanent. Successful rows lose participant access immediately; related record cleanup completes automatically, subject to required financial record retention. A `202` response also includes `analyticsErasure` when analytics erasure is pending.
      *
      * @param string $id growSurf program ID
      * @param array{participants: list<string>}|ParticipantBulkDeleteParams $params
@@ -211,6 +213,39 @@ final class ParticipantRawService implements ParticipantRawContract
             body: (object) $parsed,
             options: $options,
             convert: ParticipantBulkDeleteResponse::class,
+        );
+    }
+
+    /**
+     * @api
+     *
+     * Moves a list of participants to a group, or to Default with `groupId: null`. Each entry in `participants` is a GrowSurf participant ID or an email address (mixed lists are allowed). Up to `200` entries per request. The response reports a per-row `status` for every submitted entry, so a `200` can include rows that were `NOT_FOUND`. All found participants move together: if the move fails, no one moves. A move is a manual placement, so the group's email and domain rules do not override it later, and it removes the participant from any other group's `PARTICIPANT` rules. A move applies to new referrals only. Rewards already earned keep their amounts. An ID that is not a group in this program returns `400`.
+     *
+     * @param string $id growSurf program ID
+     * @param array{participants: list<string>, groupID: string|null}|ParticipantBulkMoveParams $params
+     * @param RequestOpts|null $requestOptions
+     *
+     * @return BaseResponse<ParticipantBulkMoveResponse>
+     *
+     * @throws APIException
+     */
+    public function bulkMove(
+        string $id,
+        array|ParticipantBulkMoveParams $params,
+        RequestOptions|array|null $requestOptions = null,
+    ): BaseResponse {
+        [$parsed, $options] = ParticipantBulkMoveParams::parseRequest(
+            $params,
+            $requestOptions,
+        );
+
+        // @phpstan-ignore-next-line return.type
+        return $this->client->request(
+            method: 'post',
+            path: ['campaign/%1$s/participants/bulk-move', $id],
+            body: (object) $parsed,
+            options: $options,
+            convert: ParticipantBulkMoveResponse::class,
         );
     }
 
@@ -553,14 +588,13 @@ final class ParticipantRawService implements ParticipantRawContract
     /**
      * @api
      *
-     * Sends email invites on behalf of a participant to a list of email addresses. Sending invites via the API requires a **verified custom email domain** on the program; the request fails until one is verified.
+     * Sends email invites on behalf of a participant to a list of email addresses. Sending invites via the API requires a **verified custom email domain** on the program. Until one is verified, it returns `success: false`.
      *
      * @param string $participantIDOrEmail path param: GrowSurf participant ID or unencoded participant email address (the SDK encodes it automatically)
      * @param array{
      *   id: string,
      *   emailAddresses: list<string>,
      *   messageText: string,
-     *   subjectText: string,
      * }|ParticipantSendInvitesParams $params
      * @param RequestOpts|null $requestOptions
      *

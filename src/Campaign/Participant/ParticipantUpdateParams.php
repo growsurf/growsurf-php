@@ -23,6 +23,7 @@ use Growsurf\Core\Contracts\BaseModel;
  *   affiliateStatus?: \Growsurf\Campaign\Participant\ParticipantUpdateParams\AffiliateStatus|value-of<\Growsurf\Campaign\Participant\ParticipantUpdateParams\AffiliateStatus>,
  *   email?: string,
  *   firstName?: string,
+ *   groupID?: string|null,
  *   language?: null|\Growsurf\Campaign\Language|value-of<\Growsurf\Campaign\Language>,
  *   lastName?: string,
  *   metadata?: array<string,mixed>,
@@ -65,6 +66,12 @@ final class ParticipantUpdateParams implements BaseModel
      */
     #[Optional(enum: Language::class, nullable: true)]
     public ?string $language;
+
+    /**
+     * Moves the participant to this group (`grp_…`), or to Default with `null`. This is a manual placement, so the groups' email and domain rules do not override it later. The move applies to new referrals only; rewards already earned keep their amounts. An ID that is not a group in this program returns `400`.
+     */
+    #[Optional('groupId', nullable: true)]
+    public ?string $groupID;
 
     #[Optional]
     public ?string $lastName;
@@ -130,6 +137,7 @@ final class ParticipantUpdateParams implements BaseModel
      * @param ReferralStatus|value-of<ReferralStatus>|null $referralStatus
      * @param list<string>|null $vanityKeys
      * @param Language|value-of<Language>|null $language `null` omits the field; call `withLanguage(null)` to use the program's base language
+     * @param string|null $groupID `null` omits the field; call `withGroupID(null)` to send `null` and move the participant to Default
      */
     public static function with(
         string $id,
@@ -144,6 +152,7 @@ final class ParticipantUpdateParams implements BaseModel
         ?bool $unsubscribed = null,
         ?array $vanityKeys = null,
         Language|string|null $language = null,
+        ?string $groupID = null,
     ): self {
         $self = new self;
 
@@ -160,6 +169,7 @@ final class ParticipantUpdateParams implements BaseModel
         null !== $referredBy && $self['referredBy'] = $referredBy;
         null !== $unsubscribed && $self['unsubscribed'] = $unsubscribed;
         null !== $vanityKeys && $self['vanityKeys'] = $vanityKeys;
+        null !== $groupID && $self['groupID'] = $groupID;
 
         return $self;
     }
@@ -282,6 +292,17 @@ final class ParticipantUpdateParams implements BaseModel
     {
         $self = clone $this;
         $self['vanityKeys'] = $vanityKeys;
+
+        return $self;
+    }
+
+    /**
+     * Moves the participant to this group (`grp_…`), or to Default with `null`. This is a manual placement, so the groups' email and domain rules do not override it later. The move applies to new referrals only; rewards already earned keep their amounts. An ID that is not a group in this program returns `400`.
+     */
+    public function withGroupID(?string $groupID): self
+    {
+        $self = clone $this;
+        $self['groupID'] = $groupID;
 
         return $self;
     }

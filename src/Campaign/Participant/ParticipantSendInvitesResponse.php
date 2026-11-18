@@ -4,13 +4,14 @@ declare(strict_types=1);
 
 namespace Growsurf\Campaign\Participant;
 
+use Growsurf\Core\Attributes\Optional;
 use Growsurf\Core\Attributes\Required;
 use Growsurf\Core\Concerns\SdkModel;
 use Growsurf\Core\Contracts\BaseModel;
 
 /**
  * @phpstan-type ParticipantSendInvitesResponseShape = array{
- *   invitesSent: int, messageType: string, success: bool
+ *   invitesSent: int, messageType: string, success: bool, message?: string|null
  * }
  */
 final class ParticipantSendInvitesResponse implements BaseModel
@@ -26,6 +27,12 @@ final class ParticipantSendInvitesResponse implements BaseModel
 
     #[Required]
     public bool $success;
+
+    /**
+     * Human-readable detail for the result. Empty when there is nothing to add.
+     */
+    #[Optional]
+    public ?string $message;
 
     /**
      * `new ParticipantSendInvitesResponse()` is missing required properties by the API.
@@ -59,13 +66,16 @@ final class ParticipantSendInvitesResponse implements BaseModel
     public static function with(
         int $invitesSent,
         string $messageType,
-        bool $success
+        bool $success,
+        ?string $message = null,
     ): self {
         $self = new self;
 
         $self['invitesSent'] = $invitesSent;
         $self['messageType'] = $messageType;
         $self['success'] = $success;
+
+        null !== $message && $self['message'] = $message;
 
         return $self;
     }
@@ -90,6 +100,17 @@ final class ParticipantSendInvitesResponse implements BaseModel
     {
         $self = clone $this;
         $self['success'] = $success;
+
+        return $self;
+    }
+
+    /**
+     * Human-readable detail for the result. Empty when there is nothing to add.
+     */
+    public function withMessage(string $message): self
+    {
+        $self = clone $this;
+        $self['message'] = $message;
 
         return $self;
     }

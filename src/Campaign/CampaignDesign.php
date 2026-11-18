@@ -66,7 +66,7 @@ namespace Growsurf\Campaign;
  *   isHeadingClickableToSignupUrl?: bool,
  *   isPageTitleReplacementActive?: bool,
  *   pageTitleReplacement?: string|null,
- *   referrerNameFormat?: 'FIRST'|'FIRST_LAST_INITIAL'|'FIRST_LAST',
+ *   referrerNameFormat?: 'NONE'|'FIRST'|'FIRST_LAST_INITIAL'|'FIRST_LAST',
  *   referrerNameFallback?: string|null,
  *   ...<string, mixed>
  * }

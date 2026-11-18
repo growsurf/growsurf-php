@@ -49,7 +49,7 @@ final class ParticipantRefundTransactionParams implements BaseModel
     public string $id;
 
     /**
-     * REFUND covers full refunds, partial refunds, and refund cancellations; CHARGEBACK is always a full reversal.
+     * REFUND covers full refunds, partial refunds, and refund cancellations; CHARGEBACK is always a full reversal. Defaults to REFUND.
      *
      * @var value-of<AmendmentType>|null $amendmentType
      */
@@ -63,7 +63,7 @@ final class ParticipantRefundTransactionParams implements BaseModel
     public ?int $amount;
 
     /**
-     * Cumulative amount refunded so far, in the currency's minor unit. Omit for a full refund. For a partial refund send the running total, not the per-refund delta.
+     * Cumulative amount refunded so far, in the currency's minor unit. Omit for a full refund. For a partial refund send the running total, not the per-refund delta. Required when `refundStatus` is `canceled`: send the total that stays refunded after the cancellation (`0` when none remain).
      */
     #[Optional]
     public ?int $amountRefunded;
@@ -113,7 +113,7 @@ final class ParticipantRefundTransactionParams implements BaseModel
     public ?string $refundID;
 
     /**
-     * Refund status. Send "canceled" with a lowered amountRefunded to restore a previously reduced commission.
+     * Refund status. Send "canceled" with the original refundId to cancel that refund.
      */
     #[Optional]
     public ?string $refundStatus;
@@ -216,7 +216,7 @@ final class ParticipantRefundTransactionParams implements BaseModel
     }
 
     /**
-     * REFUND covers full refunds, partial refunds, and refund cancellations; CHARGEBACK is always a full reversal.
+     * REFUND covers full refunds, partial refunds, and refund cancellations; CHARGEBACK is always a full reversal. Defaults to REFUND.
      *
      * @param AmendmentType|value-of<AmendmentType> $amendmentType
      */
@@ -240,7 +240,7 @@ final class ParticipantRefundTransactionParams implements BaseModel
     }
 
     /**
-     * Cumulative amount refunded so far, in the currency's minor unit. Omit for a full refund. For a partial refund send the running total, not the per-refund delta.
+     * Cumulative amount refunded so far, in the currency's minor unit. Omit for a full refund. For a partial refund send the running total, not the per-refund delta. Required when `refundStatus` is `canceled`: send the total that stays refunded after the cancellation (`0` when none remain).
      */
     public function withAmountRefunded(int $amountRefunded): self
     {
@@ -341,7 +341,7 @@ final class ParticipantRefundTransactionParams implements BaseModel
     }
 
     /**
-     * Refund status. Send "canceled" with a lowered amountRefunded to restore a previously reduced commission.
+     * Refund status. Send "canceled" with the original refundId to cancel that refund.
      */
     public function withRefundStatus(string $refundStatus): self
     {
