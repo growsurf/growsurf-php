@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.24.1](https://github.com/growsurf/growsurf-php/compare/v1.24.0...v1.24.1) (2026-11-27)
+
+
+### Chores
+
+* update dev-only symfony/http-client to 6.4.51 ([36a017a](https://github.com/growsurf/growsurf-php/commit/36a017a3b0a29ba598dd35850b7eaa22cb94cc62))
+
+
+### Documentation
+
+* describe TELEHEALTH goal privacy defaults and share disclosure ([f782828](https://github.com/growsurf/growsurf-php/commit/f782828ae1ee84d30a4c5245dfa9abe65596ef59))
+* document paused-email 400, welcomeNonReferred limits, and repeat isNew ([f713b34](https://github.com/growsurf/growsurf-php/commit/f713b34a585552c2308da5afec9f3c3c2fea8551))
+* SDK docstring updates ([ab99463](https://github.com/growsurf/growsurf-php/commit/ab99463bb206cbb43f68e2639e9b6581075556b1))
+
 ## [1.24.0](https://github.com/growsurf/growsurf-php/compare/v1.23.0...v1.24.0) (2026-11-18)
 
 
