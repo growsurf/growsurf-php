@@ -12,6 +12,8 @@ namespace Growsurf\Campaign\CampaignCreateParams;
  * When you create a referral program without `rewards`, the goal also decides the starter rewards: most goals get one double-sided reward, `HEALTHCARE_PROVIDERS` gets a single-sided reward, `SUBSCRIBERS` gets a four-step milestone ladder, and `WAITLIST` gets a leaderboard. Every starter reward arrives switched off with a placeholder name, so the program awards nothing until you set the amount and turn one on.
  *
  * `TELEHEALTH` is for consumer telehealth and wellness subscriptions, where patients refer friends. `HEALTHCARE_PROVIDERS` is for provider networks and clinician-facing products, where practices refer peer practices. A `TELEHEALTH` program also starts with `useGrowSurfHostedLinks` on, so each referral link is a GrowSurf-hosted link; turn it off with `PATCH /campaign/{id}/installation`. It also starts with `offerPageRedirectSeconds` set to `10` and with starter offer-page content (`referredExperience.offerPageDescription` and `offerPageSteps`). Values you send in the create request are kept. `INSURANCE` replaces `ONLINE_INSURANCE`, which is still accepted and behaves identically.
+ *
+ * New `TELEHEALTH` referral programs hide referrer names and photos in friend-facing elements and hide the individual Referral Status list and leaderboard. Email reveal is off, full email masking is on, and signup and conversion alerts to referrers start off. Reward emails stay available. If a visible reward pays the referrer, the default share messages and email subject also say the participant may earn a reward. Change these settings afterward through the Design and Emails endpoints; existing and cloned programs keep their saved settings.
  */
 enum Goal: string
 {
