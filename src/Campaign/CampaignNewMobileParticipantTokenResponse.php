@@ -31,7 +31,7 @@ final class CampaignNewMobileParticipantTokenResponse implements BaseModel
     public int $expiresIn;
 
     /**
-     * Whether this request created a new participant. Returns false when the participant already existed.
+     * Whether this request created a new participant. Returns false when the participant already existed. A repeat call can return true while the first signup is still finishing.
      */
     #[Required]
     public bool $isNew;
@@ -105,7 +105,7 @@ final class CampaignNewMobileParticipantTokenResponse implements BaseModel
     }
 
     /**
-     * Whether this request created a new participant. Returns false when the participant already existed.
+     * Whether this request created a new participant. Returns false when the participant already existed. A repeat call can return true while the first signup is still finishing.
      */
     public function withIsNew(bool $isNew): self
     {
